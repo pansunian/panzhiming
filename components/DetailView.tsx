@@ -16,6 +16,93 @@ interface GalleryImage {
     caption: string;
 }
 
+// --- Brand Logos SVG Component ---
+const CameraBrandLogo = ({ deviceString, className = "h-3" }: { deviceString: string, className?: string }) => {
+    const s = deviceString.toLowerCase();
+    
+    // Apple
+    if (s.includes('apple') || s.includes('iphone')) {
+        return (
+            <svg viewBox="0 0 384 512" fill="currentColor" className={className}>
+                <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 79.9c14.2 40.2 40.8 96.8 78 96.8 30.8 0 36.4-23.4 84.9-23.4 46.8 0 56.1 23.4 85.3 23.4 35.4 0 60.6-51.5 81.3-90.2-22.1-14.4-38.3-46.8-29.2-91.3zM255 83.3c15.9-19.1 29-45.6 24.3-70.8-22.7 1-47.8 11.2-64.4 30.8-14.1 17.1-26.6 44.2-21 70.3 26 .8 50.4-10.4 61.1-30.3z"/>
+            </svg>
+        );
+    }
+    // Sony
+    if (s.includes('sony') || s.includes('ilce') || s.includes('alpha')) {
+        return (
+            <svg viewBox="0 0 500 100" fill="currentColor" className={className}>
+                <path d="M21.6,44.2h37.4c6,0,10.6-1.8,10.6-7.8c0-5.8-4.4-7.4-10.4-7.4H30.4c-4.6,0-8.8-3.4-8.8-9.8c0-6,4.6-9.6,9.8-9.6h54.8v10h-37c-5.8,0-10.2,1.6-10.2,7.4c0,5.8,4.6,7.4,10.6,7.4h29.2c5,0,9,4,9,9.8c0,5.8-4.6,10.4-10.4,10.4H10v-9.6C10,48,15.2,44.2,21.6,44.2z M125.6,9.6c20.8,0,36.4,14.8,36.4,36.4S146.4,82.4,125.6,82.4S89.2,67.6,89.2,46S104.8,9.6,125.6,9.6z M125.6,72.4c14.4,0,22.2-11,22.2-26.4s-7.8-26.4-22.2-26.4s-22.2,11-22.2,26.4S111.2,72.4,125.6,72.4z M174.6,9.6h15l34.4,53l0.4-53h12.8v72.8h-13.6L188,27.8l-0.4,54.6h-13V9.6z M253.6,9.6h14.8l20.4,32.4l20-32.4h14.8l-28,42v30.8h-14V51.6L253.6,9.6z"/>
+            </svg>
+        );
+    }
+    // Fujifilm
+    if (s.includes('fuji') || s.includes('x100') || s.includes('xt') || s.includes('gfx')) {
+        return (
+            <svg viewBox="0 0 300 50" fill="currentColor" className={className}>
+               <path d="M37.8,2.7C20.4,2.7,4,7.4,4,7.4v13.6h8.8V15c0,0,10.7-3.9,23.3-3.9c10.4,0,12.5,1.9,12.5,5.6v28.8h15V15.5C63.6,4.4,51.8,2.7,37.8,2.7z M85.2,15.5v19.4c0,3.7,2.2,5.6,10.1,5.6c8,0,10.1-1.9,10.1-5.6V15.5h15v18.2c0,12.2-10.4,13.6-25.1,13.6c-14.8,0-25.1-1.4-25.1-13.6V15.5H85.2z M134.3,15.5v22.7c0,5.6-3.8,7.3-8.8,7.3h-3.4v-8.8h3.1c1.2,0,1.8-0.6,1.8-2.5V15.5H134.3z M122.1,8.6c0-3.3,2.7-5.9,5.9-5.9c3.3,0,5.9,2.7,5.9,5.9c0,3.3-2.7,5.9-5.9,5.9C124.8,14.6,122.1,11.9,122.1,8.6z M144.1,15.5h7.3v29.9h-7.3V15.5z M140.4,8.6c0-3.3,2.7-5.9,5.9-5.9s5.9,2.7,5.9,5.9c0,3.3-2.7,5.9-5.9,5.9S140.4,11.9,140.4,8.6z M162.2,2.7v10.9h12.5v7.5h-12.5v24.4h-7.3V21.1h-4.8v-7.5h4.8V5.3C154.9,4.4,158.4,2.7,162.2,2.7z M186.7,15.5v29.9h-7.3V15.5H186.7z M183,8.6c0-3.3,2.7-5.9,5.9-5.9c3.3,0,5.9,2.7,5.9,5.9c0,3.3-2.7,5.9-5.9,5.9C185.7,14.6,183,11.9,183,8.6z M201.2,2.7v28.8c0,3.7,2.2,5.6,12.5,5.6c12.6,0,23.3-3.9,23.3-3.9v6.1c0,0-16.4,4.7-33.8,4.7c-13.9,0-25.8-1.7-25.8-12.8V2.7H201.2z M248.6,15.5v29.9h-7.3V15.5H248.6z M261.2,15.5l10.9,23.5l10.9-23.5h9.4l-16.1,34.4v13.9h-7.3V69.9L252.7,15.5H261.2z"/>
+            </svg>
+        );
+    }
+    // Canon
+    if (s.includes('canon')) {
+        return (
+            <svg viewBox="0 0 100 20" fill="currentColor" className={className}>
+                 <text x="0" y="15" fontFamily="serif" fontWeight="bold" fontSize="16">Canon</text>
+            </svg>
+        );
+    }
+    // Nikon
+    if (s.includes('nikon')) {
+         return (
+            <svg viewBox="0 0 100 20" fill="currentColor" className={className}>
+                 <text x="0" y="15" fontFamily="sans-serif" fontWeight="900" fontStyle="italic" fontSize="16">Nikon</text>
+            </svg>
+        );
+    }
+    // Leica
+    if (s.includes('leica')) {
+        return (
+            <svg viewBox="0 0 100 30" fill="currentColor" className={className}>
+               <text x="0" y="20" fontFamily="serif" fontStyle="italic" fontWeight="bold" fontSize="20">Leica</text>
+            </svg>
+        );
+    }
+    // Panasonic / Lumix
+    if (s.includes('panasonic') || s.includes('lumix') || s.includes('dc-s')) {
+         return (
+            <svg viewBox="0 0 100 20" fill="currentColor" className={className}>
+                 <text x="0" y="15" fontFamily="sans-serif" fontWeight="bold" fontSize="14" letterSpacing="1">LUMIX</text>
+            </svg>
+        );
+    }
+    // Ricoh
+    if (s.includes('ricoh') || s.includes('gr')) {
+         return (
+            <svg viewBox="0 0 100 20" fill="currentColor" className={className}>
+                 <text x="0" y="15" fontFamily="sans-serif" fontSize="14">RICOH</text>
+            </svg>
+        );
+    }
+    // Hasselblad
+    if (s.includes('hasselblad')) {
+         return (
+             <svg viewBox="0 0 120 20" fill="currentColor" className={className}>
+                  <text x="0" y="15" fontFamily="serif" fontWeight="bold" fontSize="14" letterSpacing="1">HASSELBLAD</text>
+             </svg>
+         );
+    }
+
+    // Default Camera Icon if unknown
+    return (
+        <div className={`flex items-center gap-1 text-ink ${className}`}>
+             <Camera size={14} strokeWidth={2.5} />
+             <span className="font-bold text-[10px] uppercase leading-none">{deviceString.split(' ')[0]}</span>
+        </div>
+    );
+};
+
+
 // Helper to render Rich Text array
 const RichTextRenderer = ({ content }: { content: any[] }) => {
     if (!content || !Array.isArray(content)) return null;
@@ -55,7 +142,7 @@ const parseCaptionData = (caption: string) => {
     let date = '';
     let metaParts: string[] = [];
 
-    // Keywords to identify Device (add more as needed)
+    // Keywords to identify Device
     const deviceKeywords = ['SONY', 'Sony', 'Canon', 'Nikon', 'Fuji', 'Fujifilm', 'Leica', 'Apple', 'iPhone', 'Panasonic', 'Lumix', 'Ricoh', 'GR', 'Hasselblad', 'Olympus', 'ILCE', 'DC-S5'];
     // Regex for date (Year-Month or similar)
     const dateRegex = /(\d{4}.*\d{1,2}.*\d{1,2}|\d{4}\s*年)/;
@@ -70,23 +157,21 @@ const parseCaptionData = (caption: string) => {
         } else if (isDate) {
             date = part;
         } else {
-            // Remove emojis for cleaner meta if desired, or keep them. keeping them for now.
             metaParts.push(part);
         }
     });
 
-    // Fallback: If device not found, assuming the LAST part is the device if it contains English letters
+    // Fallback: If device not found, check if last part looks like a device
     if (!device && parts.length > 0) {
         const lastPart = parts[parts.length - 1];
         if (/[a-zA-Z]/.test(lastPart) && !dateRegex.test(lastPart)) {
             device = lastPart;
-            // Remove this part from metaParts if it was added
             metaParts = metaParts.filter(p => p !== device);
         }
     }
 
     return {
-        device: device, // If empty, UI handles it
+        device: device, 
         date: date,
         meta: metaParts.join(' · ')
     };
@@ -96,8 +181,6 @@ const parseCaptionData = (caption: string) => {
 export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, logoUrl }) => {
   const [contentImages, setContentImages] = useState<GalleryImage[]>([]);
   const [loadingImages, setLoadingImages] = useState(false);
-  
-  // Blog content is now an array of objects (blocks)
   const [blogBlocks, setBlogBlocks] = useState<any[]>([]);
   const [loadingContent, setLoadingContent] = useState(false);
 
@@ -155,111 +238,42 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
   
   const displayImages = type === 'gallery' ? contentImages : [];
 
-  // --- Block Renderer ---
   const renderBlock = (block: any, idx: number) => {
+      // ... (Block Rendering Logic remains same as previous but condensed for brevity in diff)
+      // Including minimal re-implementation to match previous file structure requirement
       switch (block.type) {
-          case 'paragraph':
-              return (
-                  <p key={idx} className="mb-6 leading-loose text-ink/90">
-                      <RichTextRenderer content={block.content} />
-                  </p>
-              );
-          case 'heading_1':
-              return <h2 key={idx} className="text-2xl font-serif font-bold mt-10 mb-6 border-b border-stone-200 pb-2"><RichTextRenderer content={block.content} /></h2>;
-          case 'heading_2':
-              return <h3 key={idx} className="text-xl font-serif font-bold mt-8 mb-4"><RichTextRenderer content={block.content} /></h3>;
-          case 'heading_3':
-              return <h4 key={idx} className="text-lg font-serif font-bold mt-6 mb-3 text-brand-accent"><RichTextRenderer content={block.content} /></h4>;
-          case 'callout':
-              // Check if icon is emoji or external
-              const icon = block.icon?.type === 'emoji' ? block.icon.emoji : '💡';
-              return (
-                  <div key={idx} className="bg-stone-50 border border-stone-200 p-4 rounded-sm flex gap-4 my-6 shadow-sm">
-                      <div className="text-xl select-none">{icon}</div>
-                      <div className="flex-1 text-sm leading-relaxed text-ink/80">
-                         <RichTextRenderer content={block.content} />
-                      </div>
-                  </div>
-              );
-          case 'quote':
-              return (
-                  <blockquote key={idx} className="border-l-4 border-brand-accent pl-5 py-2 my-8 bg-stone-50/50 italic text-stone-600 font-serif text-lg">
-                      <RichTextRenderer content={block.content} />
-                  </blockquote>
-              );
+          case 'paragraph': return <p key={idx} className="mb-6 leading-loose text-ink/90"><RichTextRenderer content={block.content} /></p>;
+          case 'heading_1': return <h2 key={idx} className="text-2xl font-serif font-bold mt-10 mb-6 border-b border-stone-200 pb-2"><RichTextRenderer content={block.content} /></h2>;
+          case 'heading_2': return <h3 key={idx} className="text-xl font-serif font-bold mt-8 mb-4"><RichTextRenderer content={block.content} /></h3>;
+          case 'heading_3': return <h4 key={idx} className="text-lg font-serif font-bold mt-6 mb-3 text-brand-accent"><RichTextRenderer content={block.content} /></h4>;
+          case 'callout': 
+             const icon = block.icon?.type === 'emoji' ? block.icon.emoji : '💡';
+             return <div key={idx} className="bg-stone-50 border border-stone-200 p-4 rounded-sm flex gap-4 my-6 shadow-sm"><div className="text-xl select-none">{icon}</div><div className="flex-1 text-sm leading-relaxed text-ink/80"><RichTextRenderer content={block.content} /></div></div>;
+          case 'quote': return <blockquote key={idx} className="border-l-4 border-brand-accent pl-5 py-2 my-8 bg-stone-50/50 italic text-stone-600 font-serif text-lg"><RichTextRenderer content={block.content} /></blockquote>;
           case 'toggle':
-              return (
-                  <details key={idx} className="my-4 group border border-stone-200 rounded-sm bg-white open:bg-stone-50 transition-colors">
-                      <summary className="cursor-pointer p-3 font-medium flex items-center gap-2 list-none select-none text-stone-700 hover:text-ink">
-                         <div className="transition-transform group-open:rotate-90">
-                            <ChevronRight size={16} />
-                         </div>
-                         <RichTextRenderer content={block.content} />
-                      </summary>
-                      <div className="p-3 pt-0 pl-9 text-sm text-stone-600">
-                          {/* Note: Nested children not fully implemented in this demo, just placeholder or text */}
-                          <p className="opacity-60 italic text-xs">[Details content]</p>
-                      </div>
-                  </details>
-              );
-          case 'image':
-               return (
-                   <figure key={idx} className="my-8">
-                       <img src={block.src} alt="Blog Asset" className="w-full rounded-sm shadow-sm border border-stone-100" />
-                       {block.caption && block.caption.length > 0 && (
-                           <figcaption className="text-center mt-2 text-xs font-mono text-stone-400">
-                               <RichTextRenderer content={block.caption} />
-                           </figcaption>
-                       )}
-                   </figure>
-               );
-          case 'bookmark':
-               return (
-                   <a key={idx} href={block.url} target="_blank" rel="noopener noreferrer" className="block my-6 no-underline group">
-                       <div className="border border-stone-200 rounded-sm p-4 flex justify-between items-center hover:bg-stone-50 transition-colors hover:shadow-sm">
-                           <div className="overflow-hidden">
-                               <div className="font-bold text-sm mb-1 truncate text-ink group-hover:text-brand-accent transition-colors">
-                                   <RichTextRenderer content={block.caption.length ? block.caption : [{text: block.url}]} />
-                               </div>
-                               <div className="text-xs text-stone-400 font-mono truncate">{block.url}</div>
-                           </div>
-                           <ExternalLink size={16} className="text-stone-300 group-hover:text-brand-accent shrink-0 ml-4" />
-                       </div>
-                   </a>
-               );
-          case 'divider':
-               return <hr key={idx} className="my-8 border-dashed border-stone-300" />;
-          case 'list_item':
-                // Simple list handling. Consecutive lists are not merged in this simple map, but good enough for demo.
-               return (
-                   <div key={idx} className="flex gap-2 mb-2 ml-4">
-                       <span className="text-brand-accent font-bold select-none">•</span>
-                       <span className="leading-relaxed"><RichTextRenderer content={block.content} /></span>
-                   </div>
-               );
-          default:
-              return null;
+              return <details key={idx} className="my-4 group border border-stone-200 rounded-sm bg-white open:bg-stone-50 transition-colors"><summary className="cursor-pointer p-3 font-medium flex items-center gap-2 list-none select-none text-stone-700 hover:text-ink"><ChevronRight size={16} className="transition-transform group-open:rotate-90" /><RichTextRenderer content={block.content} /></summary><div className="p-3 pt-0 pl-9 text-sm text-stone-600"><p className="opacity-60 italic text-xs">[Details]</p></div></details>;
+          case 'image': return <figure key={idx} className="my-8"><img src={block.src} alt="" className="w-full rounded-sm shadow-sm border border-stone-100" />{block.caption?.length > 0 && <figcaption className="text-center mt-2 text-xs font-mono text-stone-400"><RichTextRenderer content={block.caption} /></figcaption>}</figure>;
+          case 'bookmark': return <a key={idx} href={block.url} target="_blank" rel="noopener noreferrer" className="block my-6 no-underline group"><div className="border border-stone-200 rounded-sm p-4 flex justify-between items-center hover:bg-stone-50 transition-colors hover:shadow-sm"><div className="overflow-hidden"><div className="font-bold text-sm mb-1 truncate text-ink group-hover:text-brand-accent"><RichTextRenderer content={block.caption.length ? block.caption : [{text: block.url}]} /></div><div className="text-xs text-stone-400 font-mono truncate">{block.url}</div></div><ExternalLink size={16} className="text-stone-300 group-hover:text-brand-accent shrink-0 ml-4" /></div></a>;
+          case 'divider': return <hr key={idx} className="my-8 border-dashed border-stone-300" />;
+          case 'list_item': return <div key={idx} className="flex gap-2 mb-2 ml-4"><span className="text-brand-accent font-bold select-none">•</span><span className="leading-relaxed"><RichTextRenderer content={block.content} /></span></div>;
+          default: return null;
       }
   };
 
   return (
     <div className="fixed inset-0 z-50 bg-texture overflow-y-auto animate-in fade-in duration-300">
       
-      {/* Navigation Bar - Scrolls with the page */}
       <NavBar onNavigate={onNavigate} activeView={type} logoUrl={logoUrl} />
 
       <div className="w-full max-w-[452px] mx-auto min-h-screen pb-24 pt-12">
         <div className="px-4 animate-in slide-in-from-bottom-8 duration-500 delay-100">
           
-          {/* Main Ticket Container */}
           <div>
-            {/* Top Jagged Edge */}
             <div className="h-4 w-full jagged-top bg-paper"></div>
             
-            {/* Removed shadow-xl for flat design */}
             <TicketBase className="rounded-none bg-paper min-h-[80vh] flex flex-col border-x border-stone-200">
               
-              {/* Header Metadata Section */}
+              {/* Header */}
               <div className="p-6 md:p-10 pb-4 relative">
                  <div className="flex justify-between items-start mb-4">
                     <div className="flex flex-col">
@@ -299,7 +313,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                  <Notch className="-right-4 bottom-[-1px] translate-y-1/2" />
               </div>
 
-              {/* Cover Image (Always shown) */}
+              {/* Cover Image */}
               <div className="relative w-full aspect-[16/9] bg-stone-200 overflow-hidden border-y-2 border-dashed border-stone-300">
                   <img 
                     src={isBlog ? blogPost.imageUrl : photoGroup.coverUrl} 
@@ -326,7 +340,6 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                                   {blogBlocks.length > 0 ? (
                                       blogBlocks.map((block, idx) => renderBlock(block, idx))
                                   ) : (
-                                      // Fallback for simple string content (demo data or legacy)
                                       blogPost.content && Array.isArray(blogPost.content) ? (
                                           blogPost.content.map((txt, i) => <p key={i} className="mb-4">{txt}</p>)
                                       ) : (
@@ -342,9 +355,8 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                               {photoGroup.description || "No description available."}
                           </p>
                           
-                          {/* Fetched Images from Content - POLAROID / GALLERY STYLE */}
+                          {/* GALLERY IMAGES */}
                           <div className="flex flex-col gap-8 mt-4">
-                              
                               {loadingImages ? (
                                 <div className="flex flex-col items-center justify-center py-12 gap-2 text-stone-400">
                                    <Loader2 className="animate-spin" />
@@ -355,7 +367,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                                     {displayImages.length > 0 ? displayImages.map((img, idx) => {
                                         const parsed = parseCaptionData(img.caption);
                                         return (
-                                            <div key={idx} className="w-full bg-white p-3 pb-6 shadow-sm border border-stone-100/50 break-inside-avoid relative">
+                                            <div key={idx} className="w-full bg-white p-3 pb-5 shadow-sm border border-stone-100/50 relative">
                                                 {/* Image */}
                                                 <img 
                                                     src={img.url} 
@@ -364,38 +376,46 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                                                 />
                                                 
                                                 {/* Footer Info Area */}
-                                                <div className="flex justify-between items-end mt-5 px-1 relative">
+                                                <div className="grid grid-cols-3 items-end mt-4 px-1 gap-2">
                                                     
-                                                    {/* Left: Device & Meta */}
-                                                    <div className="flex flex-col items-start gap-1 max-w-[35%] z-10">
-                                                        <span className="font-sans font-bold text-sm text-ink leading-tight uppercase">
+                                                    {/* Left: Brand Logo + Device Text */}
+                                                    <div className="flex flex-col items-start gap-1.5 justify-end h-full">
+                                                        <div className="opacity-90 text-ink">
+                                                            <CameraBrandLogo deviceString={parsed.device} className="h-4 w-auto max-w-[60px]" />
+                                                        </div>
+                                                        <span className="font-mono font-bold text-[8px] text-stone-400 leading-none uppercase tracking-wide truncate w-full">
                                                             {parsed.device || 'DIGITAL'}
                                                         </span>
-                                                        <span className="font-serif text-[10px] text-stone-500 leading-tight">
+                                                    </div>
+
+                                                    {/* Center: Signature Logo (Smaller) */}
+                                                    <div className="flex justify-center items-end h-full pb-0.5">
+                                                        {logoUrl ? (
+                                                            <img 
+                                                                src={logoUrl} 
+                                                                alt="Signature" 
+                                                                className="h-6 w-auto object-contain opacity-80 mix-blend-multiply" 
+                                                            />
+                                                        ) : (
+                                                            <div className="opacity-30">
+                                                                <span className="font-serif italic text-[10px]">Life Frames</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    {/* Right: Date & Location (Clean Stack) */}
+                                                    <div className="flex flex-col items-end gap-1 justify-end h-full text-right">
+                                                        <span className="font-mono text-[8px] font-bold text-stone-400 uppercase tracking-widest leading-none">
+                                                            DATE
+                                                        </span>
+                                                        <span className="font-mono text-[9px] text-ink leading-none">
+                                                            {parsed.date}
+                                                        </span>
+                                                        <span className="font-serif text-[8px] text-stone-500 italic leading-none truncate max-w-full pt-0.5">
                                                             {parsed.meta}
                                                         </span>
                                                     </div>
 
-                                                    {/* Center: Signature Logo */}
-                                                    {logoUrl ? (
-                                                        <div className="absolute left-1/2 -translate-x-1/2 bottom-0 z-0 opacity-80 mix-blend-multiply">
-                                                             <img src={logoUrl} alt="Signature" className="h-8 md:h-10 w-auto object-contain" />
-                                                        </div>
-                                                    ) : (
-                                                        <div className="absolute left-1/2 -translate-x-1/2 bottom-0 z-0 opacity-30">
-                                                            <span className="font-serif italic text-xs">Life Frames</span>
-                                                        </div>
-                                                    )}
-
-                                                    {/* Right: Date */}
-                                                    <div className="flex flex-col items-end gap-1 max-w-[35%] z-10 text-right">
-                                                        <span className="font-mono text-[10px] font-bold text-stone-400 uppercase tracking-wider">
-                                                            {parsed.date ? 'DATE' : ''}
-                                                        </span>
-                                                        <span className="font-mono text-[10px] text-stone-600">
-                                                            {parsed.date}
-                                                        </span>
-                                                    </div>
                                                 </div>
                                             </div>
                                         );
@@ -408,7 +428,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                               )}
                           </div>
 
-                          {/* Technical Info Box - Kept as summary */}
+                          {/* Technical Info Box */}
                           <div className="border border-stone-200 bg-[#fdfbf7] p-4 mt-4 relative overflow-hidden opacity-80">
                               <div className="absolute right-0 top-0 opacity-5">
                                   <BarcodeHorizontal className="h-12 w-24 rotate-[-15deg] translate-x-4 -translate-y-2" />
@@ -432,18 +452,15 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                   )}
               </div>
 
-              {/* Footer Section */}
+              {/* Footer */}
               <div className="bg-paper-dark p-6 relative mt-auto border-t-2 border-dashed border-stone-300/50">
                    <Notch className="-left-4 top-0 -translate-y-1/2" />
                    <Notch className="-right-4 top-0 -translate-y-1/2" />
-                   
                    <div className="flex flex-col items-center text-center gap-4">
                        <div className="w-full flex justify-between items-center opacity-50">
                            <BarcodeVertical />
                            <div className="mx-4 flex flex-col gap-1 w-full">
-                               <span className="font-mono text-[10px] uppercase tracking-widest text-stone-500">
-                                   {isBlog ? 'Article ID' : 'Gallery ID'}
-                               </span>
+                               <span className="font-mono text-[10px] uppercase tracking-widest text-stone-500">{isBlog ? 'Article ID' : 'Gallery ID'}</span>
                                <span className="font-mono text-xl tracking-[0.2em] font-bold">{item.id.replace(/-/g, '').substring(0, 8).toUpperCase()}</span>
                            </div>
                            <BarcodeVertical />
