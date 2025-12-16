@@ -35,12 +35,36 @@ module.exports = async function handler(req, res) {
     if (!props || !props[key]) return null;
     return props[key][type];
   };
+  
   const getRichText = (props, key) => safeGet(props, key, 'rich_text')?.[0]?.plain_text || '';
-  const getTitle = (props, key) => safeGet(props, key, 'title')?.[0]?.plain_text || '';
-  const getFileUrl = (props, key) => {
-    const files = safeGet(props, key, 'files');
-    return files?.[0]?.file?.url || files?.[0]?.external?.url || '';
+  
+  // Robust Title Getter: Tries 'Title' first, then 'Name' (Notion default)
+  const getTitle = (props, keys = ['Title', 'Name']) => {
+      const keyList = Array.isArray(keys) ? keys : [keys];
+      for (const k of keyList) {
+          const val = safeGet(props, k, 'title')?.[0]?.plain_text;
+          if (val) return val;
+      }
+      return 'Untitled';
   };
+
+  // Robust Image Getter: Tries Property 'Cover' first, then Page Cover
+  const getImageUrl = (page, propertyKey = 'Cover') => {
+      // 1. Try property
+      const props = page.properties;
+      if (props && props[propertyKey]) {
+          const files = props[propertyKey].files;
+          if (files && files.length > 0) {
+              return files[0].file?.url || files[0].external?.url;
+          }
+      }
+      // 2. Try native Page Cover
+      if (page.cover) {
+          return page.cover.file?.url || page.cover.external?.url;
+      }
+      return '';
+  };
+
   const getAllFileUrls = (props, key) => {
     const files = safeGet(props, key, 'files');
     return files?.map(f => f.file?.url || f.external?.url).filter(Boolean) || [];
@@ -56,12 +80,10 @@ module.exports = async function handler(req, res) {
         return response.results.map(mapper);
     } catch (error) {
         console.error(`Error fetching ${name}:`, error.message);
-        // Determine if it's a permission error
         let msg = error.message;
         if (msg.includes('accessible by this API bot')) {
             msg = `PERMISSION DENIED: Please add your Notion Integration to the database page for ${name}.`;
         }
-        // Return detailed error structure instead of throwing
         return { error: true, message: msg };
     }
   };
@@ -76,14 +98,15 @@ module.exports = async function handler(req, res) {
   try {
       const profileRes = await notion.databases.query({ database_id: process.env.NOTION_PROFILE_DB_ID });
       if (profileRes.results.length > 0) {
-          const p = profileRes.results[0].properties;
+          const page = profileRes.results[0];
+          const p = page.properties;
           profile = {
-              name: getTitle(p, 'Name') || 'Untitled',
+              name: getTitle(p, ['Name', 'Title']) || 'Untitled',
               role: getRichText(p, 'Role'),
               bio: getRichText(p, 'Bio'),
               location: getRichText(p, 'Location'),
-              avatarUrl: getFileUrl(p, 'Avatar'),
-              logoUrl: getFileUrl(p, 'Logo'), 
+              avatarUrl: getImageUrl(page, 'Avatar'), // Use robust image getter
+              logoUrl: getImageUrl(page, 'Logo'), 
               socials: []
           };
           const socialText = getRichText(p, 'Socials');
@@ -94,9 +117,6 @@ module.exports = async function handler(req, res) {
   } catch (error) {
       console.error("Profile Fetch Error:", error.message);
       profileError = error.message;
-      if (profileError.includes('accessible by this API bot')) {
-          profileError = `PERMISSION ERROR: Connect integration to Profile DB (${process.env.NOTION_PROFILE_DB_ID})`;
-      }
   }
 
   // 2. Gallery
@@ -104,15 +124,15 @@ module.exports = async function handler(req, res) {
       const p = page.properties;
       return {
           id: page.id,
-          title: getTitle(p, 'Title'),
+          title: getTitle(p, ['Title', 'Name']),
           location: getRichText(p, 'Location'),
           count: p.Count?.number || 0,
           date: p.Date?.date?.start || '',
           ticketNumber: getRichText(p, 'TicketNumber'),
           description: getRichText(p, 'Description'),
-          coverUrl: getFileUrl(p, 'Cover'),
+          coverUrl: getImageUrl(page, 'Cover'), // Robust image getter
           images: getAllFileUrls(p, 'Images'),
-          featured: p.Featured?.checkbox || false // NEW: Checkbox extraction
+          featured: p.Featured?.checkbox || false
       };
   });
 
@@ -121,7 +141,7 @@ module.exports = async function handler(req, res) {
       const p = page.properties;
       return {
           id: page.id,
-          content: getTitle(p, 'Content'),
+          content: getTitle(p, ['Content', 'Name', 'Title']), // Flexible title
           date: p.Date?.date?.start || new Date(page.created_time).toISOString().split('T')[0],
           time: '',
           tags: p.Tags?.multi_select?.map(t => t.name) || []
@@ -133,14 +153,14 @@ module.exports = async function handler(req, res) {
       const p = page.properties;
       return {
           id: page.id,
-          title: getTitle(p, 'Title'),
+          title: getTitle(p, ['Title', 'Name']), // Support default 'Name' property
           excerpt: getRichText(p, 'Excerpt'),
           date: p.Date?.date?.start || '',
           readTime: p.ReadTime?.select?.name || '5 MIN',
           category: p.Category?.select?.name || '随笔',
-          imageUrl: getFileUrl(p, 'Cover'),
+          imageUrl: getImageUrl(page, 'Cover'), // Support Page Cover
           content: [],
-          featured: p.Featured?.checkbox || false // NEW: Checkbox extraction
+          featured: p.Featured?.checkbox || false
       };
   });
 
@@ -157,14 +177,6 @@ module.exports = async function handler(req, res) {
         postsError: postsRes.error ? postsRes.message : null,
     }
   };
-
-  if (!profile && profileError) {
-      return res.status(500).json({
-          error: "Critical Data Missing",
-          message: profileError,
-          details: responseData.debug
-      });
-  }
 
   res.status(200).json(responseData);
 }
