@@ -1,4 +1,4 @@
-import { Client } from '@notionhq/client';
+const { Client } = require('@notionhq/client');
 
 // Initialize Notion Client
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
@@ -11,7 +11,7 @@ const getFileUrl = (filesArr) => filesArr?.[0]?.file?.url || filesArr?.[0]?.exte
 // Helper to extract all file URLs from a list
 const getAllFileUrls = (filesArr) => filesArr?.map(f => f.file?.url || f.external?.url).filter(Boolean) || [];
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // Only allow GET requests
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method Not Allowed' });
