@@ -207,7 +207,8 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
             {/* Top Jagged Edge */}
             <div className="h-4 w-full jagged-top bg-paper"></div>
             
-            <TicketBase className="rounded-none bg-paper min-h-[80vh] flex flex-col border-x border-stone-200 shadow-xl">
+            {/* Removed shadow-xl for flat design */}
+            <TicketBase className="rounded-none bg-paper min-h-[80vh] flex flex-col border-x border-stone-200">
               
               {/* Header Metadata Section */}
               <div className="p-6 md:p-10 pb-4 relative">

@@ -28,13 +28,15 @@ export const NavBar: React.FC<NavBarProps> = ({ onNavigate, activeView, logoUrl 
         {/* Logo Area */}
         <button 
           onClick={() => handleNavClick('home')}
-          className="px-4 flex flex-col justify-center items-start border-r-2 border-stone-800 bg-paper hover:bg-stone-50 transition-colors group z-20 relative"
+          // Removed 'border-r-2 border-stone-800' to remove vertical line
+          className="px-4 flex flex-col justify-center items-start bg-paper hover:bg-stone-50 transition-colors group z-20 relative"
         >
            {logoUrl ? (
              <img 
                src={logoUrl} 
                alt="Logo" 
-               className="h-6 w-auto object-contain opacity-90 group-hover:opacity-100 transition-opacity" 
+               // Increased height from h-6 to h-9 for larger logo
+               className="h-9 w-auto object-contain opacity-90 group-hover:opacity-100 transition-opacity" 
              />
            ) : (
              <>

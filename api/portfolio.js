@@ -233,7 +233,8 @@ module.exports = async function handler(req, res) {
           date: p['Date']?.date?.start || '',
           ticketNumber: getPropValue(p['TicketNumber']),
           description: getPropValue(p['Description']),
-          coverUrl: getImageUrl(page, 'Cover'),
+          // Update: preferPageCover = false (use property first)
+          coverUrl: getImageUrl(page, 'Cover', false),
           images: getAllFileUrls(p, 'Images'),
           featured: p['Featured']?.checkbox || false
       };
@@ -262,7 +263,8 @@ module.exports = async function handler(req, res) {
           date: p['Date']?.date?.start || '', 
           readTime: p['ReadTime']?.select?.name || '5 MIN',
           category: p['Category']?.select?.name || '随笔',
-          imageUrl: getImageUrl(page, 'Cover'),
+          // Update: preferPageCover = false (use property first)
+          imageUrl: getImageUrl(page, 'Cover', false),
           content: [], 
           featured: p['Featured']?.checkbox || false
       };
@@ -292,7 +294,7 @@ module.exports = async function handler(req, res) {
               date: new Date(page.last_edited_time).getFullYear().toString(),
               readTime: '∞',
               category: 'MANUAL',
-              imageUrl: getImageUrl(page), // Will use page cover
+              imageUrl: getImageUrl(page), // Will use page cover for manual
               content: [], // Content will be fetched by frontend using get-page-content
               featured: false
           };
