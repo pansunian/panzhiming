@@ -42,6 +42,8 @@ export const BlogSection: React.FC<Props> = ({ posts, id, onItemClick, onViewAll
                     <img 
                         src={post.imageUrl || `https://picsum.photos/seed/${post.id}/500/300`} 
                         alt={post.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover filter brightness-[0.95] contrast-[1.05] sepia-[0.1] transition-transform duration-700 group-hover:scale-105"
                     />
                     <div className="absolute bottom-2 left-2 text-white">

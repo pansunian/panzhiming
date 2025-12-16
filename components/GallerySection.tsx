@@ -36,10 +36,12 @@ export const GallerySection: React.FC<Props> = ({ groups, id, onItemClick, onVie
           >
             <div onClick={() => onItemClick(group)} className="flex flex-col h-full">
                 {/* Image Area */}
-                <div className="relative w-full aspect-video overflow-hidden rounded-t-sm">
+                <div className="relative w-full aspect-video overflow-hidden rounded-t-sm bg-stone-200">
                     <img 
                         src={group.coverUrl} 
                         alt={group.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 filter grayscale-[20%] group-hover:grayscale-0"
                     />
                     <div className="absolute top-4 left-4 bg-paper/90 text-ink text-[10px] font-mono px-2 py-1 shadow-sm">
