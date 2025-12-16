@@ -160,6 +160,9 @@ const GalleryItem: React.FC<{ img: GalleryImage, idx: number }> = ({ img, idx })
     const [aspectClass, setAspectClass] = useState("aspect-[3/2]"); // Default to landscape
     const [isLoaded, setIsLoaded] = useState(false);
     const parsed = parseCaptionData(img.caption);
+    
+    // Updated: Eager load first 2 images
+    const isPriority = idx < 2;
 
     const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
         const { naturalWidth, naturalHeight } = e.currentTarget;
@@ -179,6 +182,8 @@ const GalleryItem: React.FC<{ img: GalleryImage, idx: number }> = ({ img, idx })
                 <img 
                     src={img.url}
                     alt={parsed.locationMain}
+                    loading={isPriority ? "eager" : "lazy"}
+                    decoding={isPriority ? "auto" : "async"}
                     // object-cover is key here for cropping excess
                     className={`w-full h-full object-cover transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
                     onLoad={handleImageLoad}
@@ -186,7 +191,8 @@ const GalleryItem: React.FC<{ img: GalleryImage, idx: number }> = ({ img, idx })
              </div>
              
              {/* Info Bar */}
-             <div className="flex justify-between items-center mt-4 px-1">
+             {/* Updated padding from px-1 to px-3 for better edge whitespace */}
+             <div className="flex justify-between items-center mt-4 px-3">
                   {/* Left: Device & Date */}
                   {/* Increased gap from 1 to 1.5 for better separation */}
                   <div className="flex flex-col gap-1.5 items-start">
@@ -211,8 +217,8 @@ const GalleryItem: React.FC<{ img: GalleryImage, idx: number }> = ({ img, idx })
 
                       {/* Location Text */}
                       <div className="flex flex-col items-start justify-center">
-                          {/* Location Main: font-medium (not bold), text-[9px] */}
-                          <span className="font-medium text-[9px] text-ink leading-none mb-0.5">
+                          {/* Location Main: text-[9px] -> text-[10px], added -translate-y-[5px] */}
+                          <span className="font-medium text-[10px] text-ink leading-none mb-0.5 -translate-y-[5px]">
                               {parsed.locationMain}
                           </span>
                           {/* Location Sub: text-[8px] */}
@@ -234,6 +240,9 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
   const [loadingImages, setLoadingImages] = useState(false);
   const [blogBlocks, setBlogBlocks] = useState<any[]>([]);
   const [loadingContent, setLoadingContent] = useState(false);
+  
+  // State for the main cover image
+  const [coverLoaded, setCoverLoaded] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -368,7 +377,9 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                   <img 
                     src={isBlog ? blogPost.imageUrl : photoGroup.coverUrl} 
                     alt={item.title}
-                    className="w-full h-full object-cover"
+                    loading="eager" // Force eager loading for main cover
+                    onLoad={() => setCoverLoaded(true)}
+                    className={`w-full h-full object-cover transition-opacity duration-700 ${coverLoaded ? 'opacity-100' : 'opacity-0'}`}
                   />
                   <div className="absolute inset-0 bg-stone-500/10 mix-blend-multiply pointer-events-none" />
               </div>
@@ -436,7 +447,8 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                           </div>
 
                           {/* Technical Info Box */}
-                          <div className="border border-stone-200 bg-[#fdfbf7] p-4 mt-4 relative overflow-hidden opacity-80">
+                          {/* Updated padding from p-4 to px-8 py-6 to indent content towards middle */}
+                          <div className="border border-stone-200 bg-[#fdfbf7] px-8 py-6 mt-4 relative overflow-hidden opacity-80">
                               <div className="absolute right-0 top-0 opacity-5">
                                   <BarcodeHorizontal className="h-12 w-24 rotate-[-15deg] translate-x-4 -translate-y-2" />
                               </div>

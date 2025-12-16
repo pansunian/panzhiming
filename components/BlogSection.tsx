@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BlogPost } from '../types';
 import { BarcodeSmall, DashedLine } from './TicketUI';
 import { ArrowRight } from 'lucide-react';
@@ -11,29 +11,17 @@ interface Props {
   title?: string;
 }
 
-export const BlogSection: React.FC<Props> = ({ posts, id, onItemClick, onViewAll, title = "文章" }) => {
-  return (
-    <section id={id} className="mb-16 scroll-mt-12 w-full">
-      <div className="flex items-end justify-between mb-8 px-2">
-         <div className="flex items-end gap-3">
-             <h2 className="font-serif text-2xl font-bold text-ink">{title}</h2>
-             <span className="font-mono text-xs text-stone-500 mb-1">/ BLOG</span>
-         </div>
-         {onViewAll && (
-             <button onClick={onViewAll} className="inline-flex items-center gap-1 font-mono text-[10px] text-stone-400 hover:text-ink transition-colors pb-1">
-                 VIEW ALL <ArrowRight size={10} />
-             </button>
-         )}
-      </div>
+// Sub-component for Blog Item
+const BlogCard: React.FC<{ post: BlogPost; index: number; onClick: (p: BlogPost) => void }> = ({ post, index, onClick }) => {
+    const [isLoaded, setIsLoaded] = useState(false);
+    const isPriority = index < 2;
 
-      <div className="flex flex-col gap-6 w-full px-2">
-        {posts.map((post, index) => (
-          <div 
-            key={post.id} 
-            onClick={() => onItemClick(post)}
+    return (
+        <div 
+            onClick={() => onClick(post)}
             // Flat design: removed shadow classes, added border for subtle definition
             className="relative w-full h-32 group cursor-pointer transition-all duration-300 hover:-translate-y-1"
-          >
+        >
             {/* Ticket Container */}
             <div className="w-full h-full flex items-stretch">
                 
@@ -42,9 +30,10 @@ export const BlogSection: React.FC<Props> = ({ posts, id, onItemClick, onViewAll
                     <img 
                         src={post.imageUrl || `https://picsum.photos/seed/${post.id}/500/300`} 
                         alt={post.title}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover filter brightness-[0.95] contrast-[1.05] sepia-[0.1] transition-transform duration-700 group-hover:scale-105"
+                        loading={isPriority ? "eager" : "lazy"}
+                        decoding={isPriority ? "auto" : "async"}
+                        onLoad={() => setIsLoaded(true)}
+                        className={`w-full h-full object-cover filter brightness-[0.95] contrast-[1.05] sepia-[0.1] transition-all duration-700 group-hover:scale-105 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
                     />
                     <div className="absolute bottom-2 left-2 text-white">
                         <span className="font-mono text-[8px] bg-black/40 border border-white/30 px-1.5 py-0.5 backdrop-blur-sm tracking-wider uppercase">
@@ -92,7 +81,33 @@ export const BlogSection: React.FC<Props> = ({ posts, id, onItemClick, onViewAll
                 </div>
 
             </div>
-          </div>
+        </div>
+    );
+};
+
+export const BlogSection: React.FC<Props> = ({ posts, id, onItemClick, onViewAll, title = "文章" }) => {
+  return (
+    <section id={id} className="mb-16 scroll-mt-12 w-full">
+      <div className="flex items-end justify-between mb-8 px-2">
+         <div className="flex items-end gap-3">
+             <h2 className="font-serif text-2xl font-bold text-ink">{title}</h2>
+             <span className="font-mono text-xs text-stone-500 mb-1">/ BLOG</span>
+         </div>
+         {onViewAll && (
+             <button onClick={onViewAll} className="inline-flex items-center gap-1 font-mono text-[10px] text-stone-400 hover:text-ink transition-colors pb-1">
+                 VIEW ALL <ArrowRight size={10} />
+             </button>
+         )}
+      </div>
+
+      <div className="flex flex-col gap-6 w-full px-2">
+        {posts.map((post, index) => (
+            <BlogCard 
+                key={post.id} 
+                post={post} 
+                index={index} 
+                onClick={onItemClick} 
+            />
         ))}
       </div>
     </section>
