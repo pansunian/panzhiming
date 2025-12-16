@@ -7,8 +7,7 @@ import { ContactSection } from './components/ContactSection';
 import { DetailView } from './components/DetailView';
 import { NavBar } from './components/NavBar';
 import { Profile, PhotoGroup, Thought, BlogPost } from './types';
-import { TicketBase } from './components/TicketUI';
-import { AlertCircle, ArrowRight } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 
 // --- Default/Fallback Data (Demo Content) ---
 
@@ -139,21 +138,16 @@ const App: React.FC = () => {
         const res = await fetch('/api/portfolio');
         if (!res.ok) {
            const errData = await res.json().catch(() => ({}));
-           // If it's a 500/404, we prefer keeping the demo data visible for the user to see the layout
-           // but we still log the error.
            console.warn("API Error, using demo data:", errData.message);
-           // We throw mainly to stop loading spinner, but we won't clear the state if it fails
            throw new Error(errData.message || 'Failed to fetch data');
         }
         const data = await res.json();
         
-        // Only override if data exists, otherwise keep demo data
         if (data.profile) setProfile(data.profile);
         if (data.gallery && data.gallery.length > 0) setPhotoGroups(data.gallery);
         if (data.thoughts && data.thoughts.length > 0) setThoughts(data.thoughts);
         if (data.posts && data.posts.length > 0) setPosts(data.posts);
         
-        // Load manual page if available
         if (data.manual) setManualPage(data.manual);
         
         if (data.debug) {
@@ -164,8 +158,6 @@ const App: React.FC = () => {
         }
       } catch (e: any) {
         console.error(e);
-        // Don't show the red banner if we have demo data, just log it. 
-        // Or show it discreetly. For now, we set errorMsg to show connection issues.
         setErrorMsg(e.message || "Could not load portfolio data.");
       } finally {
         setLoading(false);
@@ -186,10 +178,8 @@ const App: React.FC = () => {
 
   const handleOpenManual = () => {
       if (manualPage) {
-          // Use the real data fetched from Notion
           setSelectedItem({ type: 'blog', data: manualPage });
       } else {
-          // Fallback if no ID is configured
           const fallbackManual: BlogPost = {
               id: 'manual_page', 
               title: '我的说明书',
@@ -223,6 +213,7 @@ const App: React.FC = () => {
         item={selectedItem.data} 
         type={selectedItem.type} 
         onNavigate={handleNavigate}
+        onManualClick={handleOpenManual}
         logoUrl={profile.logoUrl}
       />
     );
@@ -231,12 +222,12 @@ const App: React.FC = () => {
   // Filter Data for Home Page (Featured Only)
   const featuredGallery = photoGroups.filter(g => g.featured);
   const featuredPosts = posts.filter(p => p.featured);
-  // Filter Featured Thoughts and slice to top 10
   const featuredThoughts = thoughts.filter(t => t.featured).slice(0, 10);
 
   return (
     <div className="min-h-screen bg-texture text-ink pb-12 font-sans selection:bg-ink selection:text-paper">
-      {/* Error Banner - Only show if absolutely necessary, currently configured to show API errors */}
+      
+      {/* Error Banner */}
       {errorMsg && (
         <div className="bg-red-50 border-b border-red-200 p-4 flex items-start gap-3 sticky top-0 z-[60]">
           <AlertCircle className="text-red-500 shrink-0 mt-0.5" size={16} />
@@ -247,95 +238,108 @@ const App: React.FC = () => {
         </div>
       )}
 
-      {/* Navigation (Sticky Header) - Show on non-home pages */}
+      {/* Navigation (Sticky Header) - Hidden on Home View */}
       {currentView !== 'home' && (
-        <NavBar 
-          onNavigate={handleNavigate} 
-          activeView={currentView}
-          logoUrl={profile.logoUrl}
-        />
+          <NavBar 
+              onNavigate={handleNavigate} 
+              onManualClick={handleOpenManual}
+              activeView={currentView}
+              logoUrl={profile.logoUrl}
+          />
       )}
 
-      {/* Main Single Column Layout */}
-      {/* Width set to 452px (420 content + 32 padding) to ensure ticket is wide enough */}
-      <main className="max-w-[452px] mx-auto px-4 pt-8">
+      {/* Main Layout Container - Centered Single Column */}
+      <main className="w-full max-w-[452px] mx-auto px-4 pt-8 md:pt-12">
         
+        {/* Profile is always at top in single column flow */}
         {currentView === 'home' && (
-           <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 flex flex-col gap-12">
              <ProfileSection 
                 profile={profile} 
                 onNavigate={handleNavigate} 
                 onOpenManual={handleOpenManual}
              />
-             
-             {/* FEATURED GALLERY */}
-             {featuredGallery.length > 0 && (
-                <div>
-                   <GallerySection 
-                      title="精选影像"
-                      groups={featuredGallery} 
-                      onItemClick={(g) => handleItemClick('gallery', g)} 
-                      onViewAll={() => handleNavigate('gallery')}
-                   />
-                </div>
-             )}
+        )}
 
-             {/* RECENT FEATURED THOUGHTS (Top 10) */}
-             {featuredThoughts.length > 0 && (
-                 <div>
-                    <ThoughtSection 
-                      thoughts={featuredThoughts} 
-                      onViewAll={() => handleNavigate('thoughts')}
-                    />
+        {/* Content Feeds */}
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+            
+            {/* HOME VIEW */}
+            {currentView === 'home' && (
+               <div className="flex flex-col gap-16">
+                 
+                 {/* FEATURED GALLERY */}
+                 {featuredGallery.length > 0 && (
+                    <div>
+                       <GallerySection 
+                          title="精选影像"
+                          groups={featuredGallery} 
+                          onItemClick={(g) => handleItemClick('gallery', g)} 
+                          onViewAll={() => handleNavigate('gallery')}
+                       />
+                    </div>
+                 )}
+
+                 {/* RECENT THOUGHTS */}
+                 {featuredThoughts.length > 0 && (
+                     <div>
+                        <ThoughtSection 
+                          thoughts={featuredThoughts} 
+                          onViewAll={() => handleNavigate('thoughts')}
+                        />
+                     </div>
+                 )}
+
+                 {/* FEATURED BLOG */}
+                 {featuredPosts.length > 0 && (
+                    <div>
+                       <BlogSection 
+                          title="精选文章"
+                          posts={featuredPosts} 
+                          onItemClick={(p) => handleItemClick('blog', p)}
+                          onViewAll={() => handleNavigate('blog')}
+                       />
+                    </div>
+                 )}
+                 
+                 <ContactSection />
+
+                 {/* Footer */}
+                 <div className="text-center py-8 opacity-30 font-mono text-[9px] uppercase tracking-widest select-none">
+                     <p>Life Frames Archive &copy; {new Date().getFullYear()}</p>
                  </div>
-             )}
+               </div>
+            )}
 
-             {/* FEATURED BLOG */}
-             {featuredPosts.length > 0 && (
-                <div>
-                   <BlogSection 
-                      title="精选文章"
-                      posts={featuredPosts} 
-                      onItemClick={(p) => handleItemClick('blog', p)}
-                      onViewAll={() => handleNavigate('blog')}
-                   />
-                </div>
-             )}
-             
-             <ContactSection />
-           </div>
-        )}
+            {/* GALLERY VIEW */}
+            {currentView === 'gallery' && (
+              <div>
+                <GallerySection 
+                  groups={photoGroups} 
+                  onItemClick={(g) => handleItemClick('gallery', g)} 
+                />
+              </div>
+            )}
 
-        {currentView === 'gallery' && (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <GallerySection 
-              groups={photoGroups} 
-              onItemClick={(g) => handleItemClick('gallery', g)} 
-            />
-          </div>
-        )}
+            {/* THOUGHTS VIEW */}
+            {currentView === 'thoughts' && (
+              <div>
+                <ThoughtSection thoughts={thoughts} />
+              </div>
+            )}
 
-        {currentView === 'thoughts' && (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <ThoughtSection thoughts={thoughts} />
-          </div>
-        )}
+            {/* BLOG VIEW */}
+            {currentView === 'blog' && (
+              <div>
+                <BlogSection 
+                  posts={posts} 
+                  onItemClick={(p) => handleItemClick('blog', p)} 
+                />
+              </div>
+            )}
 
-        {currentView === 'blog' && (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <BlogSection 
-              posts={posts} 
-              onItemClick={(p) => handleItemClick('blog', p)} 
-            />
-          </div>
-        )}
+        </div>
 
       </main>
-
-      {/* Footer */}
-      <footer className="text-center py-8 opacity-30 font-mono text-[9px] uppercase tracking-widest pointer-events-none select-none">
-         <p>Life Frames Archive &copy; {new Date().getFullYear()}</p>
-      </footer>
     </div>
   );
 };

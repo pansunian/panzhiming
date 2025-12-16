@@ -8,6 +8,7 @@ interface DetailViewProps {
   item: BlogPost | PhotoGroup;
   type: 'blog' | 'gallery';
   onNavigate: (view: 'home' | 'gallery' | 'thoughts' | 'blog') => void;
+  onManualClick?: () => void;
   logoUrl?: string;
 }
 
@@ -17,67 +18,52 @@ interface GalleryImage {
 }
 
 // --- Brand Logotype Component ---
-// Replaces the SVG icon with a typography-based logo to avoid distortion and maintain aesthetic.
 const BrandLogotype = ({ deviceString, className = "" }: { deviceString: string, className?: string }) => {
     const s = deviceString.toLowerCase();
+    const [imgError, setImgError] = useState(false);
     
-    // Base style for the text
     const baseClass = `leading-none select-none ${className}`;
 
-    // Apple - Use local SVG from public/fonts/apple.svg
     if (s.includes('apple') || s.includes('iphone')) {
-        return (
-            <img 
-                src="/fonts/apple.svg" 
-                alt="Apple"
-                className={`h-3.5 w-auto object-contain opacity-90 ${className}`} 
-            />
-        );
-    }
-    // Sony - Use local SVG from public/fonts/logo-sony.svg
-    if (s.includes('sony') || s.includes('ilce') || s.includes('alpha')) {
-        return (
-            <img 
-                src="/fonts/logo-sony.svg" 
-                alt="SONY"
-                className={`h-3 w-auto object-contain opacity-80 ${className}`} 
-            />
-        );
-    }
-    // Canon - Distinctive Serif
-    if (s.includes('canon')) {
-        return <span className={`${baseClass} font-serif font-bold tracking-wide text-[14px]`}>Canon</span>;
-    }
-    // Nikon - Italic Sans Bold
-    if (s.includes('nikon')) {
-        return <span className={`${baseClass} font-sans font-black italic tracking-widest uppercase text-[14px]`}>Nikon</span>;
-    }
-    // Fujifilm
-    if (s.includes('fuji') || s.includes('x100') || s.includes('xt') || s.includes('gfx')) {
-        return <span className={`${baseClass} font-sans font-bold uppercase tracking-tight text-[12px]`}>FUJIFILM</span>;
-    }
-    // Leica
-    if (s.includes('leica')) {
-         return <span className={`${baseClass} font-sans font-light tracking-[0.2em] uppercase text-[12px]`}>LEICA</span>;
-    }
-    // Hasselblad
-    if (s.includes('hasselblad')) {
-         return <span className={`${baseClass} font-mono font-bold uppercase tracking-widest text-[10px]`}>HASSELBLAD</span>;
-    }
-    // Ricoh
-    if (s.includes('ricoh') || s.includes('gr')) {
-        return <span className={`${baseClass} font-sans font-medium uppercase tracking-widest text-[12px]`}>RICOH</span>;
-    }
-    // Panasonic / Lumix
-    if (s.includes('panasonic') || s.includes('lumix')) {
-        return <span className={`${baseClass} font-sans font-bold uppercase tracking-widest text-[12px]`}>LUMIX</span>;
+        if (!imgError) {
+            return (
+                <img 
+                    src="/fonts/apple.svg" 
+                    alt="Apple"
+                    onError={() => setImgError(true)}
+                    // Increased size to h-4 (from h-3.5)
+                    className={`h-4 w-auto object-contain opacity-90 ${className}`} 
+                />
+            );
+        }
+        return <span className={`${baseClass} font-[system-ui,sans-serif] font-bold tracking-tight text-[11px]`}>APPLE</span>;
     }
 
-    // Default: Return first word of device string or fallback icon
-    const brand = deviceString.split(' ')[0];
-    if (brand) {
-         return <span className={`${baseClass} font-mono font-bold uppercase text-[12px]`}>{brand}</span>;
+    if (s.includes('sony') || s.includes('ilce') || s.includes('alpha')) {
+        if (!imgError) {
+            return (
+                <img 
+                    src="/fonts/logo-sony.svg" 
+                    alt="SONY"
+                    onError={() => setImgError(true)}
+                    // Decreased size to h-2.5 (from h-3) to look balanced with taller Apple logo
+                    className={`h-2.5 w-auto object-contain opacity-80 ${className}`} 
+                />
+            );
+        }
+        return <span className={`${baseClass} font-serif font-bold tracking-widest text-[10px]`}>SONY</span>;
     }
+
+    if (s.includes('canon')) return <span className={`${baseClass} font-serif font-bold tracking-wide text-[14px]`}>Canon</span>;
+    if (s.includes('nikon')) return <span className={`${baseClass} font-[system-ui,sans-serif] font-black italic tracking-widest uppercase text-[14px]`}>Nikon</span>;
+    if (s.includes('fuji') || s.includes('x100') || s.includes('xt') || s.includes('gfx')) return <span className={`${baseClass} font-[system-ui,sans-serif] font-bold uppercase tracking-tight text-[12px]`}>FUJIFILM</span>;
+    if (s.includes('leica')) return <span className={`${baseClass} font-[system-ui,sans-serif] font-light tracking-[0.2em] uppercase text-[12px]`}>LEICA</span>;
+    if (s.includes('hasselblad')) return <span className={`${baseClass} font-mono font-bold uppercase tracking-widest text-[10px]`}>HASSELBLAD</span>;
+    if (s.includes('ricoh') || s.includes('gr')) return <span className={`${baseClass} font-[system-ui,sans-serif] font-medium uppercase tracking-widest text-[12px]`}>RICOH</span>;
+    if (s.includes('panasonic') || s.includes('lumix')) return <span className={`${baseClass} font-[system-ui,sans-serif] font-bold uppercase tracking-widest text-[12px]`}>LUMIX</span>;
+
+    const brand = deviceString.split(' ')[0];
+    if (brand) return <span className={`${baseClass} font-mono font-bold uppercase text-[12px]`}>{brand}</span>;
     
     return <Camera size={14} className="text-stone-400" />;
 };
@@ -111,125 +97,73 @@ const RichTextRenderer = ({ content }: { content: any[] }) => {
     );
 };
 
-// --- Helper: Caption Parser ---
 const parseCaptionData = (caption: string) => {
     if (!caption) return { device: '', date: '', locationMain: '', locationSub: '' };
-
-    // Split by common delimiters: | (vertical bar) or ｜ (full-width vertical bar)
     const parts = caption.split(/\||｜/).map(s => s.trim()).filter(Boolean);
-
     let device = '';
     let date = '';
     const others: string[] = [];
-
-    // Keywords to identify Device
     const deviceKeywords = ['SONY', 'Sony', 'Canon', 'Nikon', 'Fuji', 'Fujifilm', 'Leica', 'Apple', 'iPhone', 'Panasonic', 'Lumix', 'Ricoh', 'GR', 'Hasselblad', 'Olympus', 'ILCE', 'DC-S5'];
-    // Regex for date (Year-Month or similar)
     const dateRegex = /(\d{4}.*\d{1,2}.*\d{1,2}|\d{4}\s*年)/;
-
-    // First pass: look for specific types
     parts.forEach(part => {
         const isDevice = !device && deviceKeywords.some(k => part.toLowerCase().includes(k.toLowerCase()));
         const isDate = !date && dateRegex.test(part);
-
-        if (isDevice) {
-            device = part;
-        } else if (isDate) {
-            date = part;
-        } else {
-            // Assume anything else is location meta or other info
-            others.push(part);
-        }
+        if (isDevice) device = part;
+        else if (isDate) date = part;
+        else others.push(part);
     });
-
-    let locationMain = '';
-    let locationSub = '';
-
-    if (others.length > 0) {
-        locationMain = others[0];
-        if (others.length > 1) {
-            // If multiple parts remain, join the rest as sub location (e.g. Province | City)
-            locationSub = others.slice(1).join(' · ');
-        }
-    }
-
-    return {
-        device,
-        date,
-        locationMain,
-        locationSub
-    };
+    let locationMain = others[0] || '';
+    let locationSub = others.length > 1 ? others.slice(1).join(' · ') : '';
+    return { device, date, locationMain, locationSub };
 };
 
-// --- New Component: Individual Gallery Item with Aspect Ratio Logic ---
 const GalleryItem: React.FC<{ img: GalleryImage, idx: number }> = ({ img, idx }) => {
-    const [aspectClass, setAspectClass] = useState("aspect-[3/2]"); // Default to landscape
+    const [aspectClass, setAspectClass] = useState("aspect-[3/2]");
     const [isLoaded, setIsLoaded] = useState(false);
     const parsed = parseCaptionData(img.caption);
-    
-    // Updated: Eager load first 2 images
     const isPriority = idx < 2;
 
     const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
         const { naturalWidth, naturalHeight } = e.currentTarget;
-        // Determine closest aspect ratio: if Height > Width, use 2:3 (Portrait), else 3:2 (Landscape)
-        if (naturalHeight > naturalWidth) {
-            setAspectClass("aspect-[2/3]");
-        } else {
-            setAspectClass("aspect-[3/2]");
-        }
+        if (naturalHeight > naturalWidth) setAspectClass("aspect-[2/3]");
+        else setAspectClass("aspect-[3/2]");
         setIsLoaded(true);
     };
 
     return (
         <div className="w-full bg-white mb-12 last:mb-0 group pb-4">
-             {/* Image Container: Enforced Aspect Ratio + Crop */}
              <div className={`w-full relative bg-stone-100 overflow-hidden ${aspectClass} transition-all duration-500`}>
                 <img 
                     src={img.url}
                     alt={parsed.locationMain}
                     loading={isPriority ? "eager" : "lazy"}
                     decoding={isPriority ? "auto" : "async"}
-                    // object-cover is key here for cropping excess
                     className={`w-full h-full object-cover transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
                     onLoad={handleImageLoad}
                 />
              </div>
-             
-             {/* Info Bar */}
-             {/* Updated padding from px-1 to px-3 for better edge whitespace */}
              <div className="flex justify-between items-center mt-4 px-3">
-                  {/* Left: Device & Date */}
-                  {/* Increased gap from 1 to 1.5 for better separation */}
                   <div className="flex flex-col gap-1.5 items-start">
-                      {/* Removed font-black, used font-medium */}
-                      <span className="font-sans font-medium text-[10px] uppercase leading-none tracking-wider text-ink">
+                      {/* Font Update: Removed font-sans (custom font), added font-[system-ui] for default sans */}
+                      <span className="font-[system-ui,sans-serif] font-medium text-[10px] uppercase leading-none tracking-wider text-ink">
                           {parsed.device || 'DIGITAL'}
                       </span>
                       <span className="font-mono text-[8px] text-stone-400 leading-none">
                           {parsed.date}
                       </span>
                   </div>
-
-                  {/* Right: Brand Text, Divider, Location */}
                   <div className="flex items-center h-full pt-0.5">
-                      {/* Brand Label Area - Replaced Logo */}
                       <div className="mr-3 shrink-0 flex items-center text-ink opacity-80">
                           <BrandLogotype deviceString={parsed.device} />
                       </div>
-                      
-                      {/* Vertical Divider */}
                       <div className="w-[1px] h-3 bg-stone-200 mr-3 shrink-0"></div>
-
-                      {/* Location Text */}
                       <div className="flex flex-col items-start justify-center">
-                          {/* Location Main: text-[9px] -> text-[10px], added -translate-y-[5px] */}
-                          <span className="font-medium text-[10px] text-ink leading-none mb-0.5 -translate-y-[5px]">
+                          {/* Font Update: Removed font-medium (implies specific weight of custom), added font-[system-ui] */}
+                          <span className="font-[system-ui,sans-serif] font-medium text-[10px] text-ink leading-none mb-0.5 -translate-y-[5px]">
                               {parsed.locationMain}
                           </span>
-                          {/* Location Sub: text-[8px] */}
                           {parsed.locationSub && (
-                              <span className="text-[8px] text-stone-500 leading-none font-sans">
+                              <span className="text-[8px] text-stone-500 leading-none font-[system-ui,sans-serif]">
                                   {parsed.locationSub}
                               </span>
                           )}
@@ -241,20 +175,17 @@ const GalleryItem: React.FC<{ img: GalleryImage, idx: number }> = ({ img, idx })
 };
 
 
-export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, logoUrl }) => {
+export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, onManualClick, logoUrl }) => {
   const [contentImages, setContentImages] = useState<GalleryImage[]>([]);
   const [loadingImages, setLoadingImages] = useState(false);
   const [blogBlocks, setBlogBlocks] = useState<any[]>([]);
   const [loadingContent, setLoadingContent] = useState(false);
-  
-  // State for the main cover image
   const [coverLoaded, setCoverLoaded] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Fetch images for gallery
   useEffect(() => {
     if (type === 'gallery') {
       const fetchImages = async () => {
@@ -275,8 +206,6 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
     }
   }, [item.id, type]);
 
-  // Fetch structured content for BOTH blog and gallery
-  // Modified to allow fetching content for gallery type as well
   useEffect(() => {
     if (item.id) {
         const fetchContent = async () => {
@@ -302,7 +231,6 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
   const isBlog = type === 'blog';
   const blogPost = item as BlogPost;
   const photoGroup = item as PhotoGroup;
-  
   const displayImages = type === 'gallery' ? contentImages : [];
 
   const renderBlock = (block: any, idx: number) => {
@@ -328,8 +256,9 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
   return (
     <div className="fixed inset-0 z-50 bg-texture overflow-y-auto animate-in fade-in duration-300">
       
-      <NavBar onNavigate={onNavigate} activeView={type} logoUrl={logoUrl} />
+      <NavBar onNavigate={onNavigate} onManualClick={onManualClick} activeView={type} logoUrl={logoUrl} />
 
+      {/* REVERTED: max-w-[452px] for consistent single-column ticket style */}
       <div className="w-full max-w-[452px] mx-auto min-h-screen pb-24 pt-12">
         <div className="px-4 animate-in slide-in-from-bottom-8 duration-500 delay-100">
           
@@ -362,8 +291,8 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                     )}
                  </div>
                  
-                 {/* Title uses font-serif (JingHuaLaoSongTi) */}
-                 <h1 className="font-serif font-bold text-3xl md:text-5xl text-ink leading-tight mb-4">
+                 {/* Title Size Updated: md:text-5xl -> md:text-4xl for reduced size */}
+                 <h1 className="font-serif font-bold text-3xl md:text-4xl text-ink leading-tight mb-4">
                     {item.title}
                  </h1>
 
@@ -384,7 +313,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                   <img 
                     src={isBlog ? blogPost.imageUrl : photoGroup.coverUrl} 
                     alt={item.title}
-                    loading="eager" // Force eager loading for main cover
+                    loading="eager"
                     onLoad={() => setCoverLoaded(true)}
                     className={`w-full h-full object-cover transition-opacity duration-700 ${coverLoaded ? 'opacity-100' : 'opacity-0'}`}
                   />
@@ -397,7 +326,6 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                   <Notch className="-right-4 top-0 -translate-y-1/2" />
 
                   {isBlog ? (
-                      // Changed from font-serif to font-sans (XiXianTingMingTi)
                       <div className="text-base text-ink font-sans">
                           {loadingContent ? (
                               <div className="flex justify-center items-center py-12 gap-2 text-stone-400">
@@ -420,13 +348,10 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                       </div>
                   ) : (
                       <div className="flex flex-col gap-6">
-                          {/* Description: Changed from font-serif to font-sans (XiXianTingMingTi) */}
                           <p className="font-sans text-lg md:text-xl leading-relaxed italic border-l-2 border-brand-accent pl-6 text-stone-600 bg-stone-50 py-4 pr-4">
                               {photoGroup.description || "No description available."}
                           </p>
 
-                          {/* Render Notion Content Blocks for Gallery (Filtered to exclude images) */}
-                          {/* Changed from font-serif to font-sans (XiXianTingMingTi) */}
                           {blogBlocks.length > 0 && (
                             <div className="text-base text-ink font-sans my-4">
                                 {blogBlocks
@@ -455,8 +380,6 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                                 </div>
                               )}
                           </div>
-                          
-                          {/* REMOVED: Album Info Box */}
                       </div>
                   )}
               </div>
@@ -469,7 +392,6 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                        <div className="w-full flex justify-between items-center opacity-50">
                            <BarcodeVertical />
                            <div className="mx-4 flex flex-col gap-1 w-full text-ink opacity-80">
-                               {/* Updated text content and smaller font sizes */}
                                <span className="font-serif text-[10px] tracking-widest">先见志明</span>
                                <span className="font-mono text-[9px] font-bold tracking-[0.2em] uppercase">PANZHIMING.COM</span>
                            </div>

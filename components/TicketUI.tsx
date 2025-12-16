@@ -1,8 +1,12 @@
 import React from 'react';
 
-// A clean semi-circle notch with noise texture to blend with body
+// A clean semi-circle notch.
+// Reverted to use 'bg-texture' so it inherits the global noise background.
+// This ensures the "hole" blends perfectly with the page background, eliminating color difference.
 export const Notch = ({ className = "" }: { className?: string }) => (
-  <div className={`w-8 h-8 rounded-full bg-texture absolute z-10 ${className}`} />
+  <div 
+    className={`w-8 h-8 rounded-full absolute z-10 bg-texture ${className}`} 
+  />
 );
 
 // A clean dashed line

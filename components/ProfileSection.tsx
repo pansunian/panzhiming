@@ -9,7 +9,6 @@ import {
     Mail, 
     Youtube, 
     Globe, 
-    Smartphone, 
     Zap, 
     MessageCircle, 
     Link as LinkIcon, 
@@ -53,12 +52,17 @@ const getSocialConfig = (platform: string) => {
 
 export const ProfileSection: React.FC<Props> = ({ profile, onNavigate, onOpenManual }) => {
   return (
-    <div className="flex justify-center mb-24 w-full">
-      <TicketBase className="w-full rounded-2xl flex flex-col overflow-hidden">
+    <div className="flex justify-center w-full mb-24">
+      {/* 
+        Updates:
+        1. Removed 'shadow-ticket' to flatten the card. This ensures the "Notches" (which are patches of background color)
+           blend perfectly with the page background without being interrupted by a shadow halo.
+        2. Kept structure allowing Notches to overlay the content.
+      */}
+      <TicketBase className="w-full rounded-2xl flex flex-col">
         
         {/* Top Section: Visual */}
-        {/* Updated: Added md:h-[550px] to restrict height on larger screens */}
-        <div className="relative aspect-[4/5] md:aspect-auto md:h-[550px] w-full">
+        <div className="relative aspect-[4/5] w-full rounded-t-2xl overflow-hidden">
             <img 
                 src={profile.avatarUrl} 
                 alt="Profile"
@@ -104,7 +108,7 @@ export const ProfileSection: React.FC<Props> = ({ profile, onNavigate, onOpenMan
                      {profile.bio}
                  </p>
 
-                 {/* Navigation Grid (Updated to Buttons) */}
+                 {/* Navigation Grid */}
                  <div className="grid grid-cols-4 gap-1 text-center border-t border-white/20 pt-6 mt-6">
                      <button onClick={() => onNavigate('home')} className="group flex flex-col items-center transition-all duration-300 hover:-translate-y-0.5">
                          <span className="text-[9px] font-mono text-white/50 mb-1 tracking-wider group-hover:text-white/80">HOME</span>
@@ -127,7 +131,7 @@ export const ProfileSection: React.FC<Props> = ({ profile, onNavigate, onOpenMan
         </div>
 
         {/* Bottom Section: Socials */}
-        <div className="bg-paper p-6 relative">
+        <div className="bg-paper p-6 relative rounded-b-2xl">
              <Notch className="-left-4 top-0 -translate-y-1/2" />
              <Notch className="-right-4 top-0 -translate-y-1/2" />
              <DashedLine className="absolute top-0 left-4 right-4" />
