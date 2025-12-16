@@ -1,17 +1,36 @@
 const { Client } = require('@notionhq/client');
 
-// Initialize Notion Client
-const notion = new Client({ auth: process.env.NOTION_API_KEY });
-
-// Helper to safely extract text
-const getRichText = (richTextArr) => richTextArr?.[0]?.plain_text || '';
-const getTitle = (titleArr) => titleArr?.[0]?.plain_text || '';
-// Helper to extract file URL (supports internal Notion files and external links)
-const getFileUrl = (filesArr) => filesArr?.[0]?.file?.url || filesArr?.[0]?.external?.url || '';
-// Helper to extract all file URLs from a list
-const getAllFileUrls = (filesArr) => filesArr?.map(f => f.file?.url || f.external?.url).filter(Boolean) || [];
-
 module.exports = async function handler(req, res) {
+  // 1. Debug: Check Environment Variables
+  const requiredEnv = [
+    'NOTION_API_KEY',
+    'NOTION_PROFILE_DB_ID',
+    'NOTION_GALLERY_DB_ID',
+    'NOTION_THOUGHTS_DB_ID',
+    'NOTION_BLOG_DB_ID'
+  ];
+
+  const missingEnv = requiredEnv.filter(key => !process.env[key]);
+
+  if (missingEnv.length > 0) {
+    console.error('Missing Environment Variables:', missingEnv);
+    return res.status(500).json({ 
+      error: 'Server Configuration Error', 
+      message: `Missing environment variables: ${missingEnv.join(', ')}. Please configure them in Vercel Settings.` 
+    });
+  }
+
+  // Initialize Notion Client
+  const notion = new Client({ auth: process.env.NOTION_API_KEY });
+
+  // Helper to safely extract text
+  const getRichText = (richTextArr) => richTextArr?.[0]?.plain_text || '';
+  const getTitle = (titleArr) => titleArr?.[0]?.plain_text || '';
+  // Helper to extract file URL (supports internal Notion files and external links)
+  const getFileUrl = (filesArr) => filesArr?.[0]?.file?.url || filesArr?.[0]?.external?.url || '';
+  // Helper to extract all file URLs from a list
+  const getAllFileUrls = (filesArr) => filesArr?.map(f => f.file?.url || f.external?.url).filter(Boolean) || [];
+
   // Only allow GET requests
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method Not Allowed' });
@@ -36,9 +55,7 @@ module.exports = async function handler(req, res) {
         bio: getRichText(p.Bio.rich_text),
         location: getRichText(p.Location.rich_text),
         avatarUrl: getFileUrl(p.Avatar.files),
-        // Add safe check for Logo property in case user hasn't created it yet
         logoUrl: p.Logo ? getFileUrl(p.Logo.files) : null, 
-        // Parses JSON string from Notion for socials, e.g. [{"platform":"Weibo", "url":"..."}]
         socials: JSON.parse(getRichText(p.Socials.rich_text) || '[]')
       };
     }
@@ -82,7 +99,6 @@ module.exports = async function handler(req, res) {
         readTime: p.ReadTime?.select?.name || '5 MIN',
         category: p.Category?.select?.name || '随笔',
         imageUrl: getFileUrl(p.Cover.files),
-        // Note: Full content fetching requires a separate API call per page to avoid hitting limits here
         content: [] 
       };
     });
@@ -97,6 +113,11 @@ module.exports = async function handler(req, res) {
 
   } catch (error) {
     console.error('Notion API Error:', error);
-    res.status(500).json({ error: 'Failed to fetch data from Notion', details: error.message });
+    // Return detailed error to help debugging
+    res.status(500).json({ 
+      error: 'Failed to fetch data from Notion', 
+      details: error.message,
+      code: error.code || 'UNKNOWN_ERROR'
+    });
   }
 }

@@ -118,18 +118,25 @@ const App: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log("Fetching /api/portfolio...");
         const res = await fetch('/api/portfolio');
+        
         if (res.ok) {
            const data = await res.json();
+           console.log("Data fetched successfully:", data);
            if(data.profile) setProfile(data.profile);
            if(data.gallery) setGallery(data.gallery);
            if(data.thoughts) setThoughts(data.thoughts);
            if(data.posts) setPosts(data.posts);
         } else {
-            throw new Error("API not available");
+            // Read error details from server
+            const errorText = await res.text();
+            console.error("API Error Status:", res.status);
+            console.error("API Error Details:", errorText);
+            throw new Error(`API returned ${res.status}: ${errorText}`);
         }
       } catch (error) {
-        console.warn("Using fallback data (Backend not connected)");
+        console.warn("Using fallback data due to error:", error);
         setProfile(defaultProfile);
         setGallery(defaultPhotoGroups);
         setThoughts(defaultThoughts);
