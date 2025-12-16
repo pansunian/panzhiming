@@ -44,6 +44,55 @@ const RichTextRenderer = ({ content }: { content: any[] }) => {
     );
 };
 
+// --- Helper: Caption Parser ---
+const parseCaptionData = (caption: string) => {
+    if (!caption) return { device: '', date: '', meta: '' };
+
+    // Split by common delimiters: | (vertical bar) or ｜ (full-width vertical bar)
+    const parts = caption.split(/\||｜/).map(s => s.trim()).filter(Boolean);
+
+    let device = '';
+    let date = '';
+    let metaParts: string[] = [];
+
+    // Keywords to identify Device (add more as needed)
+    const deviceKeywords = ['SONY', 'Sony', 'Canon', 'Nikon', 'Fuji', 'Fujifilm', 'Leica', 'Apple', 'iPhone', 'Panasonic', 'Lumix', 'Ricoh', 'GR', 'Hasselblad', 'Olympus', 'ILCE', 'DC-S5'];
+    // Regex for date (Year-Month or similar)
+    const dateRegex = /(\d{4}.*\d{1,2}.*\d{1,2}|\d{4}\s*年)/;
+
+    // First pass: look for specific types
+    parts.forEach(part => {
+        const isDevice = !device && deviceKeywords.some(k => part.toLowerCase().includes(k.toLowerCase()));
+        const isDate = !date && dateRegex.test(part);
+
+        if (isDevice) {
+            device = part;
+        } else if (isDate) {
+            date = part;
+        } else {
+            // Remove emojis for cleaner meta if desired, or keep them. keeping them for now.
+            metaParts.push(part);
+        }
+    });
+
+    // Fallback: If device not found, assuming the LAST part is the device if it contains English letters
+    if (!device && parts.length > 0) {
+        const lastPart = parts[parts.length - 1];
+        if (/[a-zA-Z]/.test(lastPart) && !dateRegex.test(lastPart)) {
+            device = lastPart;
+            // Remove this part from metaParts if it was added
+            metaParts = metaParts.filter(p => p !== device);
+        }
+    }
+
+    return {
+        device: device, // If empty, UI handles it
+        date: date,
+        meta: metaParts.join(' · ')
+    };
+};
+
+
 export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, logoUrl }) => {
   const [contentImages, setContentImages] = useState<GalleryImage[]>([]);
   const [loadingImages, setLoadingImages] = useState(false);
@@ -293,11 +342,8 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                               {photoGroup.description || "No description available."}
                           </p>
                           
-                          {/* Fetched Images from Content */}
-                          <div className="flex flex-col gap-6 mt-8">
-                              <span className="font-mono text-[10px] uppercase tracking-widest text-stone-400 border-b border-stone-100 pb-2">
-                                  Film Roll Sequence
-                              </span>
+                          {/* Fetched Images from Content - POLAROID / GALLERY STYLE */}
+                          <div className="flex flex-col gap-8 mt-4">
                               
                               {loadingImages ? (
                                 <div className="flex flex-col items-center justify-center py-12 gap-2 text-stone-400">
@@ -305,28 +351,56 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                                    <span className="font-mono text-xs">Developing Photos...</span>
                                 </div>
                               ) : (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    {displayImages.length > 0 ? displayImages.map((img, idx) => (
-                                        <div key={idx} className="w-full relative group break-inside-avoid">
-                                            {/* Photo Frame Style */}
-                                            <div className="p-2 bg-white border border-stone-200 shadow-sm transition-transform hover:scale-[1.01] duration-500">
-                                                <img src={img.url} alt="" className="w-full h-auto filter grayscale-[10%] contrast-[1.05]" />
+                                <div className="flex flex-col gap-10">
+                                    {displayImages.length > 0 ? displayImages.map((img, idx) => {
+                                        const parsed = parseCaptionData(img.caption);
+                                        return (
+                                            <div key={idx} className="w-full bg-white p-3 pb-6 shadow-sm border border-stone-100/50 break-inside-avoid relative">
+                                                {/* Image */}
+                                                <img 
+                                                    src={img.url} 
+                                                    alt={parsed.meta || `Photo ${idx}`} 
+                                                    className="w-full h-auto object-cover block" 
+                                                />
+                                                
+                                                {/* Footer Info Area */}
+                                                <div className="flex justify-between items-end mt-5 px-1 relative">
+                                                    
+                                                    {/* Left: Device & Meta */}
+                                                    <div className="flex flex-col items-start gap-1 max-w-[35%] z-10">
+                                                        <span className="font-sans font-bold text-sm text-ink leading-tight uppercase">
+                                                            {parsed.device || 'DIGITAL'}
+                                                        </span>
+                                                        <span className="font-serif text-[10px] text-stone-500 leading-tight">
+                                                            {parsed.meta}
+                                                        </span>
+                                                    </div>
+
+                                                    {/* Center: Signature Logo */}
+                                                    {logoUrl ? (
+                                                        <div className="absolute left-1/2 -translate-x-1/2 bottom-0 z-0 opacity-80 mix-blend-multiply">
+                                                             <img src={logoUrl} alt="Signature" className="h-8 md:h-10 w-auto object-contain" />
+                                                        </div>
+                                                    ) : (
+                                                        <div className="absolute left-1/2 -translate-x-1/2 bottom-0 z-0 opacity-30">
+                                                            <span className="font-serif italic text-xs">Life Frames</span>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Right: Date */}
+                                                    <div className="flex flex-col items-end gap-1 max-w-[35%] z-10 text-right">
+                                                        <span className="font-mono text-[10px] font-bold text-stone-400 uppercase tracking-wider">
+                                                            {parsed.date ? 'DATE' : ''}
+                                                        </span>
+                                                        <span className="font-mono text-[10px] text-stone-600">
+                                                            {parsed.date}
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div className="flex justify-between items-start mt-2 px-1">
-                                                <span className="font-mono text-[8px] text-stone-400">FRAME {String(idx + 1).padStart(2, '0')}</span>
-                                                {/* Caption Display */}
-                                                {img.caption && (
-                                                    <span className="font-serif text-[10px] text-stone-500 text-right italic flex-1 ml-2 leading-tight">
-                                                        {img.caption}
-                                                    </span>
-                                                )}
-                                                {!img.caption && (
-                                                     <span className="font-mono text-[8px] text-stone-300">FUJIFILM</span>
-                                                )}
-                                            </div>
-                                        </div>
-                                    )) : (
-                                        <div className="col-span-full text-center py-8 font-mono text-xs text-stone-400 border border-dashed border-stone-300">
+                                        );
+                                    }) : (
+                                        <div className="text-center py-8 font-mono text-xs text-stone-400 border border-dashed border-stone-300">
                                             No additional photos found in the roll.
                                         </div>
                                     )}
@@ -334,20 +408,19 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                               )}
                           </div>
 
-                          {/* Technical Info Box */}
-                          <div className="border border-stone-200 bg-[#fdfbf7] p-4 mt-8 relative overflow-hidden">
+                          {/* Technical Info Box - Kept as summary */}
+                          <div className="border border-stone-200 bg-[#fdfbf7] p-4 mt-4 relative overflow-hidden opacity-80">
                               <div className="absolute right-0 top-0 opacity-5">
                                   <BarcodeHorizontal className="h-12 w-24 rotate-[-15deg] translate-x-4 -translate-y-2" />
                               </div>
-
                               <div className="flex items-center gap-2 mb-3 border-b border-dashed border-stone-200 pb-2">
-                                  <Aperture size={14} className="text-stone-400" />
-                                  <span className="font-mono text-xs font-bold text-stone-500">EXIF DATA</span>
+                                  <Info size={14} className="text-stone-400" />
+                                  <span className="font-mono text-xs font-bold text-stone-500">ALBUM INFO</span>
                               </div>
                               <div className="grid grid-cols-2 gap-y-4 gap-x-2 font-mono text-[10px] text-stone-500">
                                   <div>
-                                      <p className="opacity-50 text-[8px] tracking-widest uppercase">CAMERA</p>
-                                      <p className="text-ink">Fujifilm X100V</p>
+                                      <p className="opacity-50 text-[8px] tracking-widest uppercase">LOCATION</p>
+                                      <p className="text-ink">{photoGroup.location}</p>
                                   </div>
                                   <div>
                                       <p className="opacity-50 text-[8px] tracking-widest uppercase">DATE</p>
