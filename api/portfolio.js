@@ -108,9 +108,86 @@ module.exports = async function handler(req, res) {
               logoUrl: getImageUrl(page, 'Logo'), 
               socials: []
           };
-          const socialText = getRichText(p, 'Socials');
+          
+          // Enhanced Socials Parsing
+          // 1. Try both 'Socials' and 'Social'
+          const socialText = getRichText(p, 'Socials') || getRichText(p, 'Social');
+          
           if (socialText) {
-              try { profile.socials = JSON.parse(socialText); } catch(e) {}
+              let isJson = false;
+              // Strategy A: JSON Parsing
+              if (socialText.trim().startsWith('[') || socialText.trim().startsWith('{')) {
+                  try { 
+                      const parsed = JSON.parse(socialText);
+                      if (Array.isArray(parsed)) {
+                          profile.socials = parsed;
+                          isJson = true;
+                      } else if (typeof parsed === 'object' && parsed !== null) {
+                          profile.socials = [parsed];
+                          isJson = true;
+                      }
+                  } catch(e) {
+                       // ignore json error, fall through to text parsing
+                  }
+              }
+
+              // Strategy B: Pipe Separated Text Parsing
+              // Example: "Instagram: https://... | Weibo: https://..."
+              if (!isJson) {
+                  const parts = socialText.split(/\||\n/).map(s => s.trim()).filter(s => s);
+                  const parsedSocials = [];
+                  
+                  for (const part of parts) {
+                      const urlMatch = part.match(/(https?:\/\/[^\s]+)/);
+                      if (urlMatch) {
+                          const url = urlMatch[0];
+                          
+                          // 1. Try to get Platform Name from text before URL (e.g. "Weibo: http...")
+                          // Remove the URL and any trailing colons
+                          let platform = part.replace(url, '').replace(/[:：]/g, '').trim();
+                          
+                          // 2. If no text label, infer from Domain
+                          if (!platform) {
+                              try {
+                                  const hostname = new URL(url).hostname.toLowerCase();
+                                  if (hostname.includes('instagram')) platform = 'INSTAGRAM';
+                                  else if (hostname.includes('twitter') || hostname.includes('x.com')) platform = 'TWITTER';
+                                  else if (hostname.includes('github')) platform = 'GITHUB';
+                                  else if (hostname.includes('weibo')) platform = 'WEIBO';
+                                  else if (hostname.includes('douban')) platform = 'DOUBAN';
+                                  else if (hostname.includes('youtube')) platform = 'YOUTUBE';
+                                  else if (hostname.includes('bilibili')) platform = 'BILIBILI';
+                                  else if (hostname.includes('linkedin')) platform = 'LINKEDIN';
+                                  else platform = 'LINK';
+                              } catch {
+                                  platform = 'LINK';
+                              }
+                          }
+
+                          // 3. Extract Handle (last part of URL path)
+                          let handle = '@Link';
+                          try {
+                              const urlObj = new URL(url);
+                              const pathname = urlObj.pathname.replace(/\/$/, ''); // Remove trailing slash
+                              const pathParts = pathname.split('/');
+                              if (pathParts.length > 0) {
+                                  const lastPart = pathParts[pathParts.length - 1];
+                                  if (lastPart) handle = '@' + lastPart;
+                              }
+                          } catch {}
+
+                          parsedSocials.push({
+                              platform: platform.toUpperCase(),
+                              url: url,
+                              handle: handle
+                          });
+                      }
+                  }
+                  
+                  if (parsedSocials.length > 0) {
+                      profile.socials = parsedSocials;
+                  }
+              }
           }
       }
   } catch (error) {
