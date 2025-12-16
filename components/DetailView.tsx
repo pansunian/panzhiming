@@ -230,34 +230,34 @@ const GalleryItem: React.FC<{ img: GalleryImage, idx: number }> = ({ img, idx })
              </div>
              
              {/* Info Bar */}
-             <div className="flex justify-between items-start mt-4 px-1">
+             <div className="flex justify-between items-center mt-3 px-1">
                   {/* Left: Device & Date */}
-                  <div className="flex flex-col gap-1.5 items-start">
-                      <span className="font-sans font-black text-sm uppercase leading-none tracking-tight text-ink">
+                  <div className="flex flex-col gap-1 items-start">
+                      <span className="font-sans font-black text-[10px] uppercase leading-none tracking-wider text-ink">
                           {parsed.device || 'DIGITAL'}
                       </span>
-                      <span className="font-mono text-[10px] text-stone-400 leading-none">
+                      <span className="font-mono text-[8px] text-stone-400 leading-none">
                           {parsed.date}
                       </span>
                   </div>
 
                   {/* Right: Logo, Divider, Location */}
                   <div className="flex items-center h-full pt-0.5">
-                      {/* Logo Container - Fixed Height (h-4), Auto Width, No Shrink */}
-                      <div className="h-4 mr-3 shrink-0 flex items-center text-ink opacity-90">
+                      {/* Logo Container - Reduced Height (h-3) */}
+                      <div className="h-3 mr-2 shrink-0 flex items-center text-ink opacity-90">
                           <CameraBrandLogo deviceString={parsed.device} className="h-full" />
                       </div>
                       
                       {/* Vertical Divider */}
-                      <div className="w-[1px] h-6 bg-stone-200 mr-3 shrink-0"></div>
+                      <div className="w-[1px] h-4 bg-stone-200 mr-2 shrink-0"></div>
 
                       {/* Location Text */}
                       <div className="flex flex-col items-start justify-center">
-                          <span className="font-bold text-sm text-ink leading-none mb-1">
+                          <span className="font-bold text-[10px] text-ink leading-none mb-0.5">
                               {parsed.locationMain}
                           </span>
                           {parsed.locationSub && (
-                              <span className="text-[10px] text-stone-500 leading-none font-sans">
+                              <span className="text-[8px] text-stone-500 leading-none font-sans">
                                   {parsed.locationSub}
                               </span>
                           )}
