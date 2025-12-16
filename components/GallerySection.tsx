@@ -7,26 +7,26 @@ interface Props {
   groups: PhotoGroup[];
   id?: string;
   onItemClick: (group: PhotoGroup) => void;
+  title?: string;
 }
 
-export const GallerySection: React.FC<Props> = ({ groups, id, onItemClick }) => {
+export const GallerySection: React.FC<Props> = ({ groups, id, onItemClick, title = "影像辑" }) => {
   return (
-    <section id={id} className="mb-24 scroll-mt-12">
-      <div className="flex items-end gap-4 mb-8 px-2">
-         <h2 className="font-serif text-2xl font-bold text-ink">影像辑</h2>
-         <span className="font-mono text-xs text-stone-500 mb-1">/ COLLECTIONS</span>
+    <section id={id} className="mb-16 scroll-mt-24 w-full">
+      <div className="flex items-end gap-4 mb-6 px-2">
+         <h2 className="font-serif text-2xl font-bold text-ink">{title}</h2>
+         <span className="font-mono text-xs text-stone-500 mb-1">/ GALLERY</span>
       </div>
 
-      {/* Force single column for vertical scroll experience */}
-      <div className="grid grid-cols-1 gap-8">
+      {/* Single Column Ticket Stack */}
+      <div className="flex flex-col gap-8 w-full">
         {groups.map((group, idx) => (
           <TicketBase 
             key={group.id} 
-            // Updated: Removed 'border border-stone-200'
-            className="group cursor-pointer rounded-sm flex flex-col h-auto"
+            className="group cursor-pointer rounded-sm flex flex-col h-auto hover:-translate-y-1 transition-transform duration-300 shadow-ticket hover:shadow-ticket-hover"
           >
-            <div onClick={() => onItemClick(group)}>
-                {/* Image Area - Full Width */}
+            <div onClick={() => onItemClick(group)} className="flex flex-col h-full">
+                {/* Image Area */}
                 <div className="relative w-full aspect-video overflow-hidden rounded-t-sm">
                     <img 
                         src={group.coverUrl} 
@@ -39,7 +39,7 @@ export const GallerySection: React.FC<Props> = ({ groups, id, onItemClick }) => 
                 </div>
 
                 {/* Stub Area */}
-                <div className="bg-paper p-5 relative border-t-2 border-dashed border-stone-200 rounded-b-sm">
+                <div className="bg-paper p-5 relative border-t-2 border-dashed border-stone-200 rounded-b-sm flex-grow flex flex-col justify-between">
                     {/* Decorative Half Circles (Tear marks) */}
                     <Notch className="-left-4 top-0 -translate-y-1/2" />
                     <Notch className="-right-4 top-0 -translate-y-1/2" />

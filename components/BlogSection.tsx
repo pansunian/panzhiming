@@ -6,6 +6,7 @@ interface Props {
   posts: BlogPost[];
   id?: string;
   onItemClick: (post: BlogPost) => void;
+  title?: string;
 }
 
 // Reusable scalloped edge component (series of holes)
@@ -20,15 +21,15 @@ const ScallopedEdge = ({ position }: { position: 'left' | 'right' }) => {
   );
 };
 
-export const BlogSection: React.FC<Props> = ({ posts, id, onItemClick }) => {
+export const BlogSection: React.FC<Props> = ({ posts, id, onItemClick, title = "文章" }) => {
   return (
-    <section id={id} className="mb-24 scroll-mt-12">
+    <section id={id} className="mb-16 scroll-mt-12 w-full">
       <div className="flex items-end gap-4 mb-10 px-2">
-         <h2 className="font-serif text-2xl font-bold text-ink">文章</h2>
+         <h2 className="font-serif text-2xl font-bold text-ink">{title}</h2>
          <span className="font-mono text-xs text-stone-500 mb-1">/ BLOG</span>
       </div>
 
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8 w-full">
         {posts.map((post, index) => (
           <div 
             key={post.id} 
@@ -41,7 +42,7 @@ export const BlogSection: React.FC<Props> = ({ posts, id, onItemClick }) => {
             <ScallopedEdge position="right" />
 
             {/* Background Wrapper */}
-            <div className="w-full h-full bg-paper flex rounded-sm overflow-hidden relative border border-stone-200">
+            <div className="w-full h-full bg-paper flex rounded-sm overflow-hidden relative border border-stone-200 shadow-ticket hover:shadow-ticket-hover">
                 
                 {/* Left: Image Section (Adjusted to 40% width) */}
                 <div className="w-[40%] relative h-full overflow-hidden border-r border-stone-200">

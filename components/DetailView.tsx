@@ -54,7 +54,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
       {/* Consistent Navigation Bar */}
       <NavBar onNavigate={onNavigate} activeView={type} logoUrl={logoUrl} />
 
-      <div className="w-full max-w-[480px] mx-auto min-h-screen pb-24 pt-12">
+      <div className="w-full max-w-2xl mx-auto min-h-screen pb-24 pt-12">
         <div className="px-4 animate-in slide-in-from-bottom-8 duration-500 delay-100">
           
           {/* Main Ticket Container */}
@@ -62,10 +62,10 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
             {/* Top Jagged Edge */}
             <div className="h-4 w-full jagged-top bg-paper"></div>
             
-            <TicketBase className="rounded-none bg-paper min-h-[80vh] flex flex-col border-x border-stone-200">
+            <TicketBase className="rounded-none bg-paper min-h-[80vh] flex flex-col border-x border-stone-200 shadow-xl">
               
               {/* Header Metadata Section */}
-              <div className="p-6 pb-4 relative">
+              <div className="p-6 md:p-10 pb-4 relative">
                  <div className="flex justify-between items-start mb-4">
                     <div className="flex flex-col">
                         <span className="font-mono text-[9px] text-stone-400 uppercase tracking-[0.2em] mb-1">
@@ -88,7 +88,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                     )}
                  </div>
                  
-                 <h1 className="font-serif font-bold text-3xl md:text-4xl text-ink leading-tight mb-4">
+                 <h1 className="font-serif font-bold text-3xl md:text-5xl text-ink leading-tight mb-4">
                     {item.title}
                  </h1>
 
@@ -99,13 +99,13 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                     </div>
                  )}
 
-                 <DashedLine className="mt-6 opacity-30" />
+                 <DashedLine className="mt-8 opacity-30" />
                  <Notch className="-left-4 bottom-[-1px] translate-y-1/2" />
                  <Notch className="-right-4 bottom-[-1px] translate-y-1/2" />
               </div>
 
               {/* Cover Image (Always shown) */}
-              <div className="relative w-full aspect-[16/10] bg-stone-200 overflow-hidden border-y-2 border-dashed border-stone-300">
+              <div className="relative w-full aspect-[16/9] bg-stone-200 overflow-hidden border-y-2 border-dashed border-stone-300">
                   <img 
                     src={isBlog ? blogPost.imageUrl : photoGroup.coverUrl} 
                     alt={item.title}
@@ -115,12 +115,12 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
               </div>
 
               {/* Content Body */}
-              <div className="p-6 pt-8 flex-grow relative">
+              <div className="p-6 md:p-10 pt-8 flex-grow relative">
                   <Notch className="-left-4 top-0 -translate-y-1/2" />
                   <Notch className="-right-4 top-0 -translate-y-1/2" />
 
                   {isBlog ? (
-                      <div className="prose prose-stone prose-p:font-serif prose-p:text-ink prose-p:leading-loose prose-headings:font-serif">
+                      <div className="prose prose-stone max-w-none prose-p:font-serif prose-p:text-ink prose-p:leading-loose prose-headings:font-serif prose-img:rounded-sm">
                           {blogPost.content?.map((paragraph, idx) => (
                               <p key={idx} className="mb-6 first-letter:text-4xl first-letter:font-bold first-letter:mr-1 first-letter:float-left first-letter:font-serif">
                                   {paragraph}
@@ -129,13 +129,13 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                       </div>
                   ) : (
                       <div className="flex flex-col gap-6">
-                          <p className="font-serif text-lg leading-relaxed italic border-l-2 border-brand-accent pl-4 text-stone-600 bg-stone-50 py-2 pr-2">
+                          <p className="font-serif text-lg md:text-xl leading-relaxed italic border-l-2 border-brand-accent pl-6 text-stone-600 bg-stone-50 py-4 pr-4">
                               {photoGroup.description || "No description available."}
                           </p>
                           
                           {/* Fetched Images from Content */}
-                          <div className="flex flex-col gap-4 mt-4">
-                              <span className="font-mono text-[10px] uppercase tracking-widest text-stone-400">
+                          <div className="flex flex-col gap-6 mt-8">
+                              <span className="font-mono text-[10px] uppercase tracking-widest text-stone-400 border-b border-stone-100 pb-2">
                                   Film Roll Sequence
                               </span>
                               
@@ -145,20 +145,20 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                                    <span className="font-mono text-xs">Developing Photos...</span>
                                 </div>
                               ) : (
-                                <div className="space-y-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     {displayImages.length > 0 ? displayImages.map((img, idx) => (
-                                        <div key={idx} className="w-full relative group">
+                                        <div key={idx} className="w-full relative group break-inside-avoid">
                                             {/* Photo Frame Style */}
-                                            <div className="p-2 bg-white border border-stone-200 shadow-sm">
+                                            <div className="p-2 bg-white border border-stone-200 shadow-sm transition-transform hover:scale-[1.01] duration-500">
                                                 <img src={img} alt="" className="w-full h-auto filter grayscale-[10%] contrast-[1.05]" />
                                             </div>
-                                            <div className="flex justify-between items-center mt-1 px-1">
+                                            <div className="flex justify-between items-center mt-2 px-1">
                                                 <span className="font-mono text-[8px] text-stone-400">FRAME {String(idx + 1).padStart(2, '0')}</span>
                                                 <span className="font-mono text-[8px] text-stone-300">FUJIFILM</span>
                                             </div>
                                         </div>
                                     )) : (
-                                        <div className="text-center py-8 font-mono text-xs text-stone-400 border border-dashed border-stone-300">
+                                        <div className="col-span-full text-center py-8 font-mono text-xs text-stone-400 border border-dashed border-stone-300">
                                             No additional photos found in the roll.
                                         </div>
                                     )}
@@ -167,7 +167,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                           </div>
 
                           {/* Technical Info Box */}
-                          <div className="border border-stone-200 bg-[#fdfbf7] p-4 mt-4 relative overflow-hidden">
+                          <div className="border border-stone-200 bg-[#fdfbf7] p-4 mt-8 relative overflow-hidden">
                               <div className="absolute right-0 top-0 opacity-5">
                                   <BarcodeHorizontal className="h-12 w-24 rotate-[-15deg] translate-x-4 -translate-y-2" />
                               </div>

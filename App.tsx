@@ -8,22 +8,105 @@ import { DetailView } from './components/DetailView';
 import { NavBar } from './components/NavBar';
 import { Profile, PhotoGroup, Thought, BlogPost } from './types';
 import { TicketBase } from './components/TicketUI';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, ArrowRight } from 'lucide-react';
 
-// --- Default/Fallback Data ---
+// --- Default/Fallback Data (Demo Content) ---
+
 const defaultProfile: Profile = {
   name: "演示用户",
-  role: "请检查 API 配置",
-  bio: "如果看到此信息，说明 API 数据获取失败。请查看页面顶部的红色报错信息，或检查 Vercel 环境变量设置。",
-  location: "System / Error",
-  avatarUrl: "https://images.unsplash.com/photo-1542596768-5d1d21f1cfde?q=80&w=800&auto=format&fit=crop",
+  role: "Photographer & Coder",
+  bio: "这里是演示数据。请在 Vercel 环境变量中配置您的 Notion 数据库 ID 以加载真实内容。",
+  location: "Shanghai, CN",
+  avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop",
   logoUrl: undefined, 
-  socials: []
+  socials: [
+      { platform: "INSTAGRAM", url: "#", handle: "@demo" },
+      { platform: "TWITTER", url: "#", handle: "@demo" }
+  ]
 };
 
-const defaultPhotoGroups: PhotoGroup[] = [];
-const defaultThoughts: Thought[] = [];
-const defaultPosts: BlogPost[] = [];
+const defaultPhotoGroups: PhotoGroup[] = [
+  {
+    id: "demo-g1",
+    title: "东京夜雨",
+    location: "Shibuya, Tokyo",
+    count: 12,
+    coverUrl: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=1000&auto=format&fit=crop",
+    date: "2023-11-15",
+    ticketNumber: "TKY-089",
+    description: "霓虹灯下的涉谷街头，雨水倒映着城市的喧嚣。使用 CineStill 800T 拍摄。",
+    featured: true // Show on Home
+  },
+  {
+    id: "demo-g2",
+    title: "冰岛公路",
+    location: "Ring Road, Iceland",
+    count: 36,
+    coverUrl: "https://images.unsplash.com/photo-1476610182048-b716b8518aae?q=80&w=1000&auto=format&fit=crop",
+    date: "2023-08-22",
+    ticketNumber: "ICL-002",
+    description: "孤独的环岛公路，仿佛通向世界尽头。",
+    featured: false
+  },
+  {
+    id: "demo-g3",
+    title: "胶片日常",
+    location: "Home, Sunday",
+    count: 8,
+    coverUrl: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1000&auto=format&fit=crop",
+    date: "2024-01-10",
+    ticketNumber: "LIF-104",
+    description: "记录生活中的细碎光影。",
+    featured: false
+  }
+];
+
+const defaultThoughts: Thought[] = [
+  {
+    id: "demo-t1",
+    content: "设计的本质不是为了装饰，而是为了解决问题。但在解决问题的过程中，我们不妨让它变得更浪漫一些。",
+    date: "2024-02-14",
+    time: "23:45",
+    tags: ["Design", "Life"]
+  },
+  {
+    id: "demo-t2",
+    content: "今天在咖啡馆听到一首很老的爵士乐，突然意识到，所谓“复古”其实是我们对未曾经历的时代的乡愁。",
+    date: "2024-02-12",
+    time: "14:20",
+    tags: ["Music", "Mood"]
+  },
+  {
+    id: "demo-t3",
+    content: "保持好奇心，保持饥饿。Stay foolish, stay hungry.",
+    date: "2024-02-01",
+    time: "09:00",
+    tags: ["Quote"]
+  }
+];
+
+const defaultPosts: BlogPost[] = [
+  {
+    id: "demo-p1",
+    title: "如何构建一个具有“票根感”的个人网站",
+    excerpt: "在这篇文章中，我将分享如何使用 Tailwind CSS 和 React 来实现这种独特的纸质质感和票据风格设计。",
+    date: "2024-03-01",
+    readTime: "8 MIN",
+    category: "Code",
+    imageUrl: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=1000&auto=format&fit=crop",
+    featured: true // Show on Home
+  },
+  {
+    id: "demo-p2",
+    title: "摄影与记忆的显影",
+    excerpt: "按下快门的那一刻，我们究竟留住了什么？是光影，还是当时的情绪？",
+    date: "2024-01-20",
+    readTime: "5 MIN",
+    category: "Essay",
+    imageUrl: "https://images.unsplash.com/photo-1452587925148-ce544ae77c7a?q=80&w=1000&auto=format&fit=crop",
+    featured: false
+  }
+];
 
 // --- Default Data Types ---
 type ViewState = 'home' | 'gallery' | 'thoughts' | 'blog';
@@ -49,18 +132,21 @@ const App: React.FC = () => {
       try {
         const res = await fetch('/api/portfolio');
         if (!res.ok) {
-           // Try to parse error, otherwise default
            const errData = await res.json().catch(() => ({}));
+           // If it's a 500/404, we prefer keeping the demo data visible for the user to see the layout
+           // but we still log the error.
+           console.warn("API Error, using demo data:", errData.message);
+           // We throw mainly to stop loading spinner, but we won't clear the state if it fails
            throw new Error(errData.message || 'Failed to fetch data');
         }
         const data = await res.json();
         
+        // Only override if data exists, otherwise keep demo data
         if (data.profile) setProfile(data.profile);
-        if (data.gallery) setPhotoGroups(data.gallery);
-        if (data.thoughts) setThoughts(data.thoughts);
-        if (data.posts) setPosts(data.posts);
+        if (data.gallery && data.gallery.length > 0) setPhotoGroups(data.gallery);
+        if (data.thoughts && data.thoughts.length > 0) setThoughts(data.thoughts);
+        if (data.posts && data.posts.length > 0) setPosts(data.posts);
         
-        // Handle partial errors (debug info)
         if (data.debug) {
             const errors = Object.values(data.debug).filter(Boolean);
             if (errors.length > 0) {
@@ -69,6 +155,8 @@ const App: React.FC = () => {
         }
       } catch (e: any) {
         console.error(e);
+        // Don't show the red banner if we have demo data, just log it. 
+        // Or show it discreetly. For now, we set errorMsg to show connection issues.
         setErrorMsg(e.message || "Could not load portfolio data.");
       } finally {
         setLoading(false);
@@ -107,14 +195,18 @@ const App: React.FC = () => {
     );
   }
 
+  // Filter Data for Home Page (Featured Only)
+  const featuredGallery = photoGroups.filter(g => g.featured);
+  const featuredPosts = posts.filter(p => p.featured);
+
   return (
     <div className="min-h-screen bg-texture text-ink pb-12 font-sans selection:bg-ink selection:text-paper">
-      {/* Error Banner */}
+      {/* Error Banner - Only show if absolutely necessary, currently configured to show API errors */}
       {errorMsg && (
-        <div className="bg-red-50 border-b border-red-200 p-4 flex items-start gap-3">
+        <div className="bg-red-50 border-b border-red-200 p-4 flex items-start gap-3 sticky top-0 z-[60]">
           <AlertCircle className="text-red-500 shrink-0 mt-0.5" size={16} />
           <div className="text-xs text-red-700 font-mono">
-            <p className="font-bold mb-1">DATA ERROR</p>
+            <p className="font-bold mb-1">DEMO MODE / API ERROR</p>
             <p>{errorMsg}</p>
           </div>
         </div>
@@ -129,26 +221,57 @@ const App: React.FC = () => {
         />
       )}
 
-      <main className="max-w-[480px] mx-auto px-4 pt-8">
+      {/* Main Single Column Layout */}
+      {/* Width set to 420px as requested for the narrow ticket feel */}
+      <main className="max-w-[420px] mx-auto px-4 pt-8">
+        
         {currentView === 'home' && (
-           <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+           <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 flex flex-col gap-12">
              <ProfileSection profile={profile} onNavigate={handleNavigate} />
              
-             {/* Shortcuts / Previews */}
-             <div className="flex flex-col gap-4 mb-24">
-                <div onClick={() => handleNavigate('gallery')} className="cursor-pointer opacity-80 hover:opacity-100 transition-opacity hover:translate-x-1 duration-300">
-                    <TicketBase className="p-4 flex justify-between items-center border-l-4 border-stone-800 bg-paper shadow-sm">
-                        <span className="font-serif font-bold text-lg">LATEST FRAMES</span>
-                        <span className="font-mono text-[10px] text-stone-400 uppercase tracking-widest">View Gallery &rarr;</span>
-                    </TicketBase>
+             {/* FEATURED GALLERY */}
+             {featuredGallery.length > 0 && (
+                <div>
+                   <GallerySection 
+                      title="精选影像"
+                      groups={featuredGallery} 
+                      onItemClick={(g) => handleItemClick('gallery', g)} 
+                   />
+                   <div className="text-center -mt-8 mb-8">
+                      <button onClick={() => handleNavigate('gallery')} className="inline-flex items-center gap-2 font-mono text-xs text-stone-500 hover:text-ink transition-colors border-b border-transparent hover:border-stone-400 pb-0.5">
+                          VIEW ALL GALLERY <ArrowRight size={12} />
+                      </button>
+                   </div>
                 </div>
-                <div onClick={() => handleNavigate('blog')} className="cursor-pointer opacity-80 hover:opacity-100 transition-opacity hover:translate-x-1 duration-300">
-                     <TicketBase className="p-4 flex justify-between items-center border-l-4 border-stone-800 bg-paper shadow-sm">
-                        <span className="font-serif font-bold text-lg">RECENT WORDS</span>
-                        <span className="font-mono text-[10px] text-stone-400 uppercase tracking-widest">Read Blog &rarr;</span>
-                    </TicketBase>
+             )}
+
+             {/* RECENT THOUGHTS (Added back to Home) */}
+             {thoughts.length > 0 && (
+                 <div>
+                    <ThoughtSection thoughts={thoughts.slice(0, 2)} />
+                    <div className="text-center -mt-8 mb-8">
+                       <button onClick={() => handleNavigate('thoughts')} className="inline-flex items-center gap-2 font-mono text-xs text-stone-500 hover:text-ink transition-colors border-b border-transparent hover:border-stone-400 pb-0.5">
+                          READ ALL NOTES <ArrowRight size={12} />
+                      </button>
+                   </div>
+                 </div>
+             )}
+
+             {/* FEATURED BLOG */}
+             {featuredPosts.length > 0 && (
+                <div>
+                   <BlogSection 
+                      title="精选文章"
+                      posts={featuredPosts} 
+                      onItemClick={(p) => handleItemClick('blog', p)} 
+                   />
+                   <div className="text-center -mt-8 mb-8">
+                       <button onClick={() => handleNavigate('blog')} className="inline-flex items-center gap-2 font-mono text-xs text-stone-500 hover:text-ink transition-colors border-b border-transparent hover:border-stone-400 pb-0.5">
+                          READ ALL POSTS <ArrowRight size={12} />
+                      </button>
+                   </div>
                 </div>
-             </div>
+             )}
              
              <ContactSection />
            </div>
@@ -177,6 +300,7 @@ const App: React.FC = () => {
             />
           </div>
         )}
+
       </main>
 
       {/* Footer */}

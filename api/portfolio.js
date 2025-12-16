@@ -69,9 +69,8 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });
 
   // --- PARALLEL FETCHING ---
-  // We don't use Promise.all here because we want to inspect each result individually
   
-  // 1. Profile (Unique Logic)
+  // 1. Profile
   let profile = null;
   let profileError = null;
   try {
@@ -112,7 +111,8 @@ module.exports = async function handler(req, res) {
           ticketNumber: getRichText(p, 'TicketNumber'),
           description: getRichText(p, 'Description'),
           coverUrl: getFileUrl(p, 'Cover'),
-          images: getAllFileUrls(p, 'Images')
+          images: getAllFileUrls(p, 'Images'),
+          featured: p.Featured?.checkbox || false // NEW: Checkbox extraction
       };
   });
 
@@ -139,7 +139,8 @@ module.exports = async function handler(req, res) {
           readTime: p.ReadTime?.select?.name || '5 MIN',
           category: p.Category?.select?.name || '随笔',
           imageUrl: getFileUrl(p, 'Cover'),
-          content: [] 
+          content: [],
+          featured: p.Featured?.checkbox || false // NEW: Checkbox extraction
       };
   });
 
@@ -149,7 +150,6 @@ module.exports = async function handler(req, res) {
     gallery: Array.isArray(galleryRes) ? galleryRes : [],
     thoughts: Array.isArray(thoughtsRes) ? thoughtsRes : [],
     posts: Array.isArray(postsRes) ? postsRes : [],
-    // Send debug info to frontend
     debug: {
         profileError,
         galleryError: galleryRes.error ? galleryRes.message : null,
@@ -158,7 +158,6 @@ module.exports = async function handler(req, res) {
     }
   };
 
-  // Only return 500 if CRITICAL data (Profile) is missing AND we have an error
   if (!profile && profileError) {
       return res.status(500).json({
           error: "Critical Data Missing",

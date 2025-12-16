@@ -24,6 +24,7 @@ export interface PhotoGroup {
   ticketNumber: string;
   description?: string;
   images?: string[];
+  featured?: boolean; // New: Controls visibility on Home
 }
 
 export interface Thought {
@@ -43,4 +44,5 @@ export interface BlogPost {
   category: string;
   imageUrl?: string;
   content?: string[];
+  featured?: boolean; // New: Controls visibility on Home
 }
