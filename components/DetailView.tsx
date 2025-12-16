@@ -11,6 +11,11 @@ interface DetailViewProps {
   logoUrl?: string;
 }
 
+interface GalleryImage {
+    url: string;
+    caption: string;
+}
+
 // Helper to render Rich Text array
 const RichTextRenderer = ({ content }: { content: any[] }) => {
     if (!content || !Array.isArray(content)) return null;
@@ -40,7 +45,7 @@ const RichTextRenderer = ({ content }: { content: any[] }) => {
 };
 
 export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, logoUrl }) => {
-  const [contentImages, setContentImages] = useState<string[]>([]);
+  const [contentImages, setContentImages] = useState<GalleryImage[]>([]);
   const [loadingImages, setLoadingImages] = useState(false);
   
   // Blog content is now an array of objects (blocks)
@@ -304,11 +309,19 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                                         <div key={idx} className="w-full relative group break-inside-avoid">
                                             {/* Photo Frame Style */}
                                             <div className="p-2 bg-white border border-stone-200 shadow-sm transition-transform hover:scale-[1.01] duration-500">
-                                                <img src={img} alt="" className="w-full h-auto filter grayscale-[10%] contrast-[1.05]" />
+                                                <img src={img.url} alt="" className="w-full h-auto filter grayscale-[10%] contrast-[1.05]" />
                                             </div>
-                                            <div className="flex justify-between items-center mt-2 px-1">
+                                            <div className="flex justify-between items-start mt-2 px-1">
                                                 <span className="font-mono text-[8px] text-stone-400">FRAME {String(idx + 1).padStart(2, '0')}</span>
-                                                <span className="font-mono text-[8px] text-stone-300">FUJIFILM</span>
+                                                {/* Caption Display */}
+                                                {img.caption && (
+                                                    <span className="font-serif text-[10px] text-stone-500 text-right italic flex-1 ml-2 leading-tight">
+                                                        {img.caption}
+                                                    </span>
+                                                )}
+                                                {!img.caption && (
+                                                     <span className="font-mono text-[8px] text-stone-300">FUJIFILM</span>
+                                                )}
                                             </div>
                                         </div>
                                     )) : (

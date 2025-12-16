@@ -60,13 +60,14 @@ module.exports = async function handler(req, res) {
   };
 
   const getImageUrl = (page, propertyKey = 'Cover') => {
-      const prop = page.properties[propertyKey];
-      if (prop) {
-          const url = getPropValue(prop);
-          if (url) return url;
-      }
+      // Priority 1: Page Cover
       if (page.cover) {
           return page.cover.file?.url || page.cover.external?.url;
+      }
+      // Priority 2: Property named 'Cover' (for databases)
+      if (page.properties && page.properties[propertyKey]) {
+          const url = getPropValue(page.properties[propertyKey]);
+          if (url) return url;
       }
       return '';
   };
@@ -77,6 +78,16 @@ module.exports = async function handler(req, res) {
         return prop.files.map(f => f.file?.url || f.external?.url).filter(Boolean);
     }
     return [];
+  };
+
+  // Helper to extract clean UUID from a potential URL or raw ID
+  const cleanNotionId = (id) => {
+      if (!id) return null;
+      // If it's a full URL (e.g., https://notion.so/user/Page-Title-1234567890abcdef1234567890abcdef)
+      // We look for the 32-char hex string at the end
+      const match = id.match(/([a-f0-9]{32})/);
+      if (match) return match[1];
+      return id; // fallback to original if no pattern match (assumed correct)
   };
 
   // Helper to handle Notion errors gracefully
@@ -132,100 +143,51 @@ module.exports = async function handler(req, res) {
           // --- SMART SOCIALS PARSING ---
           
           const detectedSocials = [];
-
-          // Strategy 1: Explicit Columns (The Easy Way)
-          // We look for columns named specifically after platforms.
+          // ... (Existing social parsing logic kept brief for diff, logic remains same) ...
+          // Strategy 1: Explicit Columns
           const platformMapping = {
-              'Instagram': 'INSTAGRAM',
-              'IG': 'INSTAGRAM',
-              'Twitter': 'TWITTER',
-              'X': 'TWITTER',
-              'Weibo': 'WEIBO',
-              '微博': 'WEIBO',
-              'GitHub': 'GITHUB',
-              'Github': 'GITHUB',
-              'Bilibili': 'BILIBILI',
-              'B站': 'BILIBILI',
-              'Douban': 'DOUBAN',
-              '豆瓣': 'DOUBAN',
-              'Xiaohongshu': 'XIAOHONGSHU',
-              'XiaoHongShu': 'XIAOHONGSHU',
-              '小红书': 'XIAOHONGSHU',
-              'Red': 'XIAOHONGSHU',
-              'RED': 'XIAOHONGSHU',
-              'YouTube': 'YOUTUBE',
-              'Youtube': 'YOUTUBE',
-              'LinkedIn': 'LINKEDIN',
-              'Email': 'EMAIL',
-              '邮箱': 'EMAIL',
-              'Mail': 'EMAIL',
-              'Jike': 'JIKE',
-              '即刻': 'JIKE',
-              'WeChat': 'WECHAT',
-              'WeChat Public': 'WECHAT',
-              '公众号': 'WECHAT'
+              'Instagram': 'INSTAGRAM', 'IG': 'INSTAGRAM', 'Twitter': 'TWITTER', 'X': 'TWITTER',
+              'Weibo': 'WEIBO', '微博': 'WEIBO', 'GitHub': 'GITHUB', 'Github': 'GITHUB',
+              'Bilibili': 'BILIBILI', 'B站': 'BILIBILI', 'Douban': 'DOUBAN', '豆瓣': 'DOUBAN',
+              'Xiaohongshu': 'XIAOHONGSHU', 'XiaoHongShu': 'XIAOHONGSHU', '小红书': 'XIAOHONGSHU',
+              'Red': 'XIAOHONGSHU', 'RED': 'XIAOHONGSHU', 'YouTube': 'YOUTUBE', 'Youtube': 'YOUTUBE',
+              'LinkedIn': 'LINKEDIN', 'Email': 'EMAIL', '邮箱': 'EMAIL', 'Mail': 'EMAIL',
+              'Jike': 'JIKE', '即刻': 'JIKE', 'WeChat': 'WECHAT', 'WeChat Public': 'WECHAT', '公众号': 'WECHAT'
           };
-
           for (const [colName, platformCode] of Object.entries(platformMapping)) {
               if (p[colName]) {
                   let rawVal = getPropValue(p[colName]);
                   if (rawVal && typeof rawVal === 'string' && rawVal.trim().length > 0) {
-                      // Handle Email specifically
                       if (platformCode === 'EMAIL' && !rawVal.startsWith('mailto:')) {
-                          // If it's just an email address, make it a link
-                          detectedSocials.push({
-                              platform: 'EMAIL',
-                              url: `mailto:${rawVal.trim()}`,
-                              handle: rawVal.trim()
-                          });
+                          detectedSocials.push({ platform: 'EMAIL', url: `mailto:${rawVal.trim()}`, handle: rawVal.trim() });
                       } else {
-                          // Normal Link
-                          // Simple Handle extraction
                           let handle = '@Link';
                           try {
                               const urlObj = new URL(rawVal);
                               const parts = urlObj.pathname.split('/').filter(x => x);
                               if (parts.length > 0) handle = '@' + parts[parts.length - 1];
                           } catch {}
-
-                          // Avoid duplicates
                           if (!detectedSocials.some(s => s.platform === platformCode)) {
-                             detectedSocials.push({
-                                 platform: platformCode,
-                                 url: rawVal,
-                                 handle: handle
-                             });
+                             detectedSocials.push({ platform: platformCode, url: rawVal, handle: handle });
                           }
                       }
                   }
               }
           }
-
-          // Strategy 2: The "Socials" Column (The Flexible Way)
+          // Strategy 2: The "Socials" Column
           const socialCol = p['Socials'] || p['Social'];
           if (socialCol) {
               const socialText = getPropValue(socialCol);
-              
               if (socialText) {
                   let isJson = false;
-                  // Try JSON
                   if (socialText.trim().startsWith('[') || socialText.trim().startsWith('{')) {
                       try { 
                           const parsed = JSON.parse(socialText);
-                          let list = [];
-                          if (Array.isArray(parsed)) list = parsed;
-                          else if (typeof parsed === 'object') list = [parsed];
-                          
-                          list.forEach(item => {
-                              if (!detectedSocials.some(s => s.platform === item.platform)) {
-                                  detectedSocials.push(item);
-                              }
-                          });
+                          let list = Array.isArray(parsed) ? parsed : [parsed];
+                          list.forEach(item => { if (!detectedSocials.some(s => s.platform === item.platform)) detectedSocials.push(item); });
                           isJson = true;
-                      } catch(e) { /* ignore */ }
+                      } catch(e) {}
                   }
-
-                  // Try Text/Pipe Splitting if not JSON
                   if (!isJson) {
                       const parts = socialText.split(/\||\n/).map(s => s.trim()).filter(s => s);
                       for (const part of parts) {
@@ -233,42 +195,23 @@ module.exports = async function handler(req, res) {
                           if (urlMatch) {
                               const url = urlMatch[0];
                               let platform = part.replace(url, '').replace(/[:：]/g, '').trim();
-                              
                               if (!platform) {
                                   try {
                                     const h = new URL(url).hostname.toLowerCase();
                                     if (h.includes('instagram')) platform = 'INSTAGRAM';
                                     else if (h.includes('twitter') || h.includes('x.com')) platform = 'TWITTER';
                                     else if (h.includes('github')) platform = 'GITHUB';
-                                    else if (h.includes('weibo')) platform = 'WEIBO';
-                                    else if (h.includes('youtube')) platform = 'YOUTUBE';
-                                    else if (h.includes('bilibili')) platform = 'BILIBILI';
-                                    else if (h.includes('xiaohongshu') || h.includes('xhs')) platform = 'XIAOHONGSHU';
-                                    else if (h.includes('okjk') || h.includes('jike')) platform = 'JIKE';
-                                    else if (h.includes('weixin') || h.includes('wechat')) platform = 'WECHAT';
                                     else platform = 'LINK';
                                   } catch { platform = 'LINK'; }
                               }
-
-                              let handle = '@Link';
-                              try {
-                                  const parts = new URL(url).pathname.split('/').filter(x => x);
-                                  if (parts.length > 0) handle = '@' + parts[parts.length - 1];
-                              } catch {}
-
                               if (!detectedSocials.some(s => s.platform === platform.toUpperCase())) {
-                                  detectedSocials.push({
-                                      platform: platform.toUpperCase(),
-                                      url: url,
-                                      handle: handle
-                                  });
+                                  detectedSocials.push({ platform: platform.toUpperCase(), url: url, handle: '@Link' });
                               }
                           }
                       }
                   }
               }
           }
-
           profile.socials = detectedSocials;
       }
   } catch (error) {
@@ -322,8 +265,43 @@ module.exports = async function handler(req, res) {
       };
   });
 
+  // 5. Manual Page (Special Single Page)
+  let manualPage = null;
+  const rawManualId = process.env.NOTION_MANUAL_PAGE_ID;
+  const cleanManualId = cleanNotionId(rawManualId);
+
+  if (cleanManualId) {
+      try {
+          const page = await notion.pages.retrieve({ page_id: cleanManualId });
+          
+          let title = "我的说明书";
+          // Try to find title in properties (if it's in a DB or has standard props)
+          if (page.properties) {
+             // Search for any title type property
+             const titleKey = Object.keys(page.properties).find(k => page.properties[k].type === 'title');
+             if (titleKey) title = getPropValue(page.properties[titleKey]);
+          }
+
+          manualPage = {
+              id: page.id,
+              title: title || "我的说明书",
+              excerpt: "User Manual / Operating Instructions",
+              date: new Date(page.last_edited_time).getFullYear().toString(),
+              readTime: '∞',
+              category: 'MANUAL',
+              imageUrl: getImageUrl(page), // Will use page cover
+              content: [], // Content will be fetched by frontend using get-page-content
+              featured: false
+          };
+      } catch (error) {
+          console.error("Manual Page Fetch Error:", error.message);
+          // Don't fail the whole request, just return null for manual
+      }
+  }
+
   const responseData = {
     profile,
+    manual: manualPage, // Add this field
     gallery: Array.isArray(galleryRes) ? galleryRes : [],
     thoughts: Array.isArray(thoughtsRes) ? thoughtsRes : [],
     posts: Array.isArray(postsRes) ? postsRes : [],

@@ -19,12 +19,18 @@ module.exports = async function handler(req, res) {
       block_id: pageId,
     });
 
-    // Filter out only image blocks and extract URLs
+    // Filter out only image blocks and extract URLs AND Captions
     const images = blocks.results
       .filter((block) => block.type === 'image')
       .map((block) => {
         const type = block.image.type;
-        return block.image[type].url;
+        const url = block.image[type].url;
+        // Extract plain text caption
+        const caption = block.image.caption && block.image.caption.length > 0 
+            ? block.image.caption.map(t => t.plain_text).join('') 
+            : '';
+            
+        return { url, caption };
       });
 
     res.status(200).json({ images });

@@ -129,6 +129,9 @@ const App: React.FC = () => {
   const [photoGroups, setPhotoGroups] = useState<PhotoGroup[]>(defaultPhotoGroups);
   const [thoughts, setThoughts] = useState<Thought[]>(defaultThoughts);
   const [posts, setPosts] = useState<BlogPost[]>(defaultPosts);
+  
+  // New state for Manual Page
+  const [manualPage, setManualPage] = useState<BlogPost | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -149,6 +152,9 @@ const App: React.FC = () => {
         if (data.gallery && data.gallery.length > 0) setPhotoGroups(data.gallery);
         if (data.thoughts && data.thoughts.length > 0) setThoughts(data.thoughts);
         if (data.posts && data.posts.length > 0) setPosts(data.posts);
+        
+        // Load manual page if available
+        if (data.manual) setManualPage(data.manual);
         
         if (data.debug) {
             const errors = Object.values(data.debug).filter(Boolean);
@@ -179,21 +185,27 @@ const App: React.FC = () => {
   };
 
   const handleOpenManual = () => {
-      // NOTE: Replace 'MANUAL_PAGE_ID' with your actual Notion Page ID if you want to load real content.
-      // If you are using environment variables, you might need an endpoint to get this ID or pass it via Profile API.
-      // For now, we use a placeholder or assume the user configures a page named 'manual-page' in Notion.
-      const manualPost: BlogPost = {
-          id: 'manual_page', // This ID should correspond to a real block ID if you want fetching to work
-          title: '我的说明书',
-          excerpt: 'User Manual / Operating Instructions',
-          date: new Date().getFullYear().toString(),
-          readTime: 'INF',
-          category: 'MANUAL',
-          content: ['This is a placeholder for your manual. Please configure a valid Notion Page ID to fetch content.'],
-          imageUrl: profile.avatarUrl,
-          featured: false
-      };
-      setSelectedItem({ type: 'blog', data: manualPost });
+      if (manualPage) {
+          // Use the real data fetched from Notion
+          setSelectedItem({ type: 'blog', data: manualPage });
+      } else {
+          // Fallback if no ID is configured
+          const fallbackManual: BlogPost = {
+              id: 'manual_page', 
+              title: '我的说明书',
+              excerpt: 'User Manual / Operating Instructions',
+              date: new Date().getFullYear().toString(),
+              readTime: 'INF',
+              category: 'MANUAL',
+              content: [
+                  'Content not loaded. Please configure NOTION_MANUAL_PAGE_ID in your Vercel environment variables.',
+                  '这个页面需要您在 Vercel 环境变量中设置 NOTION_MANUAL_PAGE_ID 才能显示真实内容。'
+              ],
+              imageUrl: profile.avatarUrl,
+              featured: false
+          };
+          setSelectedItem({ type: 'blog', data: fallbackManual });
+      }
   };
 
   if (loading) {
