@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>我的旅程 | Life, Now Showing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Importing Noto Serif SC (Songti) for artistic text and Noto Sans SC for body text -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@300;400;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              serif: ['"Noto Serif SC"', 'serif'],
+              sans: ['"Noto Sans SC"', 'sans-serif'],
+              mono: ['"Space Mono"', 'monospace'],
+            },
+            colors: {
+              bg: '#e3e1d5', // Warm Grey/Beige background (Archive style)
+              paper: '#fdfbf7', // Very light off-white/cream for tickets
+              'paper-dark': '#f2efeb', // Slightly darker cream for accents
+              ink: '#2b2926', // Soft Charcoal instead of pure black
+              'brand-accent': '#8a6d50', // CHANGED: Coffee/Bronze color instead of red
+              'brand-blue': '#4a729a',
+            },
+            boxShadow: {
+              'ticket': '0 2px 20px -2px rgba(43, 41, 38, 0.1), 0 8px 30px -4px rgba(43, 41, 38, 0.05)',
+              'ticket-hover': '0 10px 40px -4px rgba(43, 41, 38, 0.15)',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      :root {
+        --bg-color: #e3e1d5;
+        --noise-url: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+      }
+
+      body {
+        background-color: var(--bg-color);
+        color: #2b2926;
+        /* Adding a subtle noise texture for an artistic paper feel */
+        background-image: var(--noise-url);
+        background-attachment: fixed; /* Fix noise pattern to viewport */
+      }
+      
+      /* Utility class to apply the same background texture to elements (like notches) */
+      .bg-texture {
+        background-color: var(--bg-color);
+        background-image: var(--noise-url);
+        background-attachment: fixed; /* CRITICAL: Ensures pattern aligns with body, making elements visually disappear */
+      }
+
+      /* Pure CSS jagged edge generator */
+      .jagged-bottom {
+        background: inherit;
+        -webkit-mask: linear-gradient(-135deg, transparent 6px, #000 0) 0 50%,
+                      linear-gradient(135deg, transparent 6px, #000 0) 0 50%;
+        -webkit-mask-size: 12px 100%;
+        -webkit-mask-repeat: repeat-x;
+        -webkit-mask-position: left bottom;
+      }
+
+      .jagged-top {
+        background: inherit;
+        -webkit-mask: linear-gradient(45deg, transparent 6px, #000 0) 0 50%,
+                      linear-gradient(-45deg, transparent 6px, #000 0) 0 50%;
+        -webkit-mask-size: 12px 100%;
+        -webkit-mask-repeat: repeat-x;
+        -webkit-mask-position: left top;
+      }
+
+      /* Clean sawtooth edge */
+      .sawtooth-y {
+        background-image: linear-gradient(135deg, #ffffff 25%, transparent 25%), 
+                          linear-gradient(225deg, #ffffff 25%, transparent 25%);
+        background-position: 0 0;
+        background-size: 16px 16px;
+        height: 8px;
+        width: 100%;
+      }
+      
+      /* Hide scrollbar for clean look */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #b0aba0;
+        border-radius: 3px;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "@notionhq/client": "https://esm.sh/@notionhq/client@^5.6.0"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
