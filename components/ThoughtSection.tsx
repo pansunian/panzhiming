@@ -1,18 +1,27 @@
 import React from 'react';
 import { Thought } from '../types';
 import { BarcodeHorizontal } from './TicketUI';
+import { ArrowRight } from 'lucide-react';
 
 interface Props {
   thoughts: Thought[];
   id?: string;
+  onViewAll?: () => void;
 }
 
-export const ThoughtSection: React.FC<Props> = ({ thoughts, id }) => {
+export const ThoughtSection: React.FC<Props> = ({ thoughts, id, onViewAll }) => {
   return (
     <section id={id} className="mb-24 flex flex-col items-center w-full scroll-mt-12">
-      <div className="flex items-end gap-4 mb-8 px-2 w-full">
-         <h2 className="font-serif text-2xl font-bold text-ink">碎碎念</h2>
-         <span className="font-mono text-xs text-stone-500 mb-1">/ THOUGHTS</span>
+      <div className="flex items-end justify-between mb-8 px-2 w-full">
+         <div className="flex items-end gap-3">
+            <h2 className="font-serif text-2xl font-bold text-ink">碎碎念</h2>
+            <span className="font-mono text-xs text-stone-500 mb-1">/ THOUGHTS</span>
+         </div>
+         {onViewAll && (
+             <button onClick={onViewAll} className="inline-flex items-center gap-1 font-mono text-[10px] text-stone-400 hover:text-ink transition-colors pb-1">
+                 READ ALL <ArrowRight size={10} />
+             </button>
+         )}
       </div>
 
       <div className="w-full">

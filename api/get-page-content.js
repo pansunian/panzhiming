@@ -14,36 +14,83 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // Fetch the children blocks of the page
     const blocks = await notion.blocks.children.list({
       block_id: pageId,
     });
 
+    // Helper to extract rich text with basic formatting
+    const parseRichText = (richTextArray) => {
+        if (!richTextArray) return [];
+        return richTextArray.map(t => ({
+            text: t.plain_text,
+            annotations: t.annotations,
+            href: t.href
+        }));
+    };
+
     const content = [];
 
-    // Simple parser to extract text from common block types
     for (const block of blocks.results) {
       if (block.type === 'paragraph') {
-        const text = block.paragraph.rich_text.map(t => t.plain_text).join('');
-        content.push(text); // Push even empty strings to preserve paragraph spacing
-      } else if (block.type === 'heading_1') {
-        const text = block.heading_1.rich_text.map(t => t.plain_text).join('');
-        if (text) content.push(text);
-      } else if (block.type === 'heading_2') {
-         const text = block.heading_2.rich_text.map(t => t.plain_text).join('');
-         if (text) content.push(text);
-      } else if (block.type === 'heading_3') {
-         const text = block.heading_3.rich_text.map(t => t.plain_text).join('');
-         if (text) content.push(text);
-      } else if (block.type === 'bulleted_list_item') {
-         const text = block.bulleted_list_item.rich_text.map(t => t.plain_text).join('');
-         if (text) content.push('• ' + text);
-      } else if (block.type === 'numbered_list_item') {
-         const text = block.numbered_list_item.rich_text.map(t => t.plain_text).join('');
-         if (text) content.push('- ' + text);
-      } else if (block.type === 'quote') {
-         const text = block.quote.rich_text.map(t => t.plain_text).join('');
-         if (text) content.push('“' + text + '”');
+        content.push({
+            type: 'paragraph',
+            content: parseRichText(block.paragraph.rich_text)
+        });
+      } 
+      else if (block.type.startsWith('heading_')) {
+        const type = block.type; // heading_1, heading_2, etc
+        content.push({
+            type: type,
+            content: parseRichText(block[type].rich_text)
+        });
+      }
+      else if (block.type === 'callout') {
+        content.push({
+            type: 'callout',
+            icon: block.callout.icon,
+            content: parseRichText(block.callout.rich_text)
+        });
+      }
+      else if (block.type === 'quote') {
+        content.push({
+            type: 'quote',
+            content: parseRichText(block.quote.rich_text)
+        });
+      }
+      else if (block.type === 'bulleted_list_item' || block.type === 'numbered_list_item') {
+        content.push({
+            type: 'list_item',
+            listType: block.type === 'numbered_list_item' ? 'ol' : 'ul',
+            content: parseRichText(block[block.type].rich_text)
+        });
+      }
+      else if (block.type === 'toggle') {
+        content.push({
+            type: 'toggle',
+            content: parseRichText(block.toggle.rich_text),
+            // Note: Fetching children of toggles would require recursive calls. 
+            // For performance in this simple demo, we might skip deep nested children or handle them simply.
+            hasChildren: block.has_children
+        });
+      }
+      else if (block.type === 'image') {
+          const src = block.image.type === 'external' ? block.image.external.url : block.image.file.url;
+          const caption = parseRichText(block.image.caption);
+          content.push({
+              type: 'image',
+              src: src,
+              caption: caption
+          });
+      }
+      else if (block.type === 'bookmark') {
+          content.push({
+              type: 'bookmark',
+              url: block.bookmark.url,
+              caption: parseRichText(block.bookmark.caption)
+          });
+      }
+      else if (block.type === 'divider') {
+          content.push({ type: 'divider' });
       }
     }
 

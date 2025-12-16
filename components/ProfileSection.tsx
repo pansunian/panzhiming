@@ -20,6 +20,7 @@ import {
 interface Props {
   profile: Profile;
   onNavigate: (view: 'home' | 'gallery' | 'thoughts' | 'blog') => void;
+  onOpenManual?: () => void;
 }
 
 // Configuration for Social Media Display
@@ -50,13 +51,14 @@ const getSocialConfig = (platform: string) => {
     return SOCIAL_MAP[key] || { label: platform, icon: LinkIcon };
 };
 
-export const ProfileSection: React.FC<Props> = ({ profile, onNavigate }) => {
+export const ProfileSection: React.FC<Props> = ({ profile, onNavigate, onOpenManual }) => {
   return (
     <div className="flex justify-center mb-24 w-full">
       <TicketBase className="w-full rounded-2xl flex flex-col overflow-hidden">
         
         {/* Top Section: Visual */}
-        <div className="relative aspect-[4/5]">
+        {/* Updated: Added md:h-[550px] to restrict height on larger screens */}
+        <div className="relative aspect-[4/5] md:aspect-auto md:h-[550px] w-full">
             <img 
                 src={profile.avatarUrl} 
                 alt="Profile"
@@ -72,9 +74,12 @@ export const ProfileSection: React.FC<Props> = ({ profile, onNavigate }) => {
                  <p className="font-serif text-sm italic opacity-90">Our Unique Life Frames</p>
             </div>
             
-             <div className="absolute bottom-4 right-4 text-white/60 text-[10px] font-mono border border-white/40 px-2 py-0.5 rounded-full">
-                © {new Date().getFullYear()} ARCHIVE
-            </div>
+             <button 
+                onClick={onOpenManual}
+                className="absolute bottom-4 right-4 text-white/70 text-[10px] font-mono border border-white/40 px-3 py-1 rounded-full hover:bg-white/10 hover:text-white transition-all cursor-pointer backdrop-blur-sm"
+            >
+                我的说明书 &rarr;
+            </button>
         </div>
 
         {/* Middle Section: Info & Navigation */}

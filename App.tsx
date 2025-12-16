@@ -178,6 +178,24 @@ const App: React.FC = () => {
     setSelectedItem({ type, data: item });
   };
 
+  const handleOpenManual = () => {
+      // NOTE: Replace 'MANUAL_PAGE_ID' with your actual Notion Page ID if you want to load real content.
+      // If you are using environment variables, you might need an endpoint to get this ID or pass it via Profile API.
+      // For now, we use a placeholder or assume the user configures a page named 'manual-page' in Notion.
+      const manualPost: BlogPost = {
+          id: 'manual_page', // This ID should correspond to a real block ID if you want fetching to work
+          title: '我的说明书',
+          excerpt: 'User Manual / Operating Instructions',
+          date: new Date().getFullYear().toString(),
+          readTime: 'INF',
+          category: 'MANUAL',
+          content: ['This is a placeholder for your manual. Please configure a valid Notion Page ID to fetch content.'],
+          imageUrl: profile.avatarUrl,
+          featured: false
+      };
+      setSelectedItem({ type: 'blog', data: manualPost });
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-texture flex items-center justify-center font-mono text-xs text-stone-400">
@@ -232,7 +250,11 @@ const App: React.FC = () => {
         
         {currentView === 'home' && (
            <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 flex flex-col gap-12">
-             <ProfileSection profile={profile} onNavigate={handleNavigate} />
+             <ProfileSection 
+                profile={profile} 
+                onNavigate={handleNavigate} 
+                onOpenManual={handleOpenManual}
+             />
              
              {/* FEATURED GALLERY */}
              {featuredGallery.length > 0 && (
@@ -241,24 +263,18 @@ const App: React.FC = () => {
                       title="精选影像"
                       groups={featuredGallery} 
                       onItemClick={(g) => handleItemClick('gallery', g)} 
+                      onViewAll={() => handleNavigate('gallery')}
                    />
-                   <div className="text-center -mt-8 mb-8">
-                      <button onClick={() => handleNavigate('gallery')} className="inline-flex items-center gap-2 font-mono text-xs text-stone-500 hover:text-ink transition-colors border-b border-transparent hover:border-stone-400 pb-0.5">
-                          VIEW ALL GALLERY <ArrowRight size={12} />
-                      </button>
-                   </div>
                 </div>
              )}
 
              {/* RECENT FEATURED THOUGHTS (Top 10) */}
              {featuredThoughts.length > 0 && (
                  <div>
-                    <ThoughtSection thoughts={featuredThoughts} />
-                    <div className="text-center -mt-8 mb-8">
-                       <button onClick={() => handleNavigate('thoughts')} className="inline-flex items-center gap-2 font-mono text-xs text-stone-500 hover:text-ink transition-colors border-b border-transparent hover:border-stone-400 pb-0.5">
-                          READ ALL NOTES <ArrowRight size={12} />
-                      </button>
-                   </div>
+                    <ThoughtSection 
+                      thoughts={featuredThoughts} 
+                      onViewAll={() => handleNavigate('thoughts')}
+                    />
                  </div>
              )}
 
@@ -268,13 +284,9 @@ const App: React.FC = () => {
                    <BlogSection 
                       title="精选文章"
                       posts={featuredPosts} 
-                      onItemClick={(p) => handleItemClick('blog', p)} 
+                      onItemClick={(p) => handleItemClick('blog', p)}
+                      onViewAll={() => handleNavigate('blog')}
                    />
-                   <div className="text-center -mt-8 mb-8">
-                       <button onClick={() => handleNavigate('blog')} className="inline-flex items-center gap-2 font-mono text-xs text-stone-500 hover:text-ink transition-colors border-b border-transparent hover:border-stone-400 pb-0.5">
-                          READ ALL POSTS <ArrowRight size={12} />
-                      </button>
-                   </div>
                 </div>
              )}
              

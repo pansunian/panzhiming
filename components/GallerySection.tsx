@@ -1,21 +1,29 @@
 import React from 'react';
 import { PhotoGroup } from '../types';
 import { TicketBase, Notch } from './TicketUI';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, ArrowRight } from 'lucide-react';
 
 interface Props {
   groups: PhotoGroup[];
   id?: string;
   onItemClick: (group: PhotoGroup) => void;
+  onViewAll?: () => void;
   title?: string;
 }
 
-export const GallerySection: React.FC<Props> = ({ groups, id, onItemClick, title = "影像辑" }) => {
+export const GallerySection: React.FC<Props> = ({ groups, id, onItemClick, onViewAll, title = "影像辑" }) => {
   return (
     <section id={id} className="mb-16 scroll-mt-24 w-full">
-      <div className="flex items-end gap-4 mb-6 px-2">
-         <h2 className="font-serif text-2xl font-bold text-ink">{title}</h2>
-         <span className="font-mono text-xs text-stone-500 mb-1">/ GALLERY</span>
+      <div className="flex items-end justify-between mb-6 px-2">
+         <div className="flex items-end gap-3">
+            <h2 className="font-serif text-2xl font-bold text-ink">{title}</h2>
+            <span className="font-mono text-xs text-stone-500 mb-1">/ GALLERY</span>
+         </div>
+         {onViewAll && (
+             <button onClick={onViewAll} className="inline-flex items-center gap-1 font-mono text-[10px] text-stone-400 hover:text-ink transition-colors pb-1">
+                 VIEW ALL <ArrowRight size={10} />
+             </button>
+         )}
       </div>
 
       {/* Single Column Ticket Stack */}
@@ -23,7 +31,8 @@ export const GallerySection: React.FC<Props> = ({ groups, id, onItemClick, title
         {groups.map((group, idx) => (
           <TicketBase 
             key={group.id} 
-            className="group cursor-pointer rounded-sm flex flex-col h-auto hover:-translate-y-1 transition-transform duration-300 shadow-ticket hover:shadow-ticket-hover"
+            // Flat design: Removed shadow-ticket, using border for definition instead
+            className="group cursor-pointer rounded-sm flex flex-col h-auto hover:-translate-y-1 transition-transform duration-300"
           >
             <div onClick={() => onItemClick(group)} className="flex flex-col h-full">
                 {/* Image Area */}

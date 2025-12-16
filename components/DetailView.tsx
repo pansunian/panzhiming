@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BlogPost, PhotoGroup } from '../types';
 import { TicketBase, DashedLine, Notch, BarcodeHorizontal, BarcodeVertical } from './TicketUI';
 import { NavBar } from './NavBar';
-import { Clock, MapPin, Camera, Aperture, Loader2 } from 'lucide-react';
+import { Clock, MapPin, Camera, Aperture, Loader2, Info, ChevronRight, ChevronDown, ExternalLink } from 'lucide-react';
 
 interface DetailViewProps {
   item: BlogPost | PhotoGroup;
@@ -11,19 +11,47 @@ interface DetailViewProps {
   logoUrl?: string;
 }
 
+// Helper to render Rich Text array
+const RichTextRenderer = ({ content }: { content: any[] }) => {
+    if (!content || !Array.isArray(content)) return null;
+
+    return (
+        <>
+            {content.map((token, idx) => {
+                const { text, annotations, href } = token;
+                let className = "";
+                if (annotations?.bold) className += " font-bold";
+                if (annotations?.italic) className += " italic";
+                if (annotations?.strikethrough) className += " line-through";
+                if (annotations?.underline) className += " underline underline-offset-4 decoration-stone-300";
+                if (annotations?.code) className += " font-mono text-[0.9em] bg-stone-100 px-1 rounded mx-0.5 text-brand-accent";
+
+                if (href) {
+                    return (
+                        <a key={idx} href={href} target="_blank" rel="noopener noreferrer" className={`text-brand-accent hover:underline decoration-1 ${className}`}>
+                            {text}
+                        </a>
+                    );
+                }
+                return <span key={idx} className={className}>{text}</span>;
+            })}
+        </>
+    );
+};
+
 export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, logoUrl }) => {
   const [contentImages, setContentImages] = useState<string[]>([]);
   const [loadingImages, setLoadingImages] = useState(false);
   
-  const [blogContent, setBlogContent] = useState<string[]>([]);
+  // Blog content is now an array of objects (blocks)
+  const [blogBlocks, setBlogBlocks] = useState<any[]>([]);
   const [loadingContent, setLoadingContent] = useState(false);
 
-  // Scroll to top on mount
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Fetch images for gallery items
+  // Fetch images for gallery
   useEffect(() => {
     if (type === 'gallery') {
       const fetchImages = async () => {
@@ -44,7 +72,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
     }
   }, [item.id, type]);
 
-  // Fetch text content for blog items
+  // Fetch structured content for blog
   useEffect(() => {
     if (type === 'blog') {
         const fetchContent = async () => {
@@ -54,7 +82,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                 if (res.ok) {
                     const data = await res.json();
                     if (data.content && Array.isArray(data.content)) {
-                        setBlogContent(data.content);
+                        setBlogBlocks(data.content);
                     }
                 }
             } catch (error) {
@@ -72,11 +100,93 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
   const photoGroup = item as PhotoGroup;
   
   const displayImages = type === 'gallery' ? contentImages : [];
-  
-  // Prioritize fetched content, fallback to existing content (demo), finally fallback to excerpt
-  const finalBlogContent = blogContent.length > 0 
-      ? blogContent 
-      : (blogPost.content && blogPost.content.length > 0 ? blogPost.content : null);
+
+  // --- Block Renderer ---
+  const renderBlock = (block: any, idx: number) => {
+      switch (block.type) {
+          case 'paragraph':
+              return (
+                  <p key={idx} className="mb-6 leading-loose text-ink/90">
+                      <RichTextRenderer content={block.content} />
+                  </p>
+              );
+          case 'heading_1':
+              return <h2 key={idx} className="text-2xl font-serif font-bold mt-10 mb-6 border-b border-stone-200 pb-2"><RichTextRenderer content={block.content} /></h2>;
+          case 'heading_2':
+              return <h3 key={idx} className="text-xl font-serif font-bold mt-8 mb-4"><RichTextRenderer content={block.content} /></h3>;
+          case 'heading_3':
+              return <h4 key={idx} className="text-lg font-serif font-bold mt-6 mb-3 text-brand-accent"><RichTextRenderer content={block.content} /></h4>;
+          case 'callout':
+              // Check if icon is emoji or external
+              const icon = block.icon?.type === 'emoji' ? block.icon.emoji : '💡';
+              return (
+                  <div key={idx} className="bg-stone-50 border border-stone-200 p-4 rounded-sm flex gap-4 my-6 shadow-sm">
+                      <div className="text-xl select-none">{icon}</div>
+                      <div className="flex-1 text-sm leading-relaxed text-ink/80">
+                         <RichTextRenderer content={block.content} />
+                      </div>
+                  </div>
+              );
+          case 'quote':
+              return (
+                  <blockquote key={idx} className="border-l-4 border-brand-accent pl-5 py-2 my-8 bg-stone-50/50 italic text-stone-600 font-serif text-lg">
+                      <RichTextRenderer content={block.content} />
+                  </blockquote>
+              );
+          case 'toggle':
+              return (
+                  <details key={idx} className="my-4 group border border-stone-200 rounded-sm bg-white open:bg-stone-50 transition-colors">
+                      <summary className="cursor-pointer p-3 font-medium flex items-center gap-2 list-none select-none text-stone-700 hover:text-ink">
+                         <div className="transition-transform group-open:rotate-90">
+                            <ChevronRight size={16} />
+                         </div>
+                         <RichTextRenderer content={block.content} />
+                      </summary>
+                      <div className="p-3 pt-0 pl-9 text-sm text-stone-600">
+                          {/* Note: Nested children not fully implemented in this demo, just placeholder or text */}
+                          <p className="opacity-60 italic text-xs">[Details content]</p>
+                      </div>
+                  </details>
+              );
+          case 'image':
+               return (
+                   <figure key={idx} className="my-8">
+                       <img src={block.src} alt="Blog Asset" className="w-full rounded-sm shadow-sm border border-stone-100" />
+                       {block.caption && block.caption.length > 0 && (
+                           <figcaption className="text-center mt-2 text-xs font-mono text-stone-400">
+                               <RichTextRenderer content={block.caption} />
+                           </figcaption>
+                       )}
+                   </figure>
+               );
+          case 'bookmark':
+               return (
+                   <a key={idx} href={block.url} target="_blank" rel="noopener noreferrer" className="block my-6 no-underline group">
+                       <div className="border border-stone-200 rounded-sm p-4 flex justify-between items-center hover:bg-stone-50 transition-colors hover:shadow-sm">
+                           <div className="overflow-hidden">
+                               <div className="font-bold text-sm mb-1 truncate text-ink group-hover:text-brand-accent transition-colors">
+                                   <RichTextRenderer content={block.caption.length ? block.caption : [{text: block.url}]} />
+                               </div>
+                               <div className="text-xs text-stone-400 font-mono truncate">{block.url}</div>
+                           </div>
+                           <ExternalLink size={16} className="text-stone-300 group-hover:text-brand-accent shrink-0 ml-4" />
+                       </div>
+                   </a>
+               );
+          case 'divider':
+               return <hr key={idx} className="my-8 border-dashed border-stone-300" />;
+          case 'list_item':
+                // Simple list handling. Consecutive lists are not merged in this simple map, but good enough for demo.
+               return (
+                   <div key={idx} className="flex gap-2 mb-2 ml-4">
+                       <span className="text-brand-accent font-bold select-none">•</span>
+                       <span className="leading-relaxed"><RichTextRenderer content={block.content} /></span>
+                   </div>
+               );
+          default:
+              return null;
+      }
+  };
 
   return (
     <div className="fixed inset-0 z-50 bg-texture overflow-y-auto animate-in fade-in duration-300">
@@ -150,7 +260,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                   <Notch className="-right-4 top-0 -translate-y-1/2" />
 
                   {isBlog ? (
-                      <div className="prose prose-stone max-w-none prose-p:font-serif prose-p:text-ink prose-p:leading-loose prose-headings:font-serif prose-img:rounded-sm">
+                      <div className="text-base text-ink font-serif">
                           {loadingContent ? (
                               <div className="flex justify-center items-center py-12 gap-2 text-stone-400">
                                   <Loader2 className="animate-spin" size={16} />
@@ -158,17 +268,15 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                               </div>
                           ) : (
                               <>
-                                  {finalBlogContent ? (
-                                      finalBlogContent.map((paragraph, idx) => (
-                                          <p 
-                                            key={idx} 
-                                            className={`mb-6 ${idx === 0 ? 'first-letter:text-4xl first-letter:font-bold first-letter:mr-1 first-letter:float-left first-letter:font-serif' : ''}`}
-                                          >
-                                              {paragraph || <br/>}
-                                          </p>
-                                      ))
+                                  {blogBlocks.length > 0 ? (
+                                      blogBlocks.map((block, idx) => renderBlock(block, idx))
                                   ) : (
-                                      <p>{blogPost.excerpt}</p>
+                                      // Fallback for simple string content (demo data or legacy)
+                                      blogPost.content && Array.isArray(blogPost.content) ? (
+                                          blogPost.content.map((txt, i) => <p key={i} className="mb-4">{txt}</p>)
+                                      ) : (
+                                          <p>{blogPost.excerpt}</p>
+                                      )
                                   )}
                               </>
                           )}
