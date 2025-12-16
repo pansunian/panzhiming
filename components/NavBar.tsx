@@ -14,7 +14,8 @@ export const NavBar: React.FC<NavBarProps> = ({ onNavigate, activeView, logoUrl 
   ] as const;
 
   return (
-    <div className="sticky top-0 z-50 w-full bg-paper border-b-2 border-stone-800 shadow-sm">
+    // Changed 'sticky top-0' to 'relative' so it scrolls out of view
+    <div className="relative z-50 w-full bg-paper border-b-2 border-stone-800 shadow-sm">
       <div className="max-w-[420px] mx-auto h-14 flex items-stretch relative">
         
         {/* Logo Area */}

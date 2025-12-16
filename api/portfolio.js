@@ -148,16 +148,22 @@ module.exports = async function handler(req, res) {
               'B站': 'BILIBILI',
               'Douban': 'DOUBAN',
               '豆瓣': 'DOUBAN',
-              'Xiaohongshu': 'RED',
-              'XiaoHongShu': 'RED',
-              '小红书': 'RED',
-              'Red': 'RED',
+              'Xiaohongshu': 'XIAOHONGSHU',
+              'XiaoHongShu': 'XIAOHONGSHU',
+              '小红书': 'XIAOHONGSHU',
+              'Red': 'XIAOHONGSHU',
+              'RED': 'XIAOHONGSHU',
               'YouTube': 'YOUTUBE',
               'Youtube': 'YOUTUBE',
               'LinkedIn': 'LINKEDIN',
               'Email': 'EMAIL',
               '邮箱': 'EMAIL',
-              'Mail': 'EMAIL'
+              'Mail': 'EMAIL',
+              'Jike': 'JIKE',
+              '即刻': 'JIKE',
+              'WeChat': 'WECHAT',
+              'WeChat Public': 'WECHAT',
+              '公众号': 'WECHAT'
           };
 
           for (const [colName, platformCode] of Object.entries(platformMapping)) {
@@ -237,6 +243,9 @@ module.exports = async function handler(req, res) {
                                     else if (h.includes('weibo')) platform = 'WEIBO';
                                     else if (h.includes('youtube')) platform = 'YOUTUBE';
                                     else if (h.includes('bilibili')) platform = 'BILIBILI';
+                                    else if (h.includes('xiaohongshu') || h.includes('xhs')) platform = 'XIAOHONGSHU';
+                                    else if (h.includes('okjk') || h.includes('jike')) platform = 'JIKE';
+                                    else if (h.includes('weixin') || h.includes('wechat')) platform = 'WECHAT';
                                     else platform = 'LINK';
                                   } catch { platform = 'LINK'; }
                               }

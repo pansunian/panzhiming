@@ -14,13 +14,16 @@ interface DetailViewProps {
 export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, logoUrl }) => {
   const [contentImages, setContentImages] = useState<string[]>([]);
   const [loadingImages, setLoadingImages] = useState(false);
+  
+  const [blogContent, setBlogContent] = useState<string[]>([]);
+  const [loadingContent, setLoadingContent] = useState(false);
 
   // Scroll to top on mount
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Fetch images from page content if it's a gallery item
+  // Fetch images for gallery items
   useEffect(() => {
     if (type === 'gallery') {
       const fetchImages = async () => {
@@ -41,17 +44,44 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
     }
   }, [item.id, type]);
 
+  // Fetch text content for blog items
+  useEffect(() => {
+    if (type === 'blog') {
+        const fetchContent = async () => {
+            setLoadingContent(true);
+            try {
+                const res = await fetch(`/api/get-page-content?pageId=${item.id}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.content && Array.isArray(data.content)) {
+                        setBlogContent(data.content);
+                    }
+                }
+            } catch (error) {
+                 console.error("Failed to fetch blog content:", error);
+            } finally {
+                setLoadingContent(false);
+            }
+        };
+        fetchContent();
+    }
+  }, [item.id, type]);
+
   const isBlog = type === 'blog';
   const blogPost = item as BlogPost;
   const photoGroup = item as PhotoGroup;
   
-  // Use images from props (cover) + fetched images
   const displayImages = type === 'gallery' ? contentImages : [];
+  
+  // Prioritize fetched content, fallback to existing content (demo), finally fallback to excerpt
+  const finalBlogContent = blogContent.length > 0 
+      ? blogContent 
+      : (blogPost.content && blogPost.content.length > 0 ? blogPost.content : null);
 
   return (
     <div className="fixed inset-0 z-50 bg-texture overflow-y-auto animate-in fade-in duration-300">
       
-      {/* Consistent Navigation Bar */}
+      {/* Navigation Bar - Scrolls with the page */}
       <NavBar onNavigate={onNavigate} activeView={type} logoUrl={logoUrl} />
 
       <div className="w-full max-w-[420px] mx-auto min-h-screen pb-24 pt-12">
@@ -121,11 +151,27 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
 
                   {isBlog ? (
                       <div className="prose prose-stone max-w-none prose-p:font-serif prose-p:text-ink prose-p:leading-loose prose-headings:font-serif prose-img:rounded-sm">
-                          {blogPost.content?.map((paragraph, idx) => (
-                              <p key={idx} className="mb-6 first-letter:text-4xl first-letter:font-bold first-letter:mr-1 first-letter:float-left first-letter:font-serif">
-                                  {paragraph}
-                              </p>
-                          )) || <p>{blogPost.excerpt}</p>}
+                          {loadingContent ? (
+                              <div className="flex justify-center items-center py-12 gap-2 text-stone-400">
+                                  <Loader2 className="animate-spin" size={16} />
+                                  <span className="font-mono text-xs">Loading Content...</span>
+                              </div>
+                          ) : (
+                              <>
+                                  {finalBlogContent ? (
+                                      finalBlogContent.map((paragraph, idx) => (
+                                          <p 
+                                            key={idx} 
+                                            className={`mb-6 ${idx === 0 ? 'first-letter:text-4xl first-letter:font-bold first-letter:mr-1 first-letter:float-left first-letter:font-serif' : ''}`}
+                                          >
+                                              {paragraph || <br/>}
+                                          </p>
+                                      ))
+                                  ) : (
+                                      <p>{blogPost.excerpt}</p>
+                                  )}
+                              </>
+                          )}
                       </div>
                   ) : (
                       <div className="flex flex-col gap-6">

@@ -1,11 +1,54 @@
 import React from 'react';
 import { Profile } from '../types';
 import { TicketBase, Notch, DashedLine, BarcodeHorizontal } from './TicketUI';
+import { 
+    Instagram, 
+    Twitter, 
+    Github, 
+    Linkedin, 
+    Mail, 
+    Youtube, 
+    Globe, 
+    Smartphone, 
+    Zap, 
+    MessageCircle, 
+    Link as LinkIcon, 
+    Clapperboard, 
+    BookOpen 
+} from 'lucide-react';
 
 interface Props {
   profile: Profile;
   onNavigate: (view: 'home' | 'gallery' | 'thoughts' | 'blog') => void;
 }
+
+// Configuration for Social Media Display
+const SOCIAL_MAP: Record<string, { label: string; icon: React.ElementType }> = {
+    // International
+    INSTAGRAM: { label: 'Instagram', icon: Instagram },
+    TWITTER: { label: 'Twitter', icon: Twitter },
+    GITHUB: { label: 'GitHub', icon: Github },
+    LINKEDIN: { label: 'LinkedIn', icon: Linkedin },
+    YOUTUBE: { label: 'YouTube', icon: Youtube },
+    EMAIL: { label: 'Email', icon: Mail },
+    
+    // Chinese / Specific
+    WEIBO: { label: '微博', icon: Globe },
+    XIAOHONGSHU: { label: '小红书', icon: BookOpen }, // 'Little Red Book' -> Book Icon
+    RED: { label: '小红书', icon: BookOpen }, // Legacy support
+    JIKE: { label: '即刻', icon: Zap }, // Jike uses a yellow energetic icon -> Zap
+    WECHAT: { label: '公众号', icon: MessageCircle },
+    BILIBILI: { label: 'Bilibili', icon: Clapperboard },
+    DOUBAN: { label: '豆瓣', icon: BookOpen },
+    
+    // Fallback
+    LINK: { label: 'Link', icon: LinkIcon }
+};
+
+const getSocialConfig = (platform: string) => {
+    const key = platform.toUpperCase();
+    return SOCIAL_MAP[key] || { label: platform, icon: LinkIcon };
+};
 
 export const ProfileSection: React.FC<Props> = ({ profile, onNavigate }) => {
   return (
@@ -85,14 +128,24 @@ export const ProfileSection: React.FC<Props> = ({ profile, onNavigate }) => {
              <DashedLine className="absolute top-0 left-4 right-4" />
 
              <div className="mt-2 flex flex-col items-center gap-4">
-                 <div className="flex gap-4">
-                     {profile.socials.map(social => (
-                         <a key={social.platform} href={social.url} className="text-xs font-bold font-mono uppercase border-b border-ink hover:text-brand-accent hover:border-brand-accent transition-colors">
-                             {social.platform}
-                         </a>
-                     ))}
+                 <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 px-2">
+                     {profile.socials.map(social => {
+                         const { label, icon: Icon } = getSocialConfig(social.platform);
+                         return (
+                             <a 
+                                key={social.platform + social.url} 
+                                href={social.url} 
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-1.5 text-xs font-bold font-mono uppercase text-ink/70 hover:text-brand-accent transition-colors group"
+                             >
+                                 <Icon size={14} className="group-hover:scale-110 transition-transform" />
+                                 <span className="border-b border-transparent group-hover:border-brand-accent pb-0.5">{label}</span>
+                             </a>
+                         );
+                     })}
                  </div>
-                 <BarcodeHorizontal className="h-10 opacity-60 mix-blend-multiply" />
+                 <BarcodeHorizontal className="h-10 opacity-60 mix-blend-multiply mt-2" />
                  <p className="text-[10px] font-mono text-stone-400">TICKET NO. 88392019-X</p>
              </div>
         </div>
