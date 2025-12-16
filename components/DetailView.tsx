@@ -24,50 +24,56 @@ const BrandLogotype = ({ deviceString, className = "" }: { deviceString: string,
     // Base style for the text
     const baseClass = `leading-none select-none ${className}`;
 
-    // Apple - Use the specific character as requested
+    // Apple - Increased size
     if (s.includes('apple') || s.includes('iphone')) {
-        return <span className={`${baseClass} font-sans text-[14px]`}></span>;
+        return <span className={`${baseClass} font-sans text-[20px]`}></span>;
     }
-    // Sony - Serif or Slab-like uppercase
+    // Sony - Use specified image
     if (s.includes('sony') || s.includes('ilce') || s.includes('alpha')) {
-        return <span className={`${baseClass} font-serif font-bold tracking-widest uppercase text-[9px]`}>SONY</span>;
+        return (
+            <img 
+                src="https://static.fontbolt.com/themes-452px/634ee25b000f5.jpg" 
+                alt="SONY"
+                className={`h-5 w-auto object-contain mix-blend-multiply opacity-80 ${className}`} 
+            />
+        );
     }
     // Canon - Distinctive Serif
     if (s.includes('canon')) {
-        return <span className={`${baseClass} font-serif font-bold tracking-wide text-[10px]`}>Canon</span>;
+        return <span className={`${baseClass} font-serif font-bold tracking-wide text-[14px]`}>Canon</span>;
     }
     // Nikon - Italic Sans Bold
     if (s.includes('nikon')) {
-        return <span className={`${baseClass} font-sans font-black italic tracking-widest uppercase text-[10px]`}>Nikon</span>;
+        return <span className={`${baseClass} font-sans font-black italic tracking-widest uppercase text-[14px]`}>Nikon</span>;
     }
     // Fujifilm
     if (s.includes('fuji') || s.includes('x100') || s.includes('xt') || s.includes('gfx')) {
-        return <span className={`${baseClass} font-sans font-bold uppercase tracking-tight text-[9px]`}>FUJIFILM</span>;
+        return <span className={`${baseClass} font-sans font-bold uppercase tracking-tight text-[12px]`}>FUJIFILM</span>;
     }
     // Leica
     if (s.includes('leica')) {
-         return <span className={`${baseClass} font-sans font-light tracking-[0.2em] uppercase text-[9px]`}>LEICA</span>;
+         return <span className={`${baseClass} font-sans font-light tracking-[0.2em] uppercase text-[12px]`}>LEICA</span>;
     }
     // Hasselblad
     if (s.includes('hasselblad')) {
-         return <span className={`${baseClass} font-mono font-bold uppercase tracking-widest text-[8px]`}>HASSELBLAD</span>;
+         return <span className={`${baseClass} font-mono font-bold uppercase tracking-widest text-[10px]`}>HASSELBLAD</span>;
     }
     // Ricoh
     if (s.includes('ricoh') || s.includes('gr')) {
-        return <span className={`${baseClass} font-sans font-medium uppercase tracking-widest text-[9px]`}>RICOH</span>;
+        return <span className={`${baseClass} font-sans font-medium uppercase tracking-widest text-[12px]`}>RICOH</span>;
     }
     // Panasonic / Lumix
     if (s.includes('panasonic') || s.includes('lumix')) {
-        return <span className={`${baseClass} font-sans font-bold uppercase tracking-widest text-[9px]`}>LUMIX</span>;
+        return <span className={`${baseClass} font-sans font-bold uppercase tracking-widest text-[12px]`}>LUMIX</span>;
     }
 
     // Default: Return first word of device string or fallback icon
     const brand = deviceString.split(' ')[0];
     if (brand) {
-         return <span className={`${baseClass} font-mono font-bold uppercase text-[9px]`}>{brand}</span>;
+         return <span className={`${baseClass} font-mono font-bold uppercase text-[12px]`}>{brand}</span>;
     }
     
-    return <Camera size={12} className="text-stone-400" />;
+    return <Camera size={14} className="text-stone-400" />;
 };
 
 
@@ -253,9 +259,10 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
     }
   }, [item.id, type]);
 
-  // Fetch structured content for blog
+  // Fetch structured content for BOTH blog and gallery
+  // Modified to allow fetching content for gallery type as well
   useEffect(() => {
-    if (type === 'blog') {
+    if (item.id) {
         const fetchContent = async () => {
             setLoadingContent(true);
             try {
@@ -267,14 +274,14 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                     }
                 }
             } catch (error) {
-                 console.error("Failed to fetch blog content:", error);
+                 console.error("Failed to fetch page content:", error);
             } finally {
                 setLoadingContent(false);
             }
         };
         fetchContent();
     }
-  }, [item.id, type]);
+  }, [item.id]);
 
   const isBlog = type === 'blog';
   const blogPost = item as BlogPost;
@@ -396,6 +403,16 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                           <p className="font-serif text-lg md:text-xl leading-relaxed italic border-l-2 border-brand-accent pl-6 text-stone-600 bg-stone-50 py-4 pr-4">
                               {photoGroup.description || "No description available."}
                           </p>
+
+                          {/* Render Notion Content Blocks for Gallery (Filtered to exclude images) */}
+                          {blogBlocks.length > 0 && (
+                            <div className="text-base text-ink font-serif my-4">
+                                {blogBlocks
+                                    .filter(block => block.type !== 'image')
+                                    .map((block, idx) => renderBlock(block, idx))
+                                }
+                            </div>
+                          )}
                           
                           {/* GALLERY IMAGES */}
                           <div className="flex flex-col mt-4">
