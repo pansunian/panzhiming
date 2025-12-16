@@ -27,7 +27,13 @@ module.exports = async function handler(req, res) {
     return props[key][type];
   };
   
-  const getRichText = (props, key) => safeGet(props, key, 'rich_text')?.[0]?.plain_text || '';
+  // FIX: Join all rich text fragments. 
+  // Notion splits text when there are links or formatting. 
+  // Previous version only took [0], causing incomplete data.
+  const getRichText = (props, key) => {
+      const val = safeGet(props, key, 'rich_text');
+      return Array.isArray(val) ? val.map(v => v.plain_text).join('') : '';
+  };
   
   const getTitle = (props, keys = ['Title', 'Name']) => {
       const keyList = Array.isArray(keys) ? keys : [keys];
@@ -60,9 +66,6 @@ module.exports = async function handler(req, res) {
   // Helper to handle Notion errors gracefully
   const fetchDatabase = async (dbId, name, mapper) => {
     try {
-        // CHANGED: Removed "sorts: [{ property: 'Date' ... }]" 
-        // This prevents crashes if the DB lacks a "Date" column or it's named differently.
-        // We will sort in Javascript instead.
         const response = await notion.databases.query({
             database_id: dbId,
         });
@@ -111,7 +114,13 @@ module.exports = async function handler(req, res) {
           
           // Enhanced Socials Parsing
           // 1. Try both 'Socials' and 'Social'
-          const socialText = getRichText(p, 'Socials') || getRichText(p, 'Social');
+          let socialText = getRichText(p, 'Socials') || getRichText(p, 'Social');
+
+          // Fallback: If user used a URL column instead of Text, getRichText returns empty.
+          if (!socialText) {
+             const urlVal = safeGet(p, 'Socials', 'url') || safeGet(p, 'Social', 'url');
+             if (urlVal) socialText = urlVal;
+          }
           
           if (socialText) {
               let isJson = false;
@@ -142,8 +151,7 @@ module.exports = async function handler(req, res) {
                       if (urlMatch) {
                           const url = urlMatch[0];
                           
-                          // 1. Try to get Platform Name from text before URL (e.g. "Weibo: http...")
-                          // Remove the URL and any trailing colons
+                          // 1. Try to get Platform Name from text before URL
                           let platform = part.replace(url, '').replace(/[:：]/g, '').trim();
                           
                           // 2. If no text label, infer from Domain
@@ -158,17 +166,18 @@ module.exports = async function handler(req, res) {
                                   else if (hostname.includes('youtube')) platform = 'YOUTUBE';
                                   else if (hostname.includes('bilibili')) platform = 'BILIBILI';
                                   else if (hostname.includes('linkedin')) platform = 'LINKEDIN';
+                                  else if (hostname.includes('xiaohongshu') || hostname.includes('xhs')) platform = 'RED';
                                   else platform = 'LINK';
                               } catch {
                                   platform = 'LINK';
                               }
                           }
 
-                          // 3. Extract Handle (last part of URL path)
+                          // 3. Extract Handle
                           let handle = '@Link';
                           try {
                               const urlObj = new URL(url);
-                              const pathname = urlObj.pathname.replace(/\/$/, ''); // Remove trailing slash
+                              const pathname = urlObj.pathname.replace(/\/$/, ''); 
                               const pathParts = pathname.split('/');
                               if (pathParts.length > 0) {
                                   const lastPart = pathParts[pathParts.length - 1];
@@ -221,7 +230,7 @@ module.exports = async function handler(req, res) {
           date: p.Date?.date?.start || new Date(page.created_time).toISOString().split('T')[0],
           time: '', 
           tags: p.Tags?.multi_select?.map(t => t.name) || [],
-          featured: p.Featured?.checkbox || false // Added Featured support
+          featured: p.Featured?.checkbox || false 
       };
   });
 
@@ -232,7 +241,7 @@ module.exports = async function handler(req, res) {
           id: page.id,
           title: getTitle(p, ['Title', 'Name']),
           excerpt: getRichText(p, 'Excerpt'),
-          date: p.Date?.date?.start || '', // Safe access, won't crash if missing
+          date: p.Date?.date?.start || '', 
           readTime: p.ReadTime?.select?.name || '5 MIN',
           category: p.Category?.select?.name || '随笔',
           imageUrl: getImageUrl(page, 'Cover'),
