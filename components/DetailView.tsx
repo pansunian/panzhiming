@@ -24,9 +24,9 @@ const BrandLogotype = ({ deviceString, className = "" }: { deviceString: string,
     // Base style for the text
     const baseClass = `leading-none select-none ${className}`;
 
-    // Apple - Clean Sans
+    // Apple - Use the specific character as requested
     if (s.includes('apple') || s.includes('iphone')) {
-        return <span className={`${baseClass} font-sans font-medium tracking-tight text-[10px]`}>Apple</span>;
+        return <span className={`${baseClass} font-sans text-[14px]`}></span>;
     }
     // Sony - Serif or Slab-like uppercase
     if (s.includes('sony') || s.includes('ilce') || s.includes('alpha')) {
@@ -167,7 +167,7 @@ const GalleryItem: React.FC<{ img: GalleryImage, idx: number }> = ({ img, idx })
     };
 
     return (
-        <div className="w-full bg-white mb-12 last:mb-0 group">
+        <div className="w-full bg-white mb-12 last:mb-0 group pb-4">
              {/* Image Container: Enforced Aspect Ratio + Crop */}
              <div className={`w-full relative bg-stone-100 overflow-hidden ${aspectClass} transition-all duration-500`}>
                 <img 
@@ -180,7 +180,7 @@ const GalleryItem: React.FC<{ img: GalleryImage, idx: number }> = ({ img, idx })
              </div>
              
              {/* Info Bar */}
-             <div className="flex justify-between items-center mt-3 px-1">
+             <div className="flex justify-between items-center mt-4 px-1">
                   {/* Left: Device & Date */}
                   <div className="flex flex-col gap-1 items-start">
                       {/* Removed font-black, used font-medium */}
