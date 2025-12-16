@@ -146,7 +146,7 @@ const parseCaptionData = (caption: string) => {
 
     let device = '';
     let date = '';
-    let metaString = '';
+    const others: string[] = [];
 
     // Keywords to identify Device
     const deviceKeywords = ['SONY', 'Sony', 'Canon', 'Nikon', 'Fuji', 'Fujifilm', 'Leica', 'Apple', 'iPhone', 'Panasonic', 'Lumix', 'Ricoh', 'GR', 'Hasselblad', 'Olympus', 'ILCE', 'DC-S5'];
@@ -163,31 +163,19 @@ const parseCaptionData = (caption: string) => {
         } else if (isDate) {
             date = part;
         } else {
-            // Assume anything else is location meta
-            metaString = part;
+            // Assume anything else is location meta or other info
+            others.push(part);
         }
     });
 
-    // Fallback: If device not found, check if last part looks like a device (alpha characters, no date numbers)
-    if (!device && parts.length > 0) {
-        const lastPart = parts[parts.length - 1];
-        if (/[a-zA-Z]/.test(lastPart) && !dateRegex.test(lastPart)) {
-            device = lastPart;
-            if (metaString === device) metaString = '';
-        }
-    }
-
-    // Split Location Meta into Main (City) and Sub (Spot)
-    let locationMain = metaString;
+    let locationMain = '';
     let locationSub = '';
 
-    if (metaString) {
-        const splitParts = metaString.split(/·| - /).map(s => s.trim());
-        if (splitParts.length > 1) {
-            locationMain = splitParts[0];
-            locationSub = splitParts.slice(1).join(' · ');
-        } else {
-            locationMain = metaString; 
+    if (others.length > 0) {
+        locationMain = others[0];
+        if (others.length > 1) {
+            // If multiple parts remain, join the rest as sub location (e.g. Province | City)
+            locationSub = others.slice(1).join(' · ');
         }
     }
 
