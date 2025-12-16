@@ -101,7 +101,7 @@ export const ProfileSection: React.FC<Props> = ({ profile, onNavigate, onOpenMan
                  </div>
 
                  <p className="font-serif text-sm leading-relaxed opacity-90 mb-6 border-l-2 border-white/30 pl-3">
-                     “{profile.bio}”
+                     {profile.bio}
                  </p>
 
                  {/* Navigation Grid (Updated to Buttons) */}

@@ -23,7 +23,7 @@ const CameraBrandLogo = ({ deviceString, className = "h-3" }: { deviceString: st
     // Apple
     if (s.includes('apple') || s.includes('iphone')) {
         return (
-            <svg viewBox="0 0 384 512" fill="currentColor" className={className}>
+            <svg viewBox="0 0 384 512" fill="currentColor" className={className} preserveAspectRatio="xMidYMid meet">
                 <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 79.9c14.2 40.2 40.8 96.8 78 96.8 30.8 0 36.4-23.4 84.9-23.4 46.8 0 56.1 23.4 85.3 23.4 35.4 0 60.6-51.5 81.3-90.2-22.1-14.4-38.3-46.8-29.2-91.3zM255 83.3c15.9-19.1 29-45.6 24.3-70.8-22.7 1-47.8 11.2-64.4 30.8-14.1 17.1-26.6 44.2-21 70.3 26 .8 50.4-10.4 61.1-30.3z"/>
             </svg>
         );
@@ -31,7 +31,7 @@ const CameraBrandLogo = ({ deviceString, className = "h-3" }: { deviceString: st
     // Sony
     if (s.includes('sony') || s.includes('ilce') || s.includes('alpha')) {
         return (
-            <svg viewBox="0 0 500 100" fill="currentColor" className={className}>
+            <svg viewBox="0 0 500 100" fill="currentColor" className={className} preserveAspectRatio="xMidYMid meet">
                 <path d="M21.6,44.2h37.4c6,0,10.6-1.8,10.6-7.8c0-5.8-4.4-7.4-10.4-7.4H30.4c-4.6,0-8.8-3.4-8.8-9.8c0-6,4.6-9.6,9.8-9.6h54.8v10h-37c-5.8,0-10.2,1.6-10.2,7.4c0,5.8,4.6,7.4,10.6,7.4h29.2c5,0,9,4,9,9.8c0,5.8-4.6,10.4-10.4,10.4H10v-9.6C10,48,15.2,44.2,21.6,44.2z M125.6,9.6c20.8,0,36.4,14.8,36.4,36.4S146.4,82.4,125.6,82.4S89.2,67.6,89.2,46S104.8,9.6,125.6,9.6z M125.6,72.4c14.4,0,22.2-11,22.2-26.4s-7.8-26.4-22.2-26.4s-22.2,11-22.2,26.4S111.2,72.4,125.6,72.4z M174.6,9.6h15l34.4,53l0.4-53h12.8v72.8h-13.6L188,27.8l-0.4,54.6h-13V9.6z M253.6,9.6h14.8l20.4,32.4l20-32.4h14.8l-28,42v30.8h-14V51.6L253.6,9.6z"/>
             </svg>
         );
@@ -39,7 +39,7 @@ const CameraBrandLogo = ({ deviceString, className = "h-3" }: { deviceString: st
     // Fujifilm
     if (s.includes('fuji') || s.includes('x100') || s.includes('xt') || s.includes('gfx')) {
         return (
-            <svg viewBox="0 0 300 50" fill="currentColor" className={className}>
+            <svg viewBox="0 0 300 50" fill="currentColor" className={className} preserveAspectRatio="xMidYMid meet">
                <path d="M37.8,2.7C20.4,2.7,4,7.4,4,7.4v13.6h8.8V15c0,0,10.7-3.9,23.3-3.9c10.4,0,12.5,1.9,12.5,5.6v28.8h15V15.5C63.6,4.4,51.8,2.7,37.8,2.7z M85.2,15.5v19.4c0,3.7,2.2,5.6,10.1,5.6c8,0,10.1-1.9,10.1-5.6V15.5h15v18.2c0,12.2-10.4,13.6-25.1,13.6c-14.8,0-25.1-1.4-25.1-13.6V15.5H85.2z M134.3,15.5v22.7c0,5.6-3.8,7.3-8.8,7.3h-3.4v-8.8h3.1c1.2,0,1.8-0.6,1.8-2.5V15.5H134.3z M122.1,8.6c0-3.3,2.7-5.9,5.9-5.9c3.3,0,5.9,2.7,5.9,5.9c0,3.3-2.7,5.9-5.9,5.9C124.8,14.6,122.1,11.9,122.1,8.6z M144.1,15.5h7.3v29.9h-7.3V15.5z M140.4,8.6c0-3.3,2.7-5.9,5.9-5.9s5.9,2.7,5.9,5.9c0,3.3-2.7,5.9-5.9,5.9S140.4,11.9,140.4,8.6z M162.2,2.7v10.9h12.5v7.5h-12.5v24.4h-7.3V21.1h-4.8v-7.5h4.8V5.3C154.9,4.4,158.4,2.7,162.2,2.7z M186.7,15.5v29.9h-7.3V15.5H186.7z M183,8.6c0-3.3,2.7-5.9,5.9-5.9c3.3,0,5.9,2.7,5.9,5.9c0,3.3-2.7,5.9-5.9,5.9C185.7,14.6,183,11.9,183,8.6z M201.2,2.7v28.8c0,3.7,2.2,5.6,12.5,5.6c12.6,0,23.3-3.9,23.3-3.9v6.1c0,0-16.4,4.7-33.8,4.7c-13.9,0-25.8-1.7-25.8-12.8V2.7H201.2z M248.6,15.5v29.9h-7.3V15.5H248.6z M261.2,15.5l10.9,23.5l10.9-23.5h9.4l-16.1,34.4v13.9h-7.3V69.9L252.7,15.5H261.2z"/>
             </svg>
         );
@@ -47,7 +47,7 @@ const CameraBrandLogo = ({ deviceString, className = "h-3" }: { deviceString: st
     // Canon
     if (s.includes('canon')) {
         return (
-            <svg viewBox="0 0 100 20" fill="currentColor" className={className}>
+            <svg viewBox="0 0 100 20" fill="currentColor" className={className} preserveAspectRatio="xMidYMid meet">
                  <text x="0" y="15" fontFamily="serif" fontWeight="bold" fontSize="16">Canon</text>
             </svg>
         );
@@ -55,7 +55,7 @@ const CameraBrandLogo = ({ deviceString, className = "h-3" }: { deviceString: st
     // Nikon
     if (s.includes('nikon')) {
          return (
-            <svg viewBox="0 0 100 20" fill="currentColor" className={className}>
+            <svg viewBox="0 0 100 20" fill="currentColor" className={className} preserveAspectRatio="xMidYMid meet">
                  <text x="0" y="15" fontFamily="sans-serif" fontWeight="900" fontStyle="italic" fontSize="16">Nikon</text>
             </svg>
         );
@@ -63,7 +63,7 @@ const CameraBrandLogo = ({ deviceString, className = "h-3" }: { deviceString: st
     // Leica
     if (s.includes('leica')) {
         return (
-            <svg viewBox="0 0 100 30" fill="currentColor" className={className}>
+            <svg viewBox="0 0 100 30" fill="currentColor" className={className} preserveAspectRatio="xMidYMid meet">
                <text x="0" y="20" fontFamily="serif" fontStyle="italic" fontWeight="bold" fontSize="20">Leica</text>
             </svg>
         );
@@ -71,7 +71,7 @@ const CameraBrandLogo = ({ deviceString, className = "h-3" }: { deviceString: st
     // Panasonic / Lumix
     if (s.includes('panasonic') || s.includes('lumix') || s.includes('dc-s')) {
          return (
-            <svg viewBox="0 0 100 20" fill="currentColor" className={className}>
+            <svg viewBox="0 0 100 20" fill="currentColor" className={className} preserveAspectRatio="xMidYMid meet">
                  <text x="0" y="15" fontFamily="sans-serif" fontWeight="bold" fontSize="14" letterSpacing="1">LUMIX</text>
             </svg>
         );
@@ -79,7 +79,7 @@ const CameraBrandLogo = ({ deviceString, className = "h-3" }: { deviceString: st
     // Ricoh
     if (s.includes('ricoh') || s.includes('gr')) {
          return (
-            <svg viewBox="0 0 100 20" fill="currentColor" className={className}>
+            <svg viewBox="0 0 100 20" fill="currentColor" className={className} preserveAspectRatio="xMidYMid meet">
                  <text x="0" y="15" fontFamily="sans-serif" fontSize="14">RICOH</text>
             </svg>
         );
@@ -87,7 +87,7 @@ const CameraBrandLogo = ({ deviceString, className = "h-3" }: { deviceString: st
     // Hasselblad
     if (s.includes('hasselblad')) {
          return (
-             <svg viewBox="0 0 120 20" fill="currentColor" className={className}>
+             <svg viewBox="0 0 120 20" fill="currentColor" className={className} preserveAspectRatio="xMidYMid meet">
                   <text x="0" y="15" fontFamily="serif" fontWeight="bold" fontSize="14" letterSpacing="1">HASSELBLAD</text>
              </svg>
          );
@@ -239,8 +239,6 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
   const displayImages = type === 'gallery' ? contentImages : [];
 
   const renderBlock = (block: any, idx: number) => {
-      // ... (Block Rendering Logic remains same as previous but condensed for brevity in diff)
-      // Including minimal re-implementation to match previous file structure requirement
       switch (block.type) {
           case 'paragraph': return <p key={idx} className="mb-6 leading-loose text-ink/90"><RichTextRenderer content={block.content} /></p>;
           case 'heading_1': return <h2 key={idx} className="text-2xl font-serif font-bold mt-10 mb-6 border-b border-stone-200 pb-2"><RichTextRenderer content={block.content} /></h2>;
@@ -376,42 +374,42 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                                                 />
                                                 
                                                 {/* Footer Info Area */}
-                                                <div className="grid grid-cols-3 items-end mt-4 px-1 gap-2">
+                                                <div className="flex justify-between items-end mt-4 px-1 relative">
                                                     
-                                                    {/* Left: Brand Logo + Device Text */}
-                                                    <div className="flex flex-col items-start gap-1.5 justify-end h-full">
-                                                        <div className="opacity-90 text-ink">
-                                                            <CameraBrandLogo deviceString={parsed.device} className="h-4 w-auto max-w-[60px]" />
-                                                        </div>
-                                                        <span className="font-mono font-bold text-[8px] text-stone-400 leading-none uppercase tracking-wide truncate w-full">
-                                                            {parsed.device || 'DIGITAL'}
-                                                        </span>
-                                                    </div>
-
-                                                    {/* Center: Signature Logo (Smaller) */}
-                                                    <div className="flex justify-center items-end h-full pb-0.5">
-                                                        {logoUrl ? (
-                                                            <img 
-                                                                src={logoUrl} 
-                                                                alt="Signature" 
-                                                                className="h-6 w-auto object-contain opacity-80 mix-blend-multiply" 
-                                                            />
-                                                        ) : (
-                                                            <div className="opacity-30">
-                                                                <span className="font-serif italic text-[10px]">Life Frames</span>
+                                                    {/* Left Group: Brand Logo, Device Text & Signature */}
+                                                    <div className="flex items-end gap-5">
+                                                        {/* Brand & Device */}
+                                                        <div className="flex flex-col items-start gap-1.5 shrink-0 z-10">
+                                                            <div className="opacity-90 text-ink">
+                                                                <CameraBrandLogo deviceString={parsed.device} className="h-4 w-auto shrink-0" />
                                                             </div>
-                                                        )}
+                                                            <span className="font-mono font-bold text-[8px] text-stone-500 leading-none uppercase tracking-wide">
+                                                                {parsed.device || 'DIGITAL'}
+                                                            </span>
+                                                        </div>
+
+                                                        {/* Signature Logo - Moved Left */}
+                                                        <div className="shrink-0 pb-0.5">
+                                                            {logoUrl ? (
+                                                                <img 
+                                                                    src={logoUrl} 
+                                                                    alt="Signature" 
+                                                                    className="h-5 w-auto object-contain opacity-80 mix-blend-multiply max-w-[80px]" 
+                                                                />
+                                                            ) : (
+                                                                <div className="opacity-30">
+                                                                    <span className="font-serif italic text-[10px]">Life Frames</span>
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                     </div>
 
                                                     {/* Right: Date & Location (Clean Stack) */}
-                                                    <div className="flex flex-col items-end gap-1 justify-end h-full text-right">
-                                                        <span className="font-mono text-[8px] font-bold text-stone-400 uppercase tracking-widest leading-none">
-                                                            DATE
-                                                        </span>
-                                                        <span className="font-mono text-[9px] text-ink leading-none">
+                                                    <div className="flex flex-col items-end gap-1.5 shrink-0 text-right max-w-[45%]">
+                                                        <span className="font-mono text-[9px] text-stone-600 leading-none">
                                                             {parsed.date}
                                                         </span>
-                                                        <span className="font-serif text-[8px] text-stone-500 italic leading-none truncate max-w-full pt-0.5">
+                                                        <span className="font-sans text-[9px] text-stone-600 leading-tight">
                                                             {parsed.meta}
                                                         </span>
                                                     </div>
