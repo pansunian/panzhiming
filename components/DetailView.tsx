@@ -24,17 +24,17 @@ const BrandLogotype = ({ deviceString, className = "" }: { deviceString: string,
     // Base style for the text
     const baseClass = `leading-none select-none ${className}`;
 
-    // Apple - Increased size
+    // Apple - Adjusted for alignment
     if (s.includes('apple') || s.includes('iphone')) {
-        return <span className={`${baseClass} font-sans text-[20px]`}></span>;
+        return <span className={`${baseClass} font-sans text-[22px] -translate-y-0.5 -mr-1`}></span>;
     }
-    // Sony - Use specified image
+    // Sony - Enlarge image
     if (s.includes('sony') || s.includes('ilce') || s.includes('alpha')) {
         return (
             <img 
                 src="https://static.fontbolt.com/themes-452px/634ee25b000f5.jpg" 
                 alt="SONY"
-                className={`h-5 w-auto object-contain mix-blend-multiply opacity-80 ${className}`} 
+                className={`h-8 w-auto object-contain mix-blend-multiply opacity-80 ${className}`} 
             />
         );
     }
@@ -188,7 +188,8 @@ const GalleryItem: React.FC<{ img: GalleryImage, idx: number }> = ({ img, idx })
              {/* Info Bar */}
              <div className="flex justify-between items-center mt-4 px-1">
                   {/* Left: Device & Date */}
-                  <div className="flex flex-col gap-1 items-start">
+                  {/* Increased gap from 1 to 1.5 for better separation */}
+                  <div className="flex flex-col gap-1.5 items-start">
                       {/* Removed font-black, used font-medium */}
                       <span className="font-sans font-medium text-[10px] uppercase leading-none tracking-wider text-ink">
                           {parsed.device || 'DIGITAL'}
