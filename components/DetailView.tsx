@@ -356,6 +356,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                     )}
                  </div>
                  
+                 {/* Title uses font-serif (JingHuaLaoSongTi) */}
                  <h1 className="font-serif font-bold text-3xl md:text-5xl text-ink leading-tight mb-4">
                     {item.title}
                  </h1>
@@ -390,7 +391,8 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                   <Notch className="-right-4 top-0 -translate-y-1/2" />
 
                   {isBlog ? (
-                      <div className="text-base text-ink font-serif">
+                      // Changed from font-serif to font-sans (XiXianTingMingTi)
+                      <div className="text-base text-ink font-sans">
                           {loadingContent ? (
                               <div className="flex justify-center items-center py-12 gap-2 text-stone-400">
                                   <Loader2 className="animate-spin" size={16} />
@@ -412,13 +414,15 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                       </div>
                   ) : (
                       <div className="flex flex-col gap-6">
-                          <p className="font-serif text-lg md:text-xl leading-relaxed italic border-l-2 border-brand-accent pl-6 text-stone-600 bg-stone-50 py-4 pr-4">
+                          {/* Description: Changed from font-serif to font-sans (XiXianTingMingTi) */}
+                          <p className="font-sans text-lg md:text-xl leading-relaxed italic border-l-2 border-brand-accent pl-6 text-stone-600 bg-stone-50 py-4 pr-4">
                               {photoGroup.description || "No description available."}
                           </p>
 
                           {/* Render Notion Content Blocks for Gallery (Filtered to exclude images) */}
+                          {/* Changed from font-serif to font-sans (XiXianTingMingTi) */}
                           {blogBlocks.length > 0 && (
-                            <div className="text-base text-ink font-serif my-4">
+                            <div className="text-base text-ink font-sans my-4">
                                 {blogBlocks
                                     .filter(block => block.type !== 'image')
                                     .map((block, idx) => renderBlock(block, idx))
@@ -445,28 +449,8 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                                 </div>
                               )}
                           </div>
-
-                          {/* Technical Info Box */}
-                          {/* Updated padding from p-4 to px-8 py-6 to indent content towards middle */}
-                          <div className="border border-stone-200 bg-[#fdfbf7] px-8 py-6 mt-4 relative overflow-hidden opacity-80">
-                              <div className="absolute right-0 top-0 opacity-5">
-                                  <BarcodeHorizontal className="h-12 w-24 rotate-[-15deg] translate-x-4 -translate-y-2" />
-                              </div>
-                              <div className="flex items-center gap-2 mb-3 border-b border-dashed border-stone-200 pb-2">
-                                  <Info size={14} className="text-stone-400" />
-                                  <span className="font-mono text-xs font-bold text-stone-500">ALBUM INFO</span>
-                              </div>
-                              <div className="grid grid-cols-2 gap-y-4 gap-x-2 font-mono text-[10px] text-stone-500">
-                                  <div>
-                                      <p className="opacity-50 text-[8px] tracking-widest uppercase">LOCATION</p>
-                                      <p className="text-ink">{photoGroup.location}</p>
-                                  </div>
-                                  <div>
-                                      <p className="opacity-50 text-[8px] tracking-widest uppercase">DATE</p>
-                                      <p className="text-ink">{photoGroup.date}</p>
-                                  </div>
-                              </div>
-                          </div>
+                          
+                          {/* REMOVED: Album Info Box */}
                       </div>
                   )}
               </div>
@@ -478,9 +462,10 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                    <div className="flex flex-col items-center text-center gap-4">
                        <div className="w-full flex justify-between items-center opacity-50">
                            <BarcodeVertical />
-                           <div className="mx-4 flex flex-col gap-1 w-full">
-                               <span className="font-mono text-[10px] uppercase tracking-widest text-stone-500">{isBlog ? 'Article ID' : 'Gallery ID'}</span>
-                               <span className="font-mono text-xl tracking-[0.2em] font-bold">{item.id.replace(/-/g, '').substring(0, 8).toUpperCase()}</span>
+                           <div className="mx-4 flex flex-col gap-1 w-full text-ink opacity-80">
+                               {/* Updated text content and smaller font sizes */}
+                               <span className="font-serif text-[10px] tracking-widest">先见志明</span>
+                               <span className="font-mono text-[9px] font-bold tracking-[0.2em] uppercase">PANZHIMING.COM</span>
                            </div>
                            <BarcodeVertical />
                        </div>

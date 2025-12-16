@@ -14,9 +14,12 @@
         theme: {
           extend: {
             fontFamily: {
-              serif: ['"Noto Serif SC"', 'serif'],
-              sans: ['"Noto Sans SC"', 'sans-serif'],
-              mono: ['"Space Mono"', 'monospace'],
+              // Configuration: 
+              // serif -> Title Font (JingHuaLaoSongTi)
+              // sans  -> Body Font (XiXianTingMingTi) - We map 'sans' class to this serif-style font for body text ease of use
+              serif: ['"MyCustomTitle"', '"Noto Serif SC"', 'serif'],
+              sans: ['"MyCustomBody"', '"Noto Sans SC"', 'sans-serif'],
+              mono: ['"MyCustomMono"', '"Space Mono"', 'monospace'],
             },
             colors: {
               bg: '#e3e1d5', // Warm Grey/Beige background (Archive style)
@@ -35,6 +38,39 @@
       }
     </script>
     <style>
+      /* --- CUSTOM FONTS SETUP --- */
+
+      /* 1. Title Font (JingHuaLaoSongTi) - 用于标题 */
+      @font-face {
+        font-family: 'MyCustomTitle';
+        /* User specified filename */
+        src: url('/fonts/jinghualaosongti.woff') format('woff');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      /* 2. Body Font (XiXianTingMingTi) - 用于详情页正文和描述 */
+      @font-face {
+        font-family: 'MyCustomBody';
+        /* User specified filename */
+        src: url('/fonts/XiXianTingMingTi.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      /* 3. Mono Font (Data/Code) - 等宽字体 (保持默认或您可自行替换) */
+      @font-face {
+        font-family: 'MyCustomMono';
+        src: url('/fonts/MyMono.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      /* --- GLOBAL STYLES --- */
+
       :root {
         --bg-color: #e3e1d5;
         --noise-url: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
