@@ -17,6 +17,7 @@ interface GalleryImage {
 }
 
 // --- Brand Logos SVG Component ---
+// Updated to be purely black (currentColor) and robust aspect ratio
 const CameraBrandLogo = ({ deviceString, className = "h-3" }: { deviceString: string, className?: string }) => {
     const s = deviceString.toLowerCase();
     
@@ -133,14 +134,14 @@ const RichTextRenderer = ({ content }: { content: any[] }) => {
 
 // --- Helper: Caption Parser ---
 const parseCaptionData = (caption: string) => {
-    if (!caption) return { device: '', date: '', meta: '' };
+    if (!caption) return { device: '', date: '', locationMain: '', locationSub: '' };
 
     // Split by common delimiters: | (vertical bar) or ｜ (full-width vertical bar)
     const parts = caption.split(/\||｜/).map(s => s.trim()).filter(Boolean);
 
     let device = '';
     let date = '';
-    let metaParts: string[] = [];
+    let metaString = '';
 
     // Keywords to identify Device
     const deviceKeywords = ['SONY', 'Sony', 'Canon', 'Nikon', 'Fuji', 'Fujifilm', 'Leica', 'Apple', 'iPhone', 'Panasonic', 'Lumix', 'Ricoh', 'GR', 'Hasselblad', 'Olympus', 'ILCE', 'DC-S5'];
@@ -157,23 +158,44 @@ const parseCaptionData = (caption: string) => {
         } else if (isDate) {
             date = part;
         } else {
-            metaParts.push(part);
+            // Assume anything else is location meta
+            metaString = part;
         }
     });
 
-    // Fallback: If device not found, check if last part looks like a device
+    // Fallback: If device not found, check if last part looks like a device (alpha characters, no date numbers)
     if (!device && parts.length > 0) {
         const lastPart = parts[parts.length - 1];
         if (/[a-zA-Z]/.test(lastPart) && !dateRegex.test(lastPart)) {
             device = lastPart;
-            metaParts = metaParts.filter(p => p !== device);
+            // Remove this part from metaString if it was there
+            if (metaString === device) metaString = '';
+        }
+    }
+
+    // Split Location Meta into Main (City) and Sub (Spot)
+    // Delimiters: middle dot (·), dash (-), or space if no other separator
+    let locationMain = metaString;
+    let locationSub = '';
+
+    if (metaString) {
+        // Try splitting by middle dot or dash first
+        const splitParts = metaString.split(/·| - /).map(s => s.trim());
+        if (splitParts.length > 1) {
+            locationMain = splitParts[0];
+            locationSub = splitParts.slice(1).join(' · ');
+        } else {
+            // If just one string, try simple space heuristic if it looks like "City Spot"
+            // But usually safer to keep as Main if ambiguous
+            locationMain = metaString; 
         }
     }
 
     return {
-        device: device, 
-        date: date,
-        meta: metaParts.join(' · ')
+        device,
+        date,
+        locationMain,
+        locationSub
     };
 };
 
@@ -365,53 +387,48 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
                                     {displayImages.length > 0 ? displayImages.map((img, idx) => {
                                         const parsed = parseCaptionData(img.caption);
                                         return (
-                                            <div key={idx} className="w-full bg-white p-3 pb-5 shadow-sm border border-stone-100/50 relative">
-                                                {/* Image */}
+                                            <div key={idx} className="w-full bg-white relative">
+                                                {/* Image - Allow natural aspect ratio (w-full h-auto) */}
                                                 <img 
                                                     src={img.url} 
-                                                    alt={parsed.meta || `Photo ${idx}`} 
-                                                    className="w-full h-auto object-cover block" 
+                                                    alt={parsed.locationMain || `Photo ${idx}`} 
+                                                    className="w-full h-auto block" 
                                                 />
                                                 
-                                                {/* Footer Info Area */}
-                                                <div className="flex justify-between items-end mt-4 px-1 relative">
+                                                {/* Pro Footer Area - Matches Reference Image */}
+                                                <div className="flex justify-between items-center mt-5 px-1">
                                                     
-                                                    {/* Left Group: Brand Logo, Device Text & Signature */}
-                                                    <div className="flex items-end gap-5">
-                                                        {/* Brand & Device */}
-                                                        <div className="flex flex-col items-start gap-1.5 shrink-0 z-10">
-                                                            <div className="opacity-90 text-ink">
-                                                                <CameraBrandLogo deviceString={parsed.device} className="h-4 w-auto shrink-0" />
-                                                            </div>
-                                                            <span className="font-mono font-bold text-[8px] text-stone-500 leading-none uppercase tracking-wide">
-                                                                {parsed.device || 'DIGITAL'}
-                                                            </span>
-                                                        </div>
-
-                                                        {/* Signature Logo - Moved Left */}
-                                                        <div className="shrink-0 pb-0.5">
-                                                            {logoUrl ? (
-                                                                <img 
-                                                                    src={logoUrl} 
-                                                                    alt="Signature" 
-                                                                    className="h-5 w-auto object-contain opacity-80 mix-blend-multiply max-w-[80px]" 
-                                                                />
-                                                            ) : (
-                                                                <div className="opacity-30">
-                                                                    <span className="font-serif italic text-[10px]">Life Frames</span>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Right: Date & Location (Clean Stack) */}
-                                                    <div className="flex flex-col items-end gap-1.5 shrink-0 text-right max-w-[45%]">
-                                                        <span className="font-mono text-[9px] text-stone-600 leading-none">
+                                                    {/* Left: Device & Date */}
+                                                    <div className="flex flex-col items-start gap-1">
+                                                        <span className="font-sans font-extrabold text-sm sm:text-base text-black uppercase leading-none tracking-tight">
+                                                            {parsed.device || 'DIGITAL'}
+                                                        </span>
+                                                        <span className="font-mono text-[10px] text-stone-400 leading-none">
                                                             {parsed.date}
                                                         </span>
-                                                        <span className="font-sans text-[9px] text-stone-600 leading-tight">
-                                                            {parsed.meta}
-                                                        </span>
+                                                    </div>
+
+                                                    {/* Right: Brand Logo + Divider + Location */}
+                                                    <div className="flex items-center gap-3">
+                                                        {/* Brand Logo */}
+                                                        <div className="text-black opacity-90">
+                                                            <CameraBrandLogo deviceString={parsed.device} className="h-3 sm:h-4 w-auto" />
+                                                        </div>
+
+                                                        {/* Vertical Divider */}
+                                                        <div className="h-6 w-[1px] bg-stone-300"></div>
+
+                                                        {/* Location Split */}
+                                                        <div className="flex flex-col items-start min-w-[60px]">
+                                                            <span className="font-bold text-xs sm:text-sm text-black leading-tight">
+                                                                {parsed.locationMain}
+                                                            </span>
+                                                            {parsed.locationSub && (
+                                                                <span className="text-[9px] sm:text-[10px] text-stone-500 leading-tight">
+                                                                    {parsed.locationSub}
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                     </div>
 
                                                 </div>
