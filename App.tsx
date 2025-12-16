@@ -132,23 +132,53 @@ const App: React.FC = () => {
   // New state for Manual Page
   const [manualPage, setManualPage] = useState<BlogPost | null>(null);
 
+  const CACHE_KEY = 'portfolio_data_v1';
+
   useEffect(() => {
-    const fetchData = async () => {
+    const initData = async () => {
+      // 1. Try to load from LocalStorage first for immediate rendering (Stale-While-Revalidate)
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) {
+        try {
+          const data = JSON.parse(cached);
+          if (data) {
+            if (data.profile) setProfile(data.profile);
+            if (data.gallery) setPhotoGroups(data.gallery);
+            if (data.thoughts) setThoughts(data.thoughts);
+            if (data.posts) setPosts(data.posts);
+            if (data.manual) setManualPage(data.manual);
+            setLoading(false); // Stop showing loading screen immediately
+          }
+        } catch (e) {
+          console.warn("Cache parse error", e);
+        }
+      }
+
+      // 2. Fetch fresh data in the background
       try {
         const res = await fetch('/api/portfolio');
         if (!res.ok) {
            const errData = await res.json().catch(() => ({}));
-           console.warn("API Error, using demo data:", errData.message);
-           throw new Error(errData.message || 'Failed to fetch data');
+           // Only show error if we have no cached data
+           if (!cached) {
+               console.warn("API Error, using demo data:", errData.message);
+               throw new Error(errData.message || 'Failed to fetch data');
+           } else {
+               console.warn("API refresh failed, using cached data.");
+               return; 
+           }
         }
         const data = await res.json();
         
+        // Update state with fresh data
         if (data.profile) setProfile(data.profile);
         if (data.gallery && data.gallery.length > 0) setPhotoGroups(data.gallery);
         if (data.thoughts && data.thoughts.length > 0) setThoughts(data.thoughts);
         if (data.posts && data.posts.length > 0) setPosts(data.posts);
-        
         if (data.manual) setManualPage(data.manual);
+        
+        // Update Cache
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
         
         if (data.debug) {
             const errors = Object.values(data.debug).filter(Boolean);
@@ -158,12 +188,14 @@ const App: React.FC = () => {
         }
       } catch (e: any) {
         console.error(e);
-        setErrorMsg(e.message || "Could not load portfolio data.");
+        if (!cached) {
+            setErrorMsg(e.message || "Could not load portfolio data.");
+        }
       } finally {
         setLoading(false);
       }
     };
-    fetchData();
+    initData();
   }, []);
 
   const handleNavigate = (view: ViewState) => {

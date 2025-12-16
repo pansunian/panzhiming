@@ -1,7 +1,10 @@
 const { Client } = require('@notionhq/client');
 
 module.exports = async function handler(req, res) {
-  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
+  // Updated: Increased s-maxage to 3600 (1 hour). 
+  // stale-while-revalidate=86400 means if the cache is stale (older than 1 hour), 
+  // Vercel serves the stale content first, then updates the cache in the background.
+  res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
 
   const requiredEnv = [
     'NOTION_API_KEY',

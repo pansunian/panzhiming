@@ -31,8 +31,8 @@ const BrandLogotype = ({ deviceString, className = "" }: { deviceString: string,
                     src="/fonts/apple.svg" 
                     alt="Apple"
                     onError={() => setImgError(true)}
-                    // Increased size to h-4 (from h-3.5)
-                    className={`h-4 w-auto object-contain opacity-90 ${className}`} 
+                    // Updated: Increased size to h-5 (was h-4)
+                    className={`h-5 w-auto object-contain opacity-90 ${className}`} 
                 />
             );
         }
@@ -46,8 +46,8 @@ const BrandLogotype = ({ deviceString, className = "" }: { deviceString: string,
                     src="/fonts/logo-sony.svg" 
                     alt="SONY"
                     onError={() => setImgError(true)}
-                    // Decreased size to h-2.5 (from h-3) to look balanced with taller Apple logo
-                    className={`h-2.5 w-auto object-contain opacity-80 ${className}`} 
+                    // Updated: Decreased size to h-2 (was h-2.5)
+                    className={`h-2 w-auto object-contain opacity-80 ${className}`} 
                 />
             );
         }
@@ -158,12 +158,16 @@ const GalleryItem: React.FC<{ img: GalleryImage, idx: number }> = ({ img, idx })
                       </div>
                       <div className="w-[1px] h-3 bg-stone-200 mr-3 shrink-0"></div>
                       <div className="flex flex-col items-start justify-center">
-                          {/* Font Update: Removed font-medium (implies specific weight of custom), added font-[system-ui] */}
-                          <span className="font-[system-ui,sans-serif] font-medium text-[10px] text-ink leading-none mb-0.5 -translate-y-[5px]">
+                          {/* 
+                            Updated: 
+                            1. Added 'translate-y-[2px]' to shift text down visually as requested.
+                            2. Kept line-height tight.
+                          */}
+                          <span className="font-[system-ui,sans-serif] font-medium text-[10px] text-ink leading-none mb-0.5 translate-y-[2px]">
                               {parsed.locationMain}
                           </span>
                           {parsed.locationSub && (
-                              <span className="text-[8px] text-stone-500 leading-none font-[system-ui,sans-serif]">
+                              <span className="text-[8px] text-stone-500 leading-none font-[system-ui,sans-serif] translate-y-[2px]">
                                   {parsed.locationSub}
                               </span>
                           )}
