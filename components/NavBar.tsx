@@ -23,7 +23,7 @@ export const NavBar: React.FC<NavBarProps> = ({ onNavigate, activeView, logoUrl 
 
   return (
     <div className="relative z-50 w-full bg-paper border-b-2 border-stone-800 shadow-sm">
-      <div className="max-w-[420px] mx-auto h-14 flex items-stretch justify-between relative px-0">
+      <div className="max-w-[452px] mx-auto h-14 flex items-stretch justify-between relative px-0">
         
         {/* Logo Area */}
         <button 

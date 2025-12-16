@@ -257,8 +257,8 @@ const App: React.FC = () => {
       )}
 
       {/* Main Single Column Layout */}
-      {/* Width set to 420px as requested for the narrow ticket feel */}
-      <main className="max-w-[420px] mx-auto px-4 pt-8">
+      {/* Width set to 452px (420 content + 32 padding) to ensure ticket is wide enough */}
+      <main className="max-w-[452px] mx-auto px-4 pt-8">
         
         {currentView === 'home' && (
            <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 flex flex-col gap-12">

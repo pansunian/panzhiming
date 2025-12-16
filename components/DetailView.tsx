@@ -199,7 +199,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
       {/* Navigation Bar - Scrolls with the page */}
       <NavBar onNavigate={onNavigate} activeView={type} logoUrl={logoUrl} />
 
-      <div className="w-full max-w-[420px] mx-auto min-h-screen pb-24 pt-12">
+      <div className="w-full max-w-[452px] mx-auto min-h-screen pb-24 pt-12">
         <div className="px-4 animate-in slide-in-from-bottom-8 duration-500 delay-100">
           
           {/* Main Ticket Container */}

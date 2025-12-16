@@ -59,9 +59,11 @@ module.exports = async function handler(req, res) {
       }
   };
 
-  const getImageUrl = (page, propertyKey = 'Cover') => {
-      // Priority 1: Page Cover
-      if (page.cover) {
+  // Updated: Added preferPageCover flag (default true)
+  // Set to false when we explicitly want a property image (like Avatar or Logo)
+  const getImageUrl = (page, propertyKey = 'Cover', preferPageCover = true) => {
+      // Priority 1: Page Cover (only if preferPageCover is true)
+      if (preferPageCover && page.cover) {
           return page.cover.file?.url || page.cover.external?.url;
       }
       // Priority 2: Property named 'Cover' (for databases)
@@ -135,8 +137,9 @@ module.exports = async function handler(req, res) {
               role: getPropValue(p['Role']),
               bio: getPropValue(p['Bio']),
               location: getPropValue(p['Location']),
-              avatarUrl: getImageUrl(page, 'Avatar'),
-              logoUrl: getImageUrl(page, 'Logo'), 
+              // Explicitly disable page cover preference for Avatar and Logo
+              avatarUrl: getImageUrl(page, 'Avatar', false),
+              logoUrl: getImageUrl(page, 'Logo', false), 
               socials: []
           };
           
