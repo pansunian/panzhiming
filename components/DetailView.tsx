@@ -24,17 +24,23 @@ const BrandLogotype = ({ deviceString, className = "" }: { deviceString: string,
     // Base style for the text
     const baseClass = `leading-none select-none ${className}`;
 
-    // Apple - Adjusted for alignment
+    // Apple - Use local SVG from public/fonts/apple.svg
     if (s.includes('apple') || s.includes('iphone')) {
-        return <span className={`${baseClass} font-sans text-[22px] -translate-y-0.5 -mr-1`}></span>;
+        return (
+            <img 
+                src="/fonts/apple.svg" 
+                alt="Apple"
+                className={`h-3.5 w-auto object-contain opacity-90 ${className}`} 
+            />
+        );
     }
-    // Sony - Enlarge image
+    // Sony - Use local SVG from public/fonts/logo-sony.svg
     if (s.includes('sony') || s.includes('ilce') || s.includes('alpha')) {
         return (
             <img 
-                src="https://static.fontbolt.com/themes-452px/634ee25b000f5.jpg" 
+                src="/fonts/logo-sony.svg" 
                 alt="SONY"
-                className={`h-8 w-auto object-contain mix-blend-multiply opacity-80 ${className}`} 
+                className={`h-3 w-auto object-contain opacity-80 ${className}`} 
             />
         );
     }

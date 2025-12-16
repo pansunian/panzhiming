@@ -1,9 +1,9 @@
-# Custom Fonts Directory
+# Custom Fonts & Assets Directory
 
-This folder is reserved for custom font files. 
-Please manually upload your font files here via GitHub or your file manager.
+This folder is reserved for custom font files and specific brand assets. 
+Please manually upload your files here via GitHub or your file manager.
 
-## Required Files:
+## Required Fonts:
 
 1. **jinghualaosongti.woff** 
    - Used for Titles (Serif)
@@ -13,5 +13,13 @@ Please manually upload your font files here via GitHub or your file manager.
    - Used for Body Text (Sans mapping)
    - CSS Reference: `font-family: 'MyCustomBody'`
 
+## Required SVGs (Logos):
+
+1. **apple.svg**
+   - Used in Gallery Details for Apple/iPhone devices.
+
+2. **logo-sony.svg**
+   - Used in Gallery Details for Sony devices.
+
 ## Note:
-Do not remove this folder. The `index.html` file is configured to look for fonts in this specific path.
+Do not remove this folder. The `index.html` and `DetailView.tsx` files are configured to look for files in this specific path.
