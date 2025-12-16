@@ -67,21 +67,24 @@ const defaultThoughts: Thought[] = [
     content: "设计的本质不是为了装饰，而是为了解决问题。但在解决问题的过程中，我们不妨让它变得更浪漫一些。",
     date: "2024-02-14",
     time: "23:45",
-    tags: ["Design", "Life"]
+    tags: ["Design", "Life"],
+    featured: true
   },
   {
     id: "demo-t2",
     content: "今天在咖啡馆听到一首很老的爵士乐，突然意识到，所谓“复古”其实是我们对未曾经历的时代的乡愁。",
     date: "2024-02-12",
     time: "14:20",
-    tags: ["Music", "Mood"]
+    tags: ["Music", "Mood"],
+    featured: true
   },
   {
     id: "demo-t3",
     content: "保持好奇心，保持饥饿。Stay foolish, stay hungry.",
     date: "2024-02-01",
     time: "09:00",
-    tags: ["Quote"]
+    tags: ["Quote"],
+    featured: true
   }
 ];
 
@@ -198,6 +201,8 @@ const App: React.FC = () => {
   // Filter Data for Home Page (Featured Only)
   const featuredGallery = photoGroups.filter(g => g.featured);
   const featuredPosts = posts.filter(p => p.featured);
+  // Filter Featured Thoughts and slice to top 10
+  const featuredThoughts = thoughts.filter(t => t.featured).slice(0, 10);
 
   return (
     <div className="min-h-screen bg-texture text-ink pb-12 font-sans selection:bg-ink selection:text-paper">
@@ -245,10 +250,10 @@ const App: React.FC = () => {
                 </div>
              )}
 
-             {/* RECENT THOUGHTS (Added back to Home) */}
-             {thoughts.length > 0 && (
+             {/* RECENT FEATURED THOUGHTS (Top 10) */}
+             {featuredThoughts.length > 0 && (
                  <div>
-                    <ThoughtSection thoughts={thoughts.slice(0, 2)} />
+                    <ThoughtSection thoughts={featuredThoughts} />
                     <div className="text-center -mt-8 mb-8">
                        <button onClick={() => handleNavigate('thoughts')} className="inline-flex items-center gap-2 font-mono text-xs text-stone-500 hover:text-ink transition-colors border-b border-transparent hover:border-stone-400 pb-0.5">
                           READ ALL NOTES <ArrowRight size={12} />

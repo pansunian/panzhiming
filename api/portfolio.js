@@ -3,15 +3,6 @@ const { Client } = require('@notionhq/client');
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
 
-  // 1. Map IDs to Names for better error messages
-  const DB_MAP = {
-    [process.env.NOTION_PROFILE_DB_ID]: 'NOTION_PROFILE_DB_ID (Profile)',
-    [process.env.NOTION_GALLERY_DB_ID]: 'NOTION_GALLERY_DB_ID (Gallery)',
-    [process.env.NOTION_THOUGHTS_DB_ID]: 'NOTION_THOUGHTS_DB_ID (Thoughts)',
-    [process.env.NOTION_BLOG_DB_ID]: 'NOTION_BLOG_DB_ID (Blog)',
-    [process.env.NOTION_CONTACT_DB_ID]: 'NOTION_CONTACT_DB_ID (Contact)'
-  };
-
   const requiredEnv = [
     'NOTION_API_KEY',
     'NOTION_PROFILE_DB_ID',
@@ -38,7 +29,6 @@ module.exports = async function handler(req, res) {
   
   const getRichText = (props, key) => safeGet(props, key, 'rich_text')?.[0]?.plain_text || '';
   
-  // Robust Title Getter: Tries 'Title' first, then 'Name' (Notion default)
   const getTitle = (props, keys = ['Title', 'Name']) => {
       const keyList = Array.isArray(keys) ? keys : [keys];
       for (const k of keyList) {
@@ -48,9 +38,7 @@ module.exports = async function handler(req, res) {
       return 'Untitled';
   };
 
-  // Robust Image Getter: Tries Property 'Cover' first, then Page Cover
   const getImageUrl = (page, propertyKey = 'Cover') => {
-      // 1. Try property
       const props = page.properties;
       if (props && props[propertyKey]) {
           const files = props[propertyKey].files;
@@ -58,7 +46,6 @@ module.exports = async function handler(req, res) {
               return files[0].file?.url || files[0].external?.url;
           }
       }
-      // 2. Try native Page Cover
       if (page.cover) {
           return page.cover.file?.url || page.cover.external?.url;
       }
@@ -73,11 +60,23 @@ module.exports = async function handler(req, res) {
   // Helper to handle Notion errors gracefully
   const fetchDatabase = async (dbId, name, mapper) => {
     try {
+        // CHANGED: Removed "sorts: [{ property: 'Date' ... }]" 
+        // This prevents crashes if the DB lacks a "Date" column or it's named differently.
+        // We will sort in Javascript instead.
         const response = await notion.databases.query({
             database_id: dbId,
-            sorts: [{ property: 'Date', direction: 'descending' }] 
         });
-        return response.results.map(mapper);
+        
+        let results = response.results.map(mapper);
+        
+        // Sort in memory (Newest first)
+        results.sort((a, b) => {
+            const dateA = a.date || '0000-00-00';
+            const dateB = b.date || '0000-00-00';
+            return dateB.localeCompare(dateA);
+        });
+
+        return results;
     } catch (error) {
         console.error(`Error fetching ${name}:`, error.message);
         let msg = error.message;
@@ -105,7 +104,7 @@ module.exports = async function handler(req, res) {
               role: getRichText(p, 'Role'),
               bio: getRichText(p, 'Bio'),
               location: getRichText(p, 'Location'),
-              avatarUrl: getImageUrl(page, 'Avatar'), // Use robust image getter
+              avatarUrl: getImageUrl(page, 'Avatar'),
               logoUrl: getImageUrl(page, 'Logo'), 
               socials: []
           };
@@ -130,7 +129,7 @@ module.exports = async function handler(req, res) {
           date: p.Date?.date?.start || '',
           ticketNumber: getRichText(p, 'TicketNumber'),
           description: getRichText(p, 'Description'),
-          coverUrl: getImageUrl(page, 'Cover'), // Robust image getter
+          coverUrl: getImageUrl(page, 'Cover'),
           images: getAllFileUrls(p, 'Images'),
           featured: p.Featured?.checkbox || false
       };
@@ -141,10 +140,11 @@ module.exports = async function handler(req, res) {
       const p = page.properties;
       return {
           id: page.id,
-          content: getTitle(p, ['Content', 'Name', 'Title']), // Flexible title
+          content: getTitle(p, ['Content', 'Name', 'Title']),
           date: p.Date?.date?.start || new Date(page.created_time).toISOString().split('T')[0],
-          time: '',
-          tags: p.Tags?.multi_select?.map(t => t.name) || []
+          time: '', 
+          tags: p.Tags?.multi_select?.map(t => t.name) || [],
+          featured: p.Featured?.checkbox || false // Added Featured support
       };
   });
 
@@ -153,13 +153,13 @@ module.exports = async function handler(req, res) {
       const p = page.properties;
       return {
           id: page.id,
-          title: getTitle(p, ['Title', 'Name']), // Support default 'Name' property
+          title: getTitle(p, ['Title', 'Name']),
           excerpt: getRichText(p, 'Excerpt'),
-          date: p.Date?.date?.start || '',
+          date: p.Date?.date?.start || '', // Safe access, won't crash if missing
           readTime: p.ReadTime?.select?.name || '5 MIN',
           category: p.Category?.select?.name || '随笔',
-          imageUrl: getImageUrl(page, 'Cover'), // Support Page Cover
-          content: [],
+          imageUrl: getImageUrl(page, 'Cover'),
+          content: [], 
           featured: p.Featured?.checkbox || false
       };
   });

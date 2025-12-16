@@ -1,3 +1,4 @@
+
 export interface SocialLink {
   platform: string;
   url: string;
@@ -33,6 +34,7 @@ export interface Thought {
   date: string;
   time: string;
   tags: string[];
+  featured?: boolean; // New: Controls visibility on Home
 }
 
 export interface BlogPost {
