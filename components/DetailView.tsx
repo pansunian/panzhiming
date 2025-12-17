@@ -145,7 +145,8 @@ const GalleryItem: React.FC<{ img: GalleryImage, idx: number }> = ({ img, idx })
              <div className="flex justify-between items-center mt-4 px-3">
                   <div className="flex flex-col gap-1.5 items-start">
                       {/* Font Update: Removed font-sans (custom font), added font-[system-ui] for default sans */}
-                      <span className="font-[system-ui,sans-serif] font-medium text-[10px] uppercase leading-none tracking-wider text-ink">
+                      {/* Updated: tracking-wider -> tracking-tight for tighter spacing */}
+                      <span className="font-[system-ui,sans-serif] font-medium text-[10px] uppercase leading-none tracking-tight text-ink">
                           {parsed.device || 'DIGITAL'}
                       </span>
                       <span className="font-mono text-[8px] text-stone-400 leading-none">
@@ -156,14 +157,14 @@ const GalleryItem: React.FC<{ img: GalleryImage, idx: number }> = ({ img, idx })
                       <div className="mr-3 shrink-0 flex items-center text-ink opacity-80">
                           <BrandLogotype deviceString={parsed.device} />
                       </div>
-                      <div className="w-[1px] h-3 bg-stone-200 mr-3 shrink-0"></div>
+                      {/* Updated: h-3 -> h-5 to match right text height */}
+                      <div className="w-[1px] h-5 bg-stone-200 mr-3 shrink-0"></div>
                       <div className="flex flex-col items-start justify-center">
                           {/* 
                             Updated: 
-                            1. Added 'translate-y-[2px]' to shift text down visually as requested.
-                            2. Kept line-height tight.
+                            1. translate-y-[2px] -> translate-y-[1px] (moved up 1px).
                           */}
-                          <span className="font-[system-ui,sans-serif] font-medium text-[10px] text-ink leading-none mb-0.5 translate-y-[2px]">
+                          <span className="font-[system-ui,sans-serif] font-medium text-[10px] text-ink leading-none mb-0.5 translate-y-[1px]">
                               {parsed.locationMain}
                           </span>
                           {parsed.locationSub && (
