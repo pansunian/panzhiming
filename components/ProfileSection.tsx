@@ -62,7 +62,8 @@ export const ProfileSection: React.FC<Props> = ({ profile, onNavigate, onOpenMan
       <TicketBase className="w-full rounded-2xl flex flex-col">
         
         {/* Top Section: Visual */}
-        <div className="relative aspect-[4/5] w-full rounded-t-2xl overflow-hidden">
+        {/* Updated: aspect-[3/4] for mobile (taller), md:aspect-[4/5] for desktop */}
+        <div className="relative aspect-[3/4] md:aspect-[4/5] w-full rounded-t-2xl overflow-hidden">
             <img 
                 src={profile.avatarUrl} 
                 alt="Profile"
@@ -98,7 +99,8 @@ export const ProfileSection: React.FC<Props> = ({ profile, onNavigate, onOpenMan
                          <p className="text-[10px] opacity-70 tracking-widest mb-1">STARRING / 主演</p>
                          <p className="text-2xl font-serif font-bold">{profile.name}</p>
                      </div>
-                     <div className="text-right">
+                     {/* Updated: Added -translate-y-0.5 to move text up approx 2px */}
+                     <div className="text-right -translate-y-0.5">
                          <p className="text-[10px] opacity-70 tracking-widest mb-1">LOCATION / 坐标</p>
                          <p className="font-mono text-sm">{profile.location}</p>
                      </div>

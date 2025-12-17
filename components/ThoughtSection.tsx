@@ -1,6 +1,6 @@
 import React from 'react';
 import { Thought } from '../types';
-import { BarcodeHorizontal } from './TicketUI';
+import { BarcodeHorizontal, Notch, DashedLine } from './TicketUI';
 import { ArrowRight } from 'lucide-react';
 
 interface Props {
@@ -12,7 +12,9 @@ interface Props {
 export const ThoughtSection: React.FC<Props> = ({ thoughts, id, onViewAll }) => {
   return (
     <section id={id} className="mb-24 flex flex-col items-center w-full scroll-mt-12">
-      <div className="flex items-end justify-between mb-8 px-2 w-full">
+      
+      {/* Title Header */}
+      <div className="flex items-end justify-between px-5 py-6 w-full border-b border-dashed border-stone-200 relative">
          <div className="flex items-end gap-3">
             <h2 className="font-serif text-2xl font-bold text-ink">碎碎念</h2>
             <span className="font-mono text-xs text-stone-500 mb-1">/ THOUGHTS</span>
@@ -25,10 +27,8 @@ export const ThoughtSection: React.FC<Props> = ({ thoughts, id, onViewAll }) => 
       </div>
 
       <div className="w-full">
-          {/* Receipt Top */}
-          <div className="h-2 w-full jagged-top bg-paper"></div>
           
-          <div className="bg-paper px-6 py-8 border-x border-stone-100">
+          <div className="bg-paper px-6 py-8">
               {/* Header */}
               <div className="text-center border-b border-dashed border-stone-300 pb-6 mb-6">
                   <h3 className="font-serif font-bold text-lg mb-1 tracking-widest">思维碎片商店</h3>
@@ -39,12 +39,15 @@ export const ThoughtSection: React.FC<Props> = ({ thoughts, id, onViewAll }) => 
               </div>
 
               {/* Items */}
-              <div className="space-y-8 font-mono text-sm">
-                  {thoughts.map((thought) => (
+              <div className="space-y-8">
+                  {thoughts.map((thought, index) => (
                       <div key={thought.id} className="group">
-                          <div className="flex justify-between text-[9px] text-stone-400 mb-2">
-                              <span>ITEM #{thought.id.padStart(4, '0')}</span>
-                              <span>{thought.date} {thought.time}</span>
+                          <div className="flex justify-between items-baseline mb-2">
+                              {/* Updated: Removed font-bold */}
+                              <span className="text-[10px] text-stone-300 font-sans tracking-widest">
+                                  {String(index + 1).padStart(3, '0')}
+                              </span>
+                              <span className="text-[9px] font-mono text-stone-400">{thought.date} {thought.time}</span>
                           </div>
                           <p className="font-serif text-ink text-[15px] leading-7 text-justify mb-2">
                               {thought.content}
@@ -68,9 +71,6 @@ export const ThoughtSection: React.FC<Props> = ({ thoughts, id, onViewAll }) => 
                   <p className="font-serif italic text-[10px] text-stone-400 mt-2">Thanks for visiting</p>
               </div>
           </div>
-
-          {/* Receipt Bottom */}
-          <div className="h-3 w-full jagged-bottom bg-paper"></div>
       </div>
     </section>
   );
