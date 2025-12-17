@@ -24,8 +24,9 @@ export const NavBar: React.FC<NavBarProps> = ({ onNavigate, onManualClick, activ
   };
 
   return (
-    // Updated: 'relative' -> 'sticky top-0', added 'backdrop-blur-md', changed bg-paper to bg-paper/90
-    <div className="sticky top-0 z-50 w-full bg-paper/90 backdrop-blur-md border-b-2 border-stone-800 shadow-sm supports-[backdrop-filter]:bg-paper/85 transition-all duration-300">
+    // Updated: Changed from 'sticky top-0 ... backdrop-blur-md' to 'relative'
+    // Removed backdrop-blur and transparency since it is no longer overlaying content
+    <div className="relative z-50 w-full bg-paper border-b-2 border-stone-800 shadow-sm transition-all duration-300">
       <div className="max-w-[452px] mx-auto h-14 flex items-stretch justify-between relative px-0">
         
         {/* Left: Logo Area */}
@@ -73,7 +74,6 @@ export const NavBar: React.FC<NavBarProps> = ({ onNavigate, onManualClick, activ
 
         {/* Dropdown Overlay */}
         {isMenuOpen && (
-            // Updated: Removed 'border-b-2 border-x-2 border-stone-800'
             <div className="absolute top-full right-0 w-48 bg-paper shadow-xl z-10 animate-in slide-in-from-top-2 duration-300 rounded-b-sm">
                 <div className="flex flex-col">
                     {links.map((link) => (
