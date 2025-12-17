@@ -53,7 +53,8 @@ export const NavBar: React.FC<NavBarProps> = ({ onNavigate, onManualClick, activ
                 onClick={onManualClick}
                 className="flex items-center gap-2 px-4 h-full hover:bg-stone-50 transition-colors group"
             >
-                <span className="font-serif font-bold text-[10px] text-stone-500 group-hover:text-ink transition-colors">我的说明书</span>
+                {/* Updated: text-[10px] -> text-xs for larger size */}
+                <span className="font-serif font-bold text-xs text-stone-500 group-hover:text-ink transition-colors">我的说明书</span>
                 <BookOpen size={14} className="opacity-40 group-hover:opacity-80 transition-opacity" />
             </button>
 
@@ -71,7 +72,8 @@ export const NavBar: React.FC<NavBarProps> = ({ onNavigate, onManualClick, activ
 
         {/* Dropdown Overlay */}
         {isMenuOpen && (
-            <div className="absolute top-full right-0 w-48 bg-paper border-b-2 border-x-2 border-stone-800 shadow-xl z-10 animate-in slide-in-from-top-2 duration-300 rounded-b-sm">
+            // Updated: Removed 'border-b-2 border-x-2 border-stone-800'
+            <div className="absolute top-full right-0 w-48 bg-paper shadow-xl z-10 animate-in slide-in-from-top-2 duration-300 rounded-b-sm">
                 <div className="flex flex-col">
                     {links.map((link) => (
                         <button

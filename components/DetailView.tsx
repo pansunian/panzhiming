@@ -163,13 +163,17 @@ const GalleryItem: React.FC<{ img: GalleryImage, idx: number }> = ({ img, idx })
                       <div className="flex flex-col items-start justify-center">
                           {/* 
                             Updated: 
-                            1. translate-y-[2px] -> translate-y-[1px] (moved up 1px).
+                            1. Removed translate-y-[1px] (moves up 1px)
                           */}
-                          <span className="font-[system-ui,sans-serif] font-medium text-[10px] text-ink leading-none mb-0.5 translate-y-[1px]">
+                          <span className="font-[system-ui,sans-serif] font-medium text-[10px] text-ink leading-none mb-0.5">
                               {parsed.locationMain}
                           </span>
                           {parsed.locationSub && (
-                              <span className="text-[8px] text-stone-500 leading-none font-[system-ui,sans-serif] translate-y-[2px]">
+                              /* 
+                                Updated: 
+                                2. translate-y-[2px] -> translate-y-[1px] (moves up 1px)
+                              */
+                              <span className="text-[8px] text-stone-500 leading-none font-[system-ui,sans-serif] translate-y-[1px]">
                                   {parsed.locationSub}
                               </span>
                           )}
@@ -241,7 +245,8 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
 
   const renderBlock = (block: any, idx: number) => {
       switch (block.type) {
-          case 'paragraph': return <p key={idx} className="mb-6 leading-loose text-ink/90"><RichTextRenderer content={block.content} /></p>;
+          // Updated: Added text-justify to paragraph
+          case 'paragraph': return <p key={idx} className="mb-6 leading-loose text-ink/90 text-justify"><RichTextRenderer content={block.content} /></p>;
           case 'heading_1': return <h2 key={idx} className="text-2xl font-serif font-bold mt-10 mb-6 border-b border-stone-200 pb-2"><RichTextRenderer content={block.content} /></h2>;
           case 'heading_2': return <h3 key={idx} className="text-xl font-serif font-bold mt-8 mb-4"><RichTextRenderer content={block.content} /></h3>;
           case 'heading_3': return <h4 key={idx} className="text-lg font-serif font-bold mt-6 mb-3 text-brand-accent"><RichTextRenderer content={block.content} /></h4>;
@@ -260,12 +265,13 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-texture overflow-y-auto animate-in fade-in duration-300">
+    // Updated: Changed from fixed positioning to natural flow (min-h-screen) to allow native mobile overscroll behavior
+    <div className="min-h-screen w-full bg-texture animate-in fade-in duration-300">
       
       <NavBar onNavigate={onNavigate} onManualClick={onManualClick} activeView={type} logoUrl={logoUrl} />
 
       {/* REVERTED: max-w-[452px] for consistent single-column ticket style */}
-      <div className="w-full max-w-[452px] mx-auto min-h-screen pb-24 pt-12">
+      <div className="w-full max-w-[452px] mx-auto pb-24 pt-12">
         <div className="px-4 animate-in slide-in-from-bottom-8 duration-500 delay-100">
           
           <div>
