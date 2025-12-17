@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { TicketBase, DashedLine, Notch, BarcodeHorizontal } from './TicketUI';
 import { Send, Check, Loader2, AlertCircle } from 'lucide-react';
 
-export const ContactSection = () => {
+interface ContactSectionProps {
+    logoUrl?: string;
+}
+
+export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string>('');
 
@@ -42,7 +46,8 @@ export const ContactSection = () => {
   };
 
   return (
-    <section id="contact" className="mb-24 scroll-mt-12">
+    // Updated: Reduced margin-bottom from mb-24 to mb-8 to reduce whitespace
+    <section id="contact" className="mb-8 scroll-mt-12">
        <div className="flex items-end gap-4 mb-10 px-2">
          <h2 className="font-serif text-2xl font-bold text-ink">留言</h2>
          <span className="font-mono text-xs text-stone-500 mb-1">/ CONTACT</span>
@@ -114,7 +119,6 @@ export const ContactSection = () => {
                                 <AlertCircle size={14} className="mt-0.5 shrink-0" />
                                 <div>
                                     <p className="font-bold mb-1">发送失败</p>
-                                    {/* Updated: Added whitespace-pre-wrap to handle newlines in error message */}
                                     <p className="opacity-80 font-mono whitespace-pre-wrap leading-relaxed">{errorMessage}</p>
                                 </div>
                             </div>
@@ -132,7 +136,8 @@ export const ContactSection = () => {
                                 </>
                             ) : (
                                 <>
-                                    <span>投递明信片</span>
+                                    {/* Updated: Changed button text to "发送留言" */}
+                                    <span>发送留言</span>
                                     <Send size={12} className="group-hover:translate-x-1 transition-transform" />
                                 </>
                             )}
@@ -148,18 +153,28 @@ export const ContactSection = () => {
                  <DashedLine className="absolute top-0 left-4 right-4 border-stone-500/20" />
 
                  <div className="my-6">
+                     {/* Updated: Slogan on a single line */}
                      <p className="font-serif font-bold text-xl tracking-wide mb-3 leading-relaxed">
-                        "Not all those who wander are lost."
+                        有时热衷科技 &nbsp; 有时沉溺文艺
                      </p>
-                     <p className="font-mono text-[9px] opacity-60 uppercase tracking-widest">
-                         J.R.R. Tolkien
-                     </p>
+                     
+                     {/* Signature */}
+                     <div className="mt-4 flex justify-center opacity-80">
+                         {logoUrl ? (
+                             <img src={logoUrl} alt="Signature" className="h-6 w-auto object-contain mix-blend-multiply" />
+                         ) : (
+                             <span className="font-serif italic text-sm">先见志明</span>
+                         )}
+                     </div>
                  </div>
 
-                 <div className="mt-8 pt-4 border-t border-stone-500/10 flex justify-between items-end opacity-40">
-                     <span className="font-mono text-[8px]">ADMIT ONE</span>
-                     <BarcodeHorizontal className="h-5 w-24 mix-blend-multiply" />
-                     <span className="font-mono text-[8px]">FINAL STUB</span>
+                 {/* Updated Barcode Section with Side Text */}
+                 <div className="mt-8 pt-4 border-t border-stone-500/10 flex justify-between items-center opacity-40 gap-2">
+                     <span className="font-mono text-[9px] text-stone-600 whitespace-nowrap">PANZHIMING.COM</span>
+                     <div className="flex-grow flex justify-center overflow-hidden">
+                        <BarcodeHorizontal className="h-6 w-auto max-w-[120px] mix-blend-multiply" />
+                     </div>
+                     <span className="font-mono text-[9px] text-stone-600 whitespace-nowrap">Power by Notion</span>
                  </div>
             </div>
 

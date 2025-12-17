@@ -333,12 +333,10 @@ const App: React.FC = () => {
                     </div>
                  )}
                  
-                 <ContactSection />
+                 {/* Updated: Passing logoUrl to ContactSection */}
+                 <ContactSection logoUrl={profile.logoUrl} />
 
-                 {/* Footer */}
-                 <div className="text-center py-8 opacity-30 font-mono text-[9px] uppercase tracking-widest select-none">
-                     <p>Life Frames Archive &copy; {new Date().getFullYear()}</p>
-                 </div>
+                 {/* Removed old footer div that was here */}
                </div>
             )}
 

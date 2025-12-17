@@ -14,7 +14,8 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const blocks = await notion.blocks.children.list({
+    // 1. Fetch root blocks
+    const rootResponse = await notion.blocks.children.list({
       block_id: pageId,
     });
 
@@ -28,70 +29,102 @@ module.exports = async function handler(req, res) {
         }));
     };
 
+    // Helper to transform a single Notion block into our frontend schema
+    const transformBlock = (block) => {
+        if (block.type === 'paragraph') {
+          return {
+              type: 'paragraph',
+              content: parseRichText(block.paragraph.rich_text)
+          };
+        } 
+        else if (block.type.startsWith('heading_')) {
+          const type = block.type; // heading_1, heading_2, etc
+          return {
+              type: type,
+              content: parseRichText(block[type].rich_text)
+          };
+        }
+        else if (block.type === 'callout') {
+          return {
+              type: 'callout',
+              icon: block.callout.icon,
+              content: parseRichText(block.callout.rich_text)
+          };
+        }
+        else if (block.type === 'quote') {
+          return {
+              type: 'quote',
+              content: parseRichText(block.quote.rich_text)
+          };
+        }
+        else if (block.type === 'bulleted_list_item' || block.type === 'numbered_list_item') {
+          return {
+              type: 'list_item',
+              listType: block.type === 'numbered_list_item' ? 'ol' : 'ul',
+              content: parseRichText(block[block.type].rich_text)
+          };
+        }
+        else if (block.type === 'toggle') {
+          return {
+              type: 'toggle',
+              content: parseRichText(block.toggle.rich_text),
+              hasChildren: block.has_children
+          };
+        }
+        else if (block.type === 'image') {
+            const src = block.image.type === 'external' ? block.image.external.url : block.image.file.url;
+            const caption = parseRichText(block.image.caption);
+            return {
+                type: 'image',
+                src: src,
+                caption: caption
+            };
+        }
+        else if (block.type === 'bookmark') {
+            return {
+                type: 'bookmark',
+                url: block.bookmark.url,
+                caption: parseRichText(block.bookmark.caption)
+            };
+        }
+        else if (block.type === 'divider') {
+            return { type: 'divider' };
+        }
+        return null;
+    };
+
     const content = [];
 
-    for (const block of blocks.results) {
-      if (block.type === 'paragraph') {
-        content.push({
-            type: 'paragraph',
-            content: parseRichText(block.paragraph.rich_text)
-        });
-      } 
-      else if (block.type.startsWith('heading_')) {
-        const type = block.type; // heading_1, heading_2, etc
-        content.push({
-            type: type,
-            content: parseRichText(block[type].rich_text)
-        });
-      }
-      else if (block.type === 'callout') {
-        content.push({
-            type: 'callout',
-            icon: block.callout.icon,
-            content: parseRichText(block.callout.rich_text)
-        });
-      }
-      else if (block.type === 'quote') {
-        content.push({
-            type: 'quote',
-            content: parseRichText(block.quote.rich_text)
-        });
-      }
-      else if (block.type === 'bulleted_list_item' || block.type === 'numbered_list_item') {
-        content.push({
-            type: 'list_item',
-            listType: block.type === 'numbered_list_item' ? 'ol' : 'ul',
-            content: parseRichText(block[block.type].rich_text)
-        });
-      }
-      else if (block.type === 'toggle') {
-        content.push({
-            type: 'toggle',
-            content: parseRichText(block.toggle.rich_text),
-            // Note: Fetching children of toggles would require recursive calls. 
-            // For performance in this simple demo, we might skip deep nested children or handle them simply.
-            hasChildren: block.has_children
-        });
-      }
-      else if (block.type === 'image') {
-          const src = block.image.type === 'external' ? block.image.external.url : block.image.file.url;
-          const caption = parseRichText(block.image.caption);
-          content.push({
-              type: 'image',
-              src: src,
-              caption: caption
-          });
-      }
-      else if (block.type === 'bookmark') {
-          content.push({
-              type: 'bookmark',
-              url: block.bookmark.url,
-              caption: parseRichText(block.bookmark.caption)
-          });
-      }
-      else if (block.type === 'divider') {
-          content.push({ type: 'divider' });
-      }
+    // Iterate through blocks and handle Column Lists specifically
+    for (const block of rootResponse.results) {
+        if (block.type === 'column_list') {
+            try {
+                // 1. Fetch Columns
+                const columnsResponse = await notion.blocks.children.list({ block_id: block.id });
+                const columns = columnsResponse.results;
+
+                // 2. Iterate Columns
+                for (const column of columns) {
+                    if (column.type === 'column') {
+                        // 3. Fetch Content of Column
+                        const columnBlocksResponse = await notion.blocks.children.list({ block_id: column.id });
+                        const columnBlocks = columnBlocksResponse.results;
+                        
+                        // 4. Transform and Add to Content Stream (Flattening)
+                        for (const innerBlock of columnBlocks) {
+                            const transformed = transformBlock(innerBlock);
+                            if (transformed) content.push(transformed);
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn('Failed to fetch column content:', err);
+                // Continue with other blocks even if columns fail
+            }
+        } else {
+            const transformed = transformBlock(block);
+            if (transformed) content.push(transformed);
+        }
     }
 
     res.status(200).json({ content });

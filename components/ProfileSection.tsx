@@ -149,13 +149,15 @@ export const ProfileSection: React.FC<Props> = ({ profile, onNavigate, onOpenMan
                                 className="flex items-center gap-1.5 text-xs font-bold font-mono uppercase text-ink/70 hover:text-brand-accent transition-colors group"
                              >
                                  <Icon size={14} className="group-hover:scale-110 transition-transform" />
-                                 <span className="border-b border-transparent group-hover:border-brand-accent pb-0.5">{label}</span>
+                                 {/* Updated: Removed pb-0.5, added pt-[2px] and leading-none to lower the text baseline visually for Chinese characters */}
+                                 <span className="border-b border-transparent group-hover:border-brand-accent leading-none pt-[2px]">{label}</span>
                              </a>
                          );
                      })}
                  </div>
                  <BarcodeHorizontal className="h-10 opacity-60 mix-blend-multiply mt-2" />
-                 <p className="text-[10px] font-mono text-stone-400">TICKET NO. 88392019-X</p>
+                 {/* Updated: Changed text to PANZHIMING.COM */}
+                 <p className="text-[10px] font-mono text-stone-400">PANZHIMING.COM</p>
              </div>
         </div>
 

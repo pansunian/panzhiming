@@ -71,6 +71,30 @@ module.exports = async function handler(req, res) {
       return id;
   };
 
+  // Helper to fetch first image from content blocks
+  const fetchFirstContentImage = async (pageId) => {
+      try {
+          const blocks = await notion.blocks.children.list({
+              block_id: pageId,
+              page_size: 20 // Fetch small batch to find image quickly
+          });
+          for (const block of blocks.results) {
+              if (block.type === 'image') {
+                  return block.image.type === 'external' ? block.image.external.url : block.image.file.url;
+              }
+              // Check inside column list for images
+              if (block.type === 'column_list') {
+                  // We skip deep recursion for performance in list view, 
+                  // but could add it if strictly necessary. 
+                  // Assuming main image is usually top-level or standard.
+              }
+          }
+      } catch (e) {
+          console.warn(`Failed to fetch blocks for ${pageId}`, e.message);
+      }
+      return null;
+  };
+
   const fetchDatabase = async (dbId, name, mapper) => {
     try {
         const response = await notion.databases.query({ database_id: dbId });
@@ -223,6 +247,40 @@ module.exports = async function handler(req, res) {
       }
   };
 
+  // 3. Define Blog Fetcher (with Content Image Extraction)
+  const fetchBlogPosts = async () => {
+      const dbId = process.env.NOTION_BLOG_DB_ID;
+      const res = await fetchDatabase(dbId, 'Blog', page => {
+          const p = page.properties;
+          return {
+              id: page.id,
+              title: getPropValue(p['Title'] || p['Name']),
+              excerpt: getPropValue(p['Excerpt']),
+              date: p['Date']?.date?.start || '', 
+              readTime: p['ReadTime']?.select?.name || '5 MIN',
+              category: p['Category']?.select?.name || '随笔',
+              // Initially map standard cover to fallback
+              fallbackImageUrl: getImageUrl(page, 'Cover', false),
+              content: [], 
+              featured: p['Featured']?.checkbox || false
+          };
+      });
+
+      if (res.error || !Array.isArray(res)) return res;
+
+      // Enhance posts with first content image
+      // Use Promise.all to fetch concurrently. Note: Rate limiting might apply for large DBs.
+      const enhancedPosts = await Promise.all(res.map(async (post) => {
+          const contentImage = await fetchFirstContentImage(post.id);
+          return {
+              ...post,
+              imageUrl: contentImage || post.fallbackImageUrl
+          };
+      }));
+
+      return enhancedPosts;
+  };
+
   // --- EXECUTE ALL REQUESTS IN PARALLEL ---
   
   const [profileResult, galleryRes, thoughtsRes, postsRes, manualPage] = await Promise.all([
@@ -253,20 +311,7 @@ module.exports = async function handler(req, res) {
               featured: p['Featured']?.checkbox || false
           };
       }),
-      fetchDatabase(process.env.NOTION_BLOG_DB_ID, 'Blog', page => {
-          const p = page.properties;
-          return {
-              id: page.id,
-              title: getPropValue(p['Title'] || p['Name']),
-              excerpt: getPropValue(p['Excerpt']),
-              date: p['Date']?.date?.start || '', 
-              readTime: p['ReadTime']?.select?.name || '5 MIN',
-              category: p['Category']?.select?.name || '随笔',
-              imageUrl: getImageUrl(page, 'Cover', false),
-              content: [], 
-              featured: p['Featured']?.checkbox || false
-          };
-      }),
+      fetchBlogPosts(), // Use the new specialized fetcher
       fetchManual()
   ]);
 
