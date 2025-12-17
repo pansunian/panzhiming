@@ -100,7 +100,7 @@ export const BlogSection: React.FC<Props> = ({ posts, id, onItemClick, onViewAll
          )}
       </div>
 
-      <div className="flex flex-col gap-6 w-full px-2">
+      <div className="flex flex-col gap-6 w-full">
         {posts.map((post, index) => (
             <BlogCard 
                 key={post.id} 

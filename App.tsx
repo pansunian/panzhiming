@@ -7,7 +7,7 @@ import { ContactSection } from './components/ContactSection';
 import { DetailView } from './components/DetailView';
 import { NavBar } from './components/NavBar';
 import { Profile, PhotoGroup, Thought, BlogPost } from './types';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Info } from 'lucide-react';
 
 // --- Default/Fallback Data (Demo Content) ---
 
@@ -123,6 +123,7 @@ const App: React.FC = () => {
   // Data State
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isDemoMode, setIsDemoMode] = useState(false);
 
   const [profile, setProfile] = useState<Profile>(defaultProfile);
   const [photoGroups, setPhotoGroups] = useState<PhotoGroup[]>(defaultPhotoGroups);
@@ -157,17 +158,18 @@ const App: React.FC = () => {
       // 2. Fetch fresh data in the background
       try {
         const res = await fetch('/api/portfolio');
+        
+        // Handle API Failure (e.g. 404 in Dev or 500 in Prod with missing Env)
         if (!res.ok) {
-           const errData = await res.json().catch(() => ({}));
-           // Only show error if we have no cached data
+           console.warn(`API unavailable (Status: ${res.status}). Switching to Demo Mode.`);
            if (!cached) {
-               console.warn("API Error, using demo data:", errData.message);
-               throw new Error(errData.message || 'Failed to fetch data');
-           } else {
-               console.warn("API refresh failed, using cached data.");
-               return; 
+               // If we don't have cached data, we rely on the default state initialized above.
+               // We flag this as Demo Mode to the user.
+               setIsDemoMode(true);
            }
+           return; 
         }
+
         const data = await res.json();
         
         // Update state with fresh data
@@ -180,6 +182,9 @@ const App: React.FC = () => {
         // Update Cache
         localStorage.setItem(CACHE_KEY, JSON.stringify(data));
         
+        // Reset Demo Mode if fetch successful
+        setIsDemoMode(false); 
+        
         if (data.debug) {
             const errors = Object.values(data.debug).filter(Boolean);
             if (errors.length > 0) {
@@ -187,9 +192,10 @@ const App: React.FC = () => {
             }
         }
       } catch (e: any) {
-        console.error(e);
+        console.warn("Network/Fetch error, using fallback data:", e);
+        // If fetch fails completely (e.g. network error), fallback to demo data
         if (!cached) {
-            setErrorMsg(e.message || "Could not load portfolio data.");
+            setIsDemoMode(true);
         }
       } finally {
         setLoading(false);
@@ -259,12 +265,22 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-texture text-ink pb-12 font-sans selection:bg-ink selection:text-paper">
       
-      {/* Error Banner */}
-      {errorMsg && (
+      {/* Demo Mode Banner (Replaces Error Banner) */}
+      {isDemoMode && (
+        <div className="bg-stone-100 border-b border-stone-200 px-4 py-2 flex items-center justify-center gap-2 sticky top-0 z-[60]">
+          <Info className="text-stone-400 shrink-0" size={12} />
+          <p className="text-[10px] text-stone-500 font-mono tracking-wide">
+             PREVIEW MODE / DEMO DATA (API Unavailable)
+          </p>
+        </div>
+      )}
+
+      {/* Error Banner - Only used for explicit critical errors if needed, currently unused in favor of Demo Mode */}
+      {errorMsg && !isDemoMode && (
         <div className="bg-red-50 border-b border-red-200 p-4 flex items-start gap-3 sticky top-0 z-[60]">
           <AlertCircle className="text-red-500 shrink-0 mt-0.5" size={16} />
           <div className="text-xs text-red-700 font-mono">
-            <p className="font-bold mb-1">DEMO MODE / API ERROR</p>
+            <p className="font-bold mb-1">SYSTEM ERROR</p>
             <p>{errorMsg}</p>
           </div>
         </div>
