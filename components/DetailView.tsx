@@ -153,7 +153,8 @@ const GalleryItem: React.FC<{ img: GalleryImage, idx: number }> = ({ img, idx })
                           {parsed.date}
                       </span>
                   </div>
-                  <div className="flex items-center h-full pt-0.5">
+                  {/* Updated: Added -translate-y-[2px] to move the entire block up */}
+                  <div className="flex items-center h-full pt-0.5 -translate-y-[2px]">
                       <div className="mr-3 shrink-0 flex items-center text-ink opacity-80">
                           <BrandLogotype deviceString={parsed.device} />
                       </div>
