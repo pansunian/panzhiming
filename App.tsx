@@ -313,7 +313,8 @@ const App: React.FC = () => {
             
             {/* HOME VIEW */}
             {currentView === 'home' && (
-               <div className="flex flex-col gap-16">
+               /* Updated: gap-16 (64px) -> gap-11 (44px) to reduce spacing by 20px */
+               <div className="flex flex-col gap-11">
                  
                  {/* FEATURED GALLERY */}
                  {featuredGallery.length > 0 && (

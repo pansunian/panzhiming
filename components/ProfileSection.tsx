@@ -52,7 +52,8 @@ const getSocialConfig = (platform: string) => {
 
 export const ProfileSection: React.FC<Props> = ({ profile, onNavigate, onOpenManual }) => {
   return (
-    <div className="flex justify-center w-full mb-24">
+    // Updated: mb-24 (96px) -> mb-20 (80px) to reduce vertical spacing by 16px (approx 20px)
+    <div className="flex justify-center w-full mb-20">
       {/* 
         Updates:
         1. Removed 'shadow-ticket' to flatten the card. This ensures the "Notches" (which are patches of background color)

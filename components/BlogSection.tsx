@@ -25,8 +25,8 @@ const BlogCard: React.FC<{ post: BlogPost; index: number; onClick: (p: BlogPost)
             {/* Ticket Container */}
             <div className="w-full h-full flex items-stretch">
                 
-                {/* Left: Image Section */}
-                <div className="w-28 sm:w-[30%] h-full relative overflow-hidden rounded-l-sm bg-stone-200 shrink-0">
+                {/* Left: Image Section - Increased width from w-28 to w-36 (mobile) and 30% to 38% (sm) */}
+                <div className="w-36 sm:w-[38%] h-full relative overflow-hidden rounded-l-sm bg-stone-200 shrink-0">
                     <img 
                         src={post.imageUrl || `https://picsum.photos/seed/${post.id}/500/300`} 
                         alt={post.title}
