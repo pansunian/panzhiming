@@ -113,8 +113,9 @@ export const ContactSection = () => {
                             <div className="bg-red-50 text-red-600 text-xs p-3 rounded-sm flex items-start gap-2">
                                 <AlertCircle size={14} className="mt-0.5 shrink-0" />
                                 <div>
-                                    <p className="font-bold">发送失败</p>
-                                    <p className="opacity-80 font-mono">{errorMessage}</p>
+                                    <p className="font-bold mb-1">发送失败</p>
+                                    {/* Updated: Added whitespace-pre-wrap to handle newlines in error message */}
+                                    <p className="opacity-80 font-mono whitespace-pre-wrap leading-relaxed">{errorMessage}</p>
                                 </div>
                             </div>
                         )}

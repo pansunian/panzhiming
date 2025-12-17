@@ -12,13 +12,8 @@ module.exports = async function handler(req, res) {
   const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
   const { name, email, message } = body;
 
-  // Debug Log: Check if env vars are loaded (Don't log the full key for security)
-  console.log('[API/Contact] Received request.');
-  console.log('[API/Contact] DB ID Configured:', !!process.env.NOTION_CONTACT_DB_ID);
-  console.log('[API/Contact] API Key Configured:', !!process.env.NOTION_API_KEY);
-
   if (!process.env.NOTION_CONTACT_DB_ID) {
-     return res.status(500).json({ error: 'Server Error: NOTION_CONTACT_DB_ID is missing in Vercel Env Variables.' });
+     return res.status(500).json({ error: '服务器配置错误: 缺少 NOTION_CONTACT_DB_ID 环境变量。' });
   }
 
   try {
@@ -48,28 +43,66 @@ module.exports = async function handler(req, res) {
     res.status(200).json({ success: true, id: response.id });
 
   } catch (error) {
-    // LOG THE REAL ERROR to Vercel Function Logs
-    console.error('[API/Contact] Notion API Error:', JSON.stringify(error.body || error, null, 2));
+    console.error('[API/Contact] Error:', JSON.stringify(error.body || error, null, 2));
     
-    // Return meaningful error to frontend
-    if (error.code === 'object_not_found' || error.message.includes('accessible by this API bot')) {
-        return res.status(500).json({ 
-            error: 'Permission Error', 
-            details: 'Robot cannot access the database. Please go to the Notion Page -> ... Menu -> Connections -> Add your integration.' 
-        });
+    // --- INTELLIGENT DIAGNOSIS ---
+    // If validation fails, let's fetch the DB schema to see what's actually there
+    if (error.code === 'validation_error' || error.status === 400) {
+        try {
+            const db = await notion.databases.retrieve({ database_id: process.env.NOTION_CONTACT_DB_ID });
+            const props = db.properties;
+            const actualKeys = Object.keys(props);
+            
+            // Define what we expect
+            const expectations = [
+                { key: 'Name', type: 'title', label: 'Name (标题/Title)' },
+                { key: 'Email', type: 'email', label: 'Email (邮箱/Email)' },
+                { key: 'Message', type: 'rich_text', label: 'Message (文本/Text)' }
+            ];
+
+            const diagnosis = [];
+            
+            expectations.forEach(exp => {
+                if (!props[exp.key]) {
+                    // Check if it exists but with different case or localized name
+                    const similar = actualKeys.find(k => k.toLowerCase() === exp.key.toLowerCase());
+                    if (similar) {
+                        diagnosis.push(`❌ 列名错误: 您的列名是 "${similar}"，代码需要 "${exp.key}" (注意首字母大写)。`);
+                    } else {
+                        // Check if user has default names like "Tags" or "Date"
+                        if (exp.key === 'Message' && props['Tags']) {
+                             diagnosis.push(`❌ 缺失 "${exp.key}" 列。建议将现有的 "Tags" 列改名为 "Message"。`);
+                        } else {
+                             diagnosis.push(`❌ 缺失 "${exp.key}" 列。`);
+                        }
+                    }
+                } else if (props[exp.key].type !== exp.type) {
+                    diagnosis.push(`⚠️ 类型错误: "${exp.key}" 列应该是 ${exp.type} 类型，当前是 ${props[exp.key].type} 类型。`);
+                }
+            });
+
+            if (diagnosis.length > 0) {
+                return res.status(400).json({
+                    error: '数据库列名不匹配',
+                    details: `您的 Notion 数据库设置与代码不一致:\n\n${diagnosis.join('\n')}\n\n请去 Notion 修改列名，必须完全一致。`
+                });
+            }
+        } catch (diagErr) {
+            console.error('Diagnosis failed:', diagErr);
+        }
     }
 
-    if (error.code === 'validation_error') {
-        return res.status(400).json({
-            error: 'Column Mismatch',
-            details: 'Ensure your Notion Database has columns named exactly: "Name" (Title), "Email" (Email), "Message" (Text).',
-            notionMessage: error.message
+    // Standard Error Handling
+    if (error.code === 'object_not_found' || error.message.includes('accessible by this API bot')) {
+        return res.status(500).json({ 
+            error: '权限错误', 
+            details: '机器人无法访问该数据库。请在 Notion 数据库页面右上角点击 ... -> Add connections -> 选择您的机器人。' 
         });
     }
 
     res.status(500).json({ 
-        error: 'Submission Failed', 
-        details: error.message || 'Unknown error occurred' 
+        error: '提交失败', 
+        details: error.message || '未知错误' 
     });
   }
 }
