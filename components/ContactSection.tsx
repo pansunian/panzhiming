@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { TicketBase, DashedLine, Notch, BarcodeHorizontal } from './TicketUI';
-import { Send, Check, Loader2 } from 'lucide-react';
+import { Send, Check, Loader2, AlertCircle } from 'lucide-react';
 
 export const ContactSection = () => {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus('submitting');
+    setErrorMessage('');
     
     const formData = new FormData(e.currentTarget);
     const data = {
@@ -23,15 +25,19 @@ export const ContactSection = () => {
             body: JSON.stringify(data)
         });
 
+        const result = await res.json();
+
         if (res.ok) {
             setStatus('success');
-            // Reset form after delay if needed, or keep success state
         } else {
+            console.error('Contact Form Error:', result);
             setStatus('error');
+            setErrorMessage(result.details || result.error || 'Failed to send message');
         }
-    } catch (err) {
-        console.error(err);
+    } catch (err: any) {
+        console.error('Network Error:', err);
         setStatus('error');
+        setErrorMessage(err.message || 'Network connection failed');
     }
   };
 
@@ -46,7 +52,6 @@ export const ContactSection = () => {
         {/* Top Edge */}
         <div className="h-3 w-full jagged-top bg-paper"></div>
         
-        {/* Updated: Removed 'border-x border-stone-100' */}
         <TicketBase className="rounded-none bg-paper">
             {/* Form Section */}
             <div className="p-8 pb-12 relative">
@@ -103,6 +108,16 @@ export const ContactSection = () => {
                                 placeholder="写下你的想法..."
                             />
                         </div>
+
+                        {status === 'error' && (
+                            <div className="bg-red-50 text-red-600 text-xs p-3 rounded-sm flex items-start gap-2">
+                                <AlertCircle size={14} className="mt-0.5 shrink-0" />
+                                <div>
+                                    <p className="font-bold">发送失败</p>
+                                    <p className="opacity-80 font-mono">{errorMessage}</p>
+                                </div>
+                            </div>
+                        )}
 
                         <button 
                             type="submit"
