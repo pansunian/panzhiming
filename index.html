@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#fdfbf7" />
+    <meta name="theme-color" content="#e3e1d5" />
     <title>先见志明｜潘志明的个人主页</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -78,10 +78,11 @@
       }
 
       body {
-        /* Updated: Background match NavBar (#fdfbf7) instead of page background (#e3e1d5) */
-        background-color: #fdfbf7; 
+        /* Default to Home style (Grey Texture) */
+        background-color: var(--bg-color); 
+        background-image: var(--noise-url);
+        background-attachment: fixed;
         color: #2b2926;
-        /* Updated: Removed global noise from body. It will be applied to .bg-texture containers */
       }
       
       .bg-texture {

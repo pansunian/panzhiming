@@ -192,8 +192,13 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
   const [loadingContent, setLoadingContent] = useState(false);
   const [coverLoaded, setCoverLoaded] = useState(false);
 
+  // Updated: Set theme color to 'paper' on mount
   useEffect(() => {
     window.scrollTo(0, 0);
+    // Explicitly set theme to paper for detail view
+    document.body.style.backgroundColor = '#fdfbf7';
+    document.body.style.backgroundImage = 'none';
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#fdfbf7');
   }, []);
 
   useEffect(() => {
@@ -265,8 +270,9 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
   };
 
   return (
-    // Updated: Root bg-paper (for address bar match), flex column layout
-    <div className="min-h-screen w-full bg-paper flex flex-col animate-in fade-in duration-300">
+    // Updated: Root is transparent to let body background show through. 
+    // Content wrapper has bg-texture to provide the grey background below the navbar.
+    <div className="min-h-screen w-full flex flex-col animate-in fade-in duration-300">
       
       <NavBar onNavigate={onNavigate} onManualClick={onManualClick} activeView={type} logoUrl={logoUrl} />
 

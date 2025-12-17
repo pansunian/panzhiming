@@ -113,6 +113,22 @@ const defaultPosts: BlogPost[] = [
 // --- Default Data Types ---
 type ViewState = 'home' | 'gallery' | 'thoughts' | 'blog';
 
+// --- Utility: Set Theme Color ---
+const setGlobalTheme = (mode: 'home' | 'paper') => {
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (mode === 'home') {
+        document.body.style.backgroundColor = '#e3e1d5';
+        // Re-enable global noise on body for home
+        document.body.style.backgroundImage = 'var(--noise-url)';
+        if (meta) meta.setAttribute('content', '#e3e1d5');
+    } else {
+        document.body.style.backgroundColor = '#fdfbf7';
+        // Disable noise on body for paper views (noise is applied to content div)
+        document.body.style.backgroundImage = 'none';
+        if (meta) meta.setAttribute('content', '#fdfbf7');
+    }
+};
+
 // --- Application Component ---
 
 const App: React.FC = () => {
@@ -134,6 +150,17 @@ const App: React.FC = () => {
   const [manualPage, setManualPage] = useState<BlogPost | null>(null);
 
   const CACHE_KEY = 'portfolio_data_v1';
+
+  // --- Theme Management Effect ---
+  useEffect(() => {
+    if (selectedItem) return; // Handled by DetailView
+    
+    if (currentView === 'home') {
+        setGlobalTheme('home');
+    } else {
+        setGlobalTheme('paper');
+    }
+  }, [currentView, selectedItem]);
 
   useEffect(() => {
     const initData = async () => {
@@ -263,9 +290,9 @@ const App: React.FC = () => {
   const featuredThoughts = thoughts.filter(t => t.featured).slice(0, 10);
 
   return (
-    // Updated: Root is now bg-paper to match browser chrome (Safari address bar). 
-    // Content is wrapped in bg-texture.
-    <div className="min-h-screen bg-paper text-ink font-sans selection:bg-ink selection:text-paper flex flex-col">
+    // Updated: Root is transparent to let body background show through. 
+    // This allows the address bar to match the body background naturally.
+    <div className="min-h-screen flex flex-col text-ink font-sans selection:bg-ink selection:text-paper">
       
       {/* Demo Mode Banner (Replaces Error Banner) */}
       {isDemoMode && (
@@ -298,8 +325,10 @@ const App: React.FC = () => {
           />
       )}
 
-      {/* Main Layout Container - Wrapped in bg-texture to provide grey background for content */}
-      <div className="flex-grow w-full bg-texture">
+      {/* Main Layout Container */}
+      {/* Updated: Only apply bg-texture if NOT on home, because Home body has texture already. */}
+      {/* This ensures we don't have double texture or texture overlaying the transparent top area on home. */}
+      <div className={`flex-grow w-full ${currentView === 'home' ? '' : 'bg-texture'}`}>
           <main className="w-full max-w-[452px] mx-auto px-4 pt-8 md:pt-12 pb-12">
             
             {/* Profile is always at top in single column flow */}
