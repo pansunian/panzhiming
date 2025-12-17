@@ -265,159 +265,162 @@ export const DetailView: React.FC<DetailViewProps> = ({ item, type, onNavigate, 
   };
 
   return (
-    // Updated: Changed from fixed positioning to natural flow (min-h-screen) to allow native mobile overscroll behavior
-    <div className="min-h-screen w-full bg-texture animate-in fade-in duration-300">
+    // Updated: Root bg-paper (for address bar match), flex column layout
+    <div className="min-h-screen w-full bg-paper flex flex-col animate-in fade-in duration-300">
       
       <NavBar onNavigate={onNavigate} onManualClick={onManualClick} activeView={type} logoUrl={logoUrl} />
 
-      {/* REVERTED: max-w-[452px] for consistent single-column ticket style */}
-      <div className="w-full max-w-[452px] mx-auto pb-24 pt-12">
-        <div className="px-4 animate-in slide-in-from-bottom-8 duration-500 delay-100">
-          
-          <div>
-            <div className="h-4 w-full jagged-top bg-paper"></div>
+      {/* Content area: bg-texture fills remaining space */}
+      <div className="flex-grow w-full bg-texture">
+        {/* REVERTED: max-w-[452px] for consistent single-column ticket style */}
+        <div className="w-full max-w-[452px] mx-auto pb-24 pt-12">
+            <div className="px-4 animate-in slide-in-from-bottom-8 duration-500 delay-100">
             
-            <TicketBase className="rounded-none bg-paper min-h-[80vh] flex flex-col border-x border-stone-200">
-              
-              {/* Header */}
-              <div className="p-6 md:p-10 pb-4 relative">
-                 <div className="flex justify-between items-start mb-4">
-                    <div className="flex flex-col">
-                        <span className="font-mono text-[9px] text-stone-400 uppercase tracking-[0.2em] mb-1">
-                            {isBlog ? blogPost.category : 'COLLECTION'}
-                        </span>
-                        <span className="font-mono text-xs font-bold text-ink bg-stone-100 px-2 py-0.5 inline-block rounded-sm w-fit">
-                            {isBlog ? blogPost.date : photoGroup.ticketNumber}
-                        </span>
-                    </div>
-                    {isBlog ? (
-                        <div className="border border-stone-300 px-2 py-1 flex items-center gap-1 opacity-70">
-                            <Clock size={10} />
-                            <span className="font-mono text-[9px] font-bold">{blogPost.readTime}</span>
+            <div>
+                <div className="h-4 w-full jagged-top bg-paper"></div>
+                
+                <TicketBase className="rounded-none bg-paper min-h-[80vh] flex flex-col border-x border-stone-200">
+                
+                {/* Header */}
+                <div className="p-6 md:p-10 pb-4 relative">
+                    <div className="flex justify-between items-start mb-4">
+                        <div className="flex flex-col">
+                            <span className="font-mono text-[9px] text-stone-400 uppercase tracking-[0.2em] mb-1">
+                                {isBlog ? blogPost.category : 'COLLECTION'}
+                            </span>
+                            <span className="font-mono text-xs font-bold text-ink bg-stone-100 px-2 py-0.5 inline-block rounded-sm w-fit">
+                                {isBlog ? blogPost.date : photoGroup.ticketNumber}
+                            </span>
                         </div>
-                    ) : (
-                        <div className="border border-stone-300 px-2 py-1 flex items-center gap-1 opacity-70">
-                            <Camera size={10} />
-                            <span className="font-mono text-[9px] font-bold">{photoGroup.count} SHOTS</span>
+                        {isBlog ? (
+                            <div className="border border-stone-300 px-2 py-1 flex items-center gap-1 opacity-70">
+                                <Clock size={10} />
+                                <span className="font-mono text-[9px] font-bold">{blogPost.readTime}</span>
+                            </div>
+                        ) : (
+                            <div className="border border-stone-300 px-2 py-1 flex items-center gap-1 opacity-70">
+                                <Camera size={10} />
+                                <span className="font-mono text-[9px] font-bold">{photoGroup.count} SHOTS</span>
+                            </div>
+                        )}
+                    </div>
+                    
+                    {/* Title Size Updated: md:text-5xl -> md:text-4xl for reduced size */}
+                    <h1 className="font-serif font-bold text-3xl md:text-4xl text-ink leading-tight mb-4">
+                        {item.title}
+                    </h1>
+
+                    {!isBlog && (
+                        <div className="flex items-center gap-2 text-stone-500 text-xs font-mono mb-2">
+                            <MapPin size={12} />
+                            <span>{photoGroup.location}</span>
                         </div>
                     )}
-                 </div>
-                 
-                 {/* Title Size Updated: md:text-5xl -> md:text-4xl for reduced size */}
-                 <h1 className="font-serif font-bold text-3xl md:text-4xl text-ink leading-tight mb-4">
-                    {item.title}
-                 </h1>
 
-                 {!isBlog && (
-                    <div className="flex items-center gap-2 text-stone-500 text-xs font-mono mb-2">
-                        <MapPin size={12} />
-                        <span>{photoGroup.location}</span>
-                    </div>
-                 )}
+                    <DashedLine className="mt-8 opacity-30" />
+                    <Notch className="-left-4 bottom-[-1px] translate-y-1/2" />
+                    <Notch className="-right-4 bottom-[-1px] translate-y-1/2" />
+                </div>
 
-                 <DashedLine className="mt-8 opacity-30" />
-                 <Notch className="-left-4 bottom-[-1px] translate-y-1/2" />
-                 <Notch className="-right-4 bottom-[-1px] translate-y-1/2" />
-              </div>
+                {/* Cover Image */}
+                <div className="relative w-full aspect-[16/9] bg-stone-200 overflow-hidden border-y-2 border-dashed border-stone-300">
+                    <img 
+                        src={isBlog ? blogPost.imageUrl : photoGroup.coverUrl} 
+                        alt={item.title}
+                        loading="eager"
+                        onLoad={() => setCoverLoaded(true)}
+                        className={`w-full h-full object-cover transition-opacity duration-700 ${coverLoaded ? 'opacity-100' : 'opacity-0'}`}
+                    />
+                    <div className="absolute inset-0 bg-stone-500/10 mix-blend-multiply pointer-events-none" />
+                </div>
 
-              {/* Cover Image */}
-              <div className="relative w-full aspect-[16/9] bg-stone-200 overflow-hidden border-y-2 border-dashed border-stone-300">
-                  <img 
-                    src={isBlog ? blogPost.imageUrl : photoGroup.coverUrl} 
-                    alt={item.title}
-                    loading="eager"
-                    onLoad={() => setCoverLoaded(true)}
-                    className={`w-full h-full object-cover transition-opacity duration-700 ${coverLoaded ? 'opacity-100' : 'opacity-0'}`}
-                  />
-                  <div className="absolute inset-0 bg-stone-500/10 mix-blend-multiply pointer-events-none" />
-              </div>
+                {/* Content Body */}
+                <div className="p-6 md:p-10 pt-8 flex-grow relative">
+                    <Notch className="-left-4 top-0 -translate-y-1/2" />
+                    <Notch className="-right-4 top-0 -translate-y-1/2" />
 
-              {/* Content Body */}
-              <div className="p-6 md:p-10 pt-8 flex-grow relative">
-                  <Notch className="-left-4 top-0 -translate-y-1/2" />
-                  <Notch className="-right-4 top-0 -translate-y-1/2" />
-
-                  {isBlog ? (
-                      <div className="text-base text-ink font-sans">
-                          {loadingContent ? (
-                              <div className="flex justify-center items-center py-12 gap-2 text-stone-400">
-                                  <Loader2 className="animate-spin" size={16} />
-                                  <span className="font-mono text-xs">Loading Content...</span>
-                              </div>
-                          ) : (
-                              <>
-                                  {blogBlocks.length > 0 ? (
-                                      blogBlocks.map((block, idx) => renderBlock(block, idx))
-                                  ) : (
-                                      blogPost.content && Array.isArray(blogPost.content) ? (
-                                          blogPost.content.map((txt, i) => <p key={i} className="mb-4">{txt}</p>)
-                                      ) : (
-                                          <p>{blogPost.excerpt}</p>
-                                      )
-                                  )}
-                              </>
-                          )}
-                      </div>
-                  ) : (
-                      <div className="flex flex-col gap-6">
-                          <p className="font-sans text-lg md:text-xl leading-relaxed italic border-l-2 border-brand-accent pl-6 text-stone-600 bg-stone-50 py-4 pr-4">
-                              {photoGroup.description || "No description available."}
-                          </p>
-
-                          {blogBlocks.length > 0 && (
-                            <div className="text-base text-ink font-sans my-4">
-                                {blogBlocks
-                                    .filter(block => block.type !== 'image')
-                                    .map((block, idx) => renderBlock(block, idx))
-                                }
-                            </div>
-                          )}
-                          
-                          {/* GALLERY IMAGES */}
-                          <div className="flex flex-col mt-4">
-                              {loadingImages ? (
-                                <div className="flex flex-col items-center justify-center py-12 gap-2 text-stone-400">
-                                   <Loader2 className="animate-spin" />
-                                   <span className="font-mono text-xs">Developing Photos...</span>
+                    {isBlog ? (
+                        <div className="text-base text-ink font-sans">
+                            {loadingContent ? (
+                                <div className="flex justify-center items-center py-12 gap-2 text-stone-400">
+                                    <Loader2 className="animate-spin" size={16} />
+                                    <span className="font-mono text-xs">Loading Content...</span>
                                 </div>
-                              ) : (
-                                <div className="flex flex-col w-full">
-                                    {displayImages.length > 0 ? displayImages.map((img, idx) => (
-                                        <GalleryItem key={idx} img={img} idx={idx} />
-                                    )) : (
-                                        <div className="text-center py-8 font-mono text-xs text-stone-400 border border-dashed border-stone-300">
-                                            No additional photos found in the roll.
-                                        </div>
+                            ) : (
+                                <>
+                                    {blogBlocks.length > 0 ? (
+                                        blogBlocks.map((block, idx) => renderBlock(block, idx))
+                                    ) : (
+                                        blogPost.content && Array.isArray(blogPost.content) ? (
+                                            blogPost.content.map((txt, i) => <p key={i} className="mb-4">{txt}</p>)
+                                        ) : (
+                                            <p>{blogPost.excerpt}</p>
+                                        )
                                     )}
+                                </>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="flex flex-col gap-6">
+                            <p className="font-sans text-lg md:text-xl leading-relaxed italic border-l-2 border-brand-accent pl-6 text-stone-600 bg-stone-50 py-4 pr-4">
+                                {photoGroup.description || "No description available."}
+                            </p>
+
+                            {blogBlocks.length > 0 && (
+                                <div className="text-base text-ink font-sans my-4">
+                                    {blogBlocks
+                                        .filter(block => block.type !== 'image')
+                                        .map((block, idx) => renderBlock(block, idx))
+                                    }
                                 </div>
-                              )}
-                          </div>
-                      </div>
-                  )}
-              </div>
+                            )}
+                            
+                            {/* GALLERY IMAGES */}
+                            <div className="flex flex-col mt-4">
+                                {loadingImages ? (
+                                    <div className="flex flex-col items-center justify-center py-12 gap-2 text-stone-400">
+                                    <Loader2 className="animate-spin" />
+                                    <span className="font-mono text-xs">Developing Photos...</span>
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col w-full">
+                                        {displayImages.length > 0 ? displayImages.map((img, idx) => (
+                                            <GalleryItem key={idx} img={img} idx={idx} />
+                                        )) : (
+                                            <div className="text-center py-8 font-mono text-xs text-stone-400 border border-dashed border-stone-300">
+                                                No additional photos found in the roll.
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </div>
 
-              {/* Footer */}
-              <div className="bg-paper-dark p-6 relative mt-auto border-t-2 border-dashed border-stone-300/50">
-                   <Notch className="-left-4 top-0 -translate-y-1/2" />
-                   <Notch className="-right-4 top-0 -translate-y-1/2" />
-                   <div className="flex flex-col items-center text-center gap-4">
-                       <div className="w-full flex justify-between items-center opacity-50">
-                           <BarcodeVertical />
-                           <div className="mx-4 flex flex-col gap-1 w-full text-ink opacity-80">
-                               <span className="font-serif text-[10px] tracking-widest">先见志明</span>
-                               <span className="font-mono text-[9px] font-bold tracking-[0.2em] uppercase">PANZHIMING.COM</span>
-                           </div>
-                           <BarcodeVertical />
-                       </div>
-                   </div>
-              </div>
+                {/* Footer */}
+                <div className="bg-paper-dark p-6 relative mt-auto border-t-2 border-dashed border-stone-300/50">
+                    <Notch className="-left-4 top-0 -translate-y-1/2" />
+                    <Notch className="-right-4 top-0 -translate-y-1/2" />
+                    <div className="flex flex-col items-center text-center gap-4">
+                        <div className="w-full flex justify-between items-center opacity-50">
+                            <BarcodeVertical />
+                            <div className="mx-4 flex flex-col gap-1 w-full text-ink opacity-80">
+                                <span className="font-serif text-[10px] tracking-widest">先见志明</span>
+                                <span className="font-mono text-[9px] font-bold tracking-[0.2em] uppercase">PANZHIMING.COM</span>
+                            </div>
+                            <BarcodeVertical />
+                        </div>
+                    </div>
+                </div>
 
-            </TicketBase>
-            
-            <div className="h-4 w-full jagged-bottom bg-paper-dark"></div>
-          </div>
+                </TicketBase>
+                
+                <div className="h-4 w-full jagged-bottom bg-paper-dark"></div>
+            </div>
+            </div>
+
         </div>
-
       </div>
     </div>
   );

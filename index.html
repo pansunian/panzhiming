@@ -78,10 +78,10 @@
       }
 
       body {
-        background-color: var(--bg-color);
+        /* Updated: Background match NavBar (#fdfbf7) instead of page background (#e3e1d5) */
+        background-color: #fdfbf7; 
         color: #2b2926;
-        background-image: var(--noise-url);
-        background-attachment: fixed;
+        /* Updated: Removed global noise from body. It will be applied to .bg-texture containers */
       }
       
       .bg-texture {

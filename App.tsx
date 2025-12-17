@@ -263,7 +263,9 @@ const App: React.FC = () => {
   const featuredThoughts = thoughts.filter(t => t.featured).slice(0, 10);
 
   return (
-    <div className="min-h-screen bg-texture text-ink pb-12 font-sans selection:bg-ink selection:text-paper">
+    // Updated: Root is now bg-paper to match browser chrome (Safari address bar). 
+    // Content is wrapped in bg-texture.
+    <div className="min-h-screen bg-paper text-ink font-sans selection:bg-ink selection:text-paper flex flex-col">
       
       {/* Demo Mode Banner (Replaces Error Banner) */}
       {isDemoMode && (
@@ -275,7 +277,7 @@ const App: React.FC = () => {
         </div>
       )}
 
-      {/* Error Banner - Only used for explicit critical errors if needed, currently unused in favor of Demo Mode */}
+      {/* Error Banner */}
       {errorMsg && !isDemoMode && (
         <div className="bg-red-50 border-b border-red-200 p-4 flex items-start gap-3 sticky top-0 z-[60]">
           <AlertCircle className="text-red-500 shrink-0 mt-0.5" size={16} />
@@ -286,7 +288,7 @@ const App: React.FC = () => {
         </div>
       )}
 
-      {/* Navigation (Sticky Header) - Hidden on Home View */}
+      {/* Navigation - Relative (scrolls with page) */}
       {currentView !== 'home' && (
           <NavBar 
               onNavigate={handleNavigate} 
@@ -296,97 +298,99 @@ const App: React.FC = () => {
           />
       )}
 
-      {/* Main Layout Container - Centered Single Column */}
-      <main className="w-full max-w-[452px] mx-auto px-4 pt-8 md:pt-12">
-        
-        {/* Profile is always at top in single column flow */}
-        {currentView === 'home' && (
-             <ProfileSection 
-                profile={profile} 
-                onNavigate={handleNavigate} 
-                onOpenManual={handleOpenManual}
-             />
-        )}
-
-        {/* Content Feeds */}
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* Main Layout Container - Wrapped in bg-texture to provide grey background for content */}
+      <div className="flex-grow w-full bg-texture">
+          <main className="w-full max-w-[452px] mx-auto px-4 pt-8 md:pt-12 pb-12">
             
-            {/* HOME VIEW */}
+            {/* Profile is always at top in single column flow */}
             {currentView === 'home' && (
-               /* Updated: gap-16 (64px) -> gap-11 (44px) to reduce spacing by 20px */
-               <div className="flex flex-col gap-11">
-                 
-                 {/* FEATURED GALLERY */}
-                 {featuredGallery.length > 0 && (
-                    <div>
-                       <GallerySection 
-                          title="精选影像"
-                          groups={featuredGallery} 
-                          onItemClick={(g) => handleItemClick('gallery', g)} 
-                          onViewAll={() => handleNavigate('gallery')}
-                       />
-                    </div>
-                 )}
+                <ProfileSection 
+                    profile={profile} 
+                    onNavigate={handleNavigate} 
+                    onOpenManual={handleOpenManual}
+                />
+            )}
 
-                 {/* RECENT THOUGHTS */}
-                 {featuredThoughts.length > 0 && (
-                     <div>
-                        <ThoughtSection 
-                          thoughts={featuredThoughts} 
-                          onViewAll={() => handleNavigate('thoughts')}
+            {/* Content Feeds */}
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+                
+                {/* HOME VIEW */}
+                {currentView === 'home' && (
+                /* Updated: gap-16 (64px) -> gap-11 (44px) to reduce spacing by 20px */
+                <div className="flex flex-col gap-11">
+                    
+                    {/* FEATURED GALLERY */}
+                    {featuredGallery.length > 0 && (
+                        <div>
+                        <GallerySection 
+                            title="精选影像"
+                            groups={featuredGallery} 
+                            onItemClick={(g) => handleItemClick('gallery', g)} 
+                            onViewAll={() => handleNavigate('gallery')}
                         />
-                     </div>
-                 )}
+                        </div>
+                    )}
 
-                 {/* FEATURED BLOG */}
-                 {featuredPosts.length > 0 && (
-                    <div>
-                       <BlogSection 
-                          title="精选文章"
-                          posts={featuredPosts} 
-                          onItemClick={(p) => handleItemClick('blog', p)}
-                          onViewAll={() => handleNavigate('blog')}
-                       />
-                    </div>
-                 )}
-                 
-                 {/* Updated: Passing logoUrl to ContactSection */}
-                 <ContactSection logoUrl={profile.logoUrl} />
+                    {/* RECENT THOUGHTS */}
+                    {featuredThoughts.length > 0 && (
+                        <div>
+                            <ThoughtSection 
+                            thoughts={featuredThoughts} 
+                            onViewAll={() => handleNavigate('thoughts')}
+                            />
+                        </div>
+                    )}
 
-                 {/* Removed old footer div that was here */}
-               </div>
-            )}
+                    {/* FEATURED BLOG */}
+                    {featuredPosts.length > 0 && (
+                        <div>
+                        <BlogSection 
+                            title="精选文章"
+                            posts={featuredPosts} 
+                            onItemClick={(p) => handleItemClick('blog', p)}
+                            onViewAll={() => handleNavigate('blog')}
+                        />
+                        </div>
+                    )}
+                    
+                    {/* Updated: Passing logoUrl to ContactSection */}
+                    <ContactSection logoUrl={profile.logoUrl} />
 
-            {/* GALLERY VIEW */}
-            {currentView === 'gallery' && (
-              <div>
-                <GallerySection 
-                  groups={photoGroups} 
-                  onItemClick={(g) => handleItemClick('gallery', g)} 
-                />
-              </div>
-            )}
+                    {/* Removed old footer div that was here */}
+                </div>
+                )}
 
-            {/* THOUGHTS VIEW */}
-            {currentView === 'thoughts' && (
-              <div>
-                <ThoughtSection thoughts={thoughts} />
-              </div>
-            )}
+                {/* GALLERY VIEW */}
+                {currentView === 'gallery' && (
+                <div>
+                    <GallerySection 
+                    groups={photoGroups} 
+                    onItemClick={(g) => handleItemClick('gallery', g)} 
+                    />
+                </div>
+                )}
 
-            {/* BLOG VIEW */}
-            {currentView === 'blog' && (
-              <div>
-                <BlogSection 
-                  posts={posts} 
-                  onItemClick={(p) => handleItemClick('blog', p)} 
-                />
-              </div>
-            )}
+                {/* THOUGHTS VIEW */}
+                {currentView === 'thoughts' && (
+                <div>
+                    <ThoughtSection thoughts={thoughts} />
+                </div>
+                )}
 
-        </div>
+                {/* BLOG VIEW */}
+                {currentView === 'blog' && (
+                <div>
+                    <BlogSection 
+                    posts={posts} 
+                    onItemClick={(p) => handleItemClick('blog', p)} 
+                    />
+                </div>
+                )}
 
-      </main>
+            </div>
+
+          </main>
+      </div>
     </div>
   );
 };
