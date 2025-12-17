@@ -24,13 +24,14 @@ export const NavBar: React.FC<NavBarProps> = ({ onNavigate, onManualClick, activ
   };
 
   return (
-    <div className="relative z-50 w-full bg-paper border-b-2 border-stone-800 shadow-sm">
+    // Updated: 'relative' -> 'sticky top-0', added 'backdrop-blur-md', changed bg-paper to bg-paper/90
+    <div className="sticky top-0 z-50 w-full bg-paper/90 backdrop-blur-md border-b-2 border-stone-800 shadow-sm supports-[backdrop-filter]:bg-paper/85 transition-all duration-300">
       <div className="max-w-[452px] mx-auto h-14 flex items-stretch justify-between relative px-0">
         
         {/* Left: Logo Area */}
         <button 
           onClick={() => handleNavClick('home')}
-          className="px-4 flex flex-col justify-center items-start bg-paper hover:bg-stone-50 transition-colors group z-20 relative"
+          className="px-4 flex flex-col justify-center items-start bg-transparent hover:bg-stone-50/50 transition-colors group z-20 relative"
         >
            {logoUrl ? (
              <img 
@@ -46,12 +47,12 @@ export const NavBar: React.FC<NavBarProps> = ({ onNavigate, onManualClick, activ
         </button>
 
         {/* Right: Actions Area */}
-        <div className="flex items-center h-full bg-paper z-20">
+        <div className="flex items-center h-full z-20">
             
             {/* Manual Button (Direct Access - Always Visible) */}
             <button 
                 onClick={onManualClick}
-                className="flex items-center gap-2 px-4 h-full hover:bg-stone-50 transition-colors group"
+                className="flex items-center gap-2 px-4 h-full hover:bg-stone-50/50 transition-colors group"
             >
                 {/* Updated: text-[10px] -> text-xs for larger size */}
                 <span className="font-serif font-bold text-xs text-stone-500 group-hover:text-ink transition-colors">我的说明书</span>
@@ -61,7 +62,7 @@ export const NavBar: React.FC<NavBarProps> = ({ onNavigate, onManualClick, activ
             {/* Menu Toggle (Collapses Gallery, Thoughts, Blog) */}
             <button 
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className={`flex items-center justify-center px-4 h-full transition-colors ${isMenuOpen ? 'bg-stone-100 text-brand-accent' : 'hover:bg-stone-50'}`}
+                className={`flex items-center justify-center px-4 h-full transition-colors ${isMenuOpen ? 'bg-stone-100 text-brand-accent' : 'hover:bg-stone-50/50'}`}
                 aria-label="Menu"
             >
                 <div className={`transition-transform duration-300 ${isMenuOpen ? 'rotate-90' : 'rotate-0'}`}>

@@ -43,8 +43,8 @@ export const ThoughtSection: React.FC<Props> = ({ thoughts, id, onViewAll }) => 
                   {thoughts.map((thought, index) => (
                       <div key={thought.id} className="group">
                           <div className="flex justify-between items-baseline mb-2">
-                              {/* Updated: Removed font-bold */}
-                              <span className="text-[10px] text-stone-300 font-sans tracking-widest">
+                              {/* Updated: Changed font-sans to font-[system-ui,sans-serif] for clearer numbering */}
+                              <span className="text-[10px] text-stone-300 font-[system-ui,sans-serif] tracking-widest">
                                   {String(index + 1).padStart(3, '0')}
                               </span>
                               <span className="text-[9px] font-mono text-stone-400">{thought.date} {thought.time}</span>
@@ -54,7 +54,8 @@ export const ThoughtSection: React.FC<Props> = ({ thoughts, id, onViewAll }) => 
                           </p>
                           <div className="flex justify-start gap-2 opacity-60">
                                {thought.tags.map(tag => (
-                                   <span key={tag} className="text-[9px] text-stone-500 border border-stone-200 px-1 rounded-sm">#{tag}</span>
+                                   /* Updated: Added font-[system-ui,sans-serif] for clearer tags */
+                                   <span key={tag} className="text-[9px] text-stone-500 border border-stone-200 px-1 rounded-sm font-[system-ui,sans-serif]">#{tag}</span>
                                ))}
                           </div>
                       </div>
