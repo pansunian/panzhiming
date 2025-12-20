@@ -18,9 +18,7 @@ export const NavBar: React.FC<NavBarProps> = ({ logoUrl }) => {
 
   return (
     <div className="relative z-50 w-full bg-paper border-b-2 border-stone-800 shadow-sm transition-all duration-300">
-      <div className="max-w-[452px] mx-auto h-14 flex items-stretch justify-between relative px-0">
-        
-        {/* Left: Logo Area */}
+      <div className="max-w-[420px] mx-auto h-14 flex items-stretch justify-between relative px-0">
         <Link 
           to="/"
           onClick={() => setIsMenuOpen(false)}
@@ -32,65 +30,33 @@ export const NavBar: React.FC<NavBarProps> = ({ logoUrl }) => {
              <span className="font-serif font-bold text-base tracking-wide text-ink group-hover:text-brand-accent transition-colors">ARCHIVE</span>
            )}
         </Link>
-
-        {/* Right: Actions Area */}
         <div className="flex items-center h-full z-20">
-            <Link 
-                to="/aboutme"
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center gap-2 px-4 h-full hover:bg-stone-50/50 transition-colors group"
-            >
+            <Link to="/aboutme" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2 px-4 h-full hover:bg-stone-50/50 transition-colors group">
                 <span className="font-serif font-bold text-xs text-stone-500 group-hover:text-ink transition-colors">我的说明书</span>
                 <BookOpen size={14} className="opacity-40 group-hover:opacity-80 transition-opacity" />
             </Link>
-
-            <button 
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className={`flex items-center justify-center px-4 h-full transition-colors ${isMenuOpen ? 'bg-stone-100 text-brand-accent' : 'hover:bg-stone-50/50'}`}
-            >
-                <div className={`transition-transform duration-300 ${isMenuOpen ? 'rotate-90' : 'rotate-0'}`}>
-                    {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
-                </div>
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className={`flex items-center justify-center px-4 h-full transition-colors ${isMenuOpen ? 'bg-stone-100 text-brand-accent' : 'hover:bg-stone-50/50'}`}>
+                <div className={`transition-transform duration-300 ${isMenuOpen ? 'rotate-90' : 'rotate-0'}`}>{isMenuOpen ? <X size={20} /> : <Menu size={20} />}</div>
             </button>
         </div>
-
-        {/* Dropdown Overlay */}
         {isMenuOpen && (
             <div className="absolute top-full right-0 w-48 bg-paper shadow-xl z-10 animate-in slide-in-from-top-2 duration-300 rounded-b-sm">
                 <div className="flex flex-col">
                     {links.map((link) => (
-                        <Link
-                            key={link.id}
-                            to={link.path}
-                            onClick={() => setIsMenuOpen(false)}
-                            className={`flex items-center justify-between p-4 border-b border-dashed border-stone-200 last:border-0 hover:bg-stone-50 transition-colors group ${location.pathname.startsWith(link.path) ? 'bg-stone-50' : ''}`}
-                        >
+                        <Link key={link.id} to={link.path} onClick={() => setIsMenuOpen(false)} className={`flex items-center justify-between p-4 border-b border-dashed border-stone-200 last:border-0 hover:bg-stone-50 transition-colors group ${location.pathname.startsWith(link.path) ? 'bg-stone-50' : ''}`}>
                              <div className="flex items-baseline gap-3">
-                                <span className={`font-serif font-bold text-sm ${location.pathname.startsWith(link.path) ? 'text-brand-accent' : 'text-ink'}`}>
-                                    {link.label}
-                                </span>
-                                <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest group-hover:text-brand-accent transition-colors">
-                                    {link.en}
-                                </span>
+                                <span className={`font-serif font-bold text-sm ${location.pathname.startsWith(link.path) ? 'text-brand-accent' : 'text-ink'}`}>{link.label}</span>
+                                <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest group-hover:text-brand-accent transition-colors">{link.en}</span>
                              </div>
-                             {location.pathname.startsWith(link.path) && <div className="w-1.5 h-1.5 rounded-full bg-brand-accent" />}
                         </Link>
                     ))}
-                    <Link 
-                        to="/"
-                        onClick={() => setIsMenuOpen(false)}
-                        className="text-center text-[10px] font-mono text-stone-400 uppercase tracking-[0.2em] p-3 hover:text-ink transition-colors"
-                    >
-                        Home
-                    </Link>
+                    <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-center text-[10px] font-mono text-stone-400 uppercase tracking-[0.2em] p-3 hover:text-ink transition-colors">Home</Link>
                 </div>
                 <div className="h-2 w-full sawtooth-y opacity-50"></div>
             </div>
         )}
       </div>
-      {!isMenuOpen && (
-        <div className="absolute top-full left-0 right-0 h-2 w-full sawtooth-y opacity-80 pointer-events-none"></div>
-      )}
+      {!isMenuOpen && <div className="absolute top-full left-0 right-0 h-2 w-full sawtooth-y opacity-80 pointer-events-none"></div>}
     </div>
   );
 };

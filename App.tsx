@@ -10,7 +10,7 @@ import { NavBar } from './components/NavBar';
 import { Profile, PhotoGroup, Thought, BlogPost } from './types';
 import { Info } from 'lucide-react';
 
-// --- 全量演示数据：确保首页视觉饱满 ---
+// --- 全量演示数据 ---
 const defaultProfile: Profile = {
   name: "潘志明",
   role: "先见志明 | Photographer",
@@ -64,13 +64,6 @@ const defaultThoughts: Thought[] = [
     date: "2024-03-18",
     time: "15:20",
     tags: ["书影音", "灵感"]
-  },
-  {
-    id: "demo-t3",
-    content: "生活不需要时刻都在线上。偶尔的断网，反而能让我们重新找回感官的敏锐。去呼吸、去触摸、去感受真实的温度。",
-    date: "2024-03-10",
-    time: "09:12",
-    tags: ["极简主义"]
   }
 ];
 
@@ -84,20 +77,10 @@ const defaultPosts: BlogPost[] = [
     category: "ESSAY",
     imageUrl: "https://images.unsplash.com/photo-1454165833222-7e737d97607a?q=80&w=1000&auto=format&fit=crop",
     featured: true
-  },
-  {
-    id: "demo-p2",
-    title: "一个摄影师的京都散策：慢门下的时间流逝",
-    excerpt: "鸭川边的晚风，岚山的竹林，在慢速快门下，一切都化作了流动的诗。通过镜头，我试图捕捉那些转瞬即逝的光影。",
-    date: "2023-11-20",
-    readTime: "8 MIN",
-    category: "TRAVEL",
-    imageUrl: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=1000&auto=format&fit=crop",
-    featured: true
   }
 ];
 
-// --- 布局：黄金 452px 宽度 ---
+// --- 布局：黄金 420px 宽度 ---
 interface MainLayoutProps {
     children?: React.ReactNode;
     hideNav?: boolean;
@@ -116,7 +99,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, hideNav, isDemoMode, 
     )}
     {!hideNav && <NavBar logoUrl={logoUrl} />}
     <div className={`flex-grow w-full ${isHome ? '' : 'bg-texture'}`}>
-      <main className="w-full max-w-[452px] mx-auto px-4 pt-12 pb-20">
+      <main className="w-full max-w-[420px] mx-auto px-4 pt-12 pb-20">
         {children}
       </main>
     </div>
@@ -146,8 +129,6 @@ const App: React.FC = () => {
   const [posts, setPosts] = useState<BlogPost[]>(defaultPosts);
   const [aboutPage, setAboutPage] = useState<BlogPost | null>(null);
 
-  const CACHE_KEY = 'portfolio_data_v1.0.8';
-
   useEffect(() => {
     const isHome = location.pathname === '/' || location.pathname === '';
     setGlobalTheme(isHome ? 'home' : 'paper');
@@ -156,19 +137,6 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const initData = async () => {
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (cached) {
-        try {
-          const data = JSON.parse(cached);
-          if (data.profile) setProfile(data.profile);
-          if (data.gallery?.length) setPhotoGroups(data.gallery);
-          if (data.thoughts?.length) setThoughts(data.thoughts);
-          if (data.posts?.length) setPosts(data.posts);
-          setAboutPage(data.about || null);
-          setIsDemoMode(false);
-        } catch (e) { }
-      }
-
       try {
         const res = await fetch('/api/portfolio');
         if (res.ok) {
@@ -178,7 +146,6 @@ const App: React.FC = () => {
            if (data.thoughts?.length) setThoughts(data.thoughts);
            if (data.posts?.length) setPosts(data.posts);
            setAboutPage(data.about || null);
-           localStorage.setItem(CACHE_KEY, JSON.stringify(data));
            setIsDemoMode(false); 
         }
       } catch (e) { }
@@ -193,7 +160,7 @@ const App: React.FC = () => {
       <Route path="/" element={
         <MainLayout {...commonProps} hideNav isHome>
           <ProfileSection profile={profile} />
-          <div className="flex flex-col gap-24 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+          <div className="flex flex-col gap-24">
             <GallerySection 
                 title="精选影像" 
                 groups={photoGroups.filter(g => g.featured).slice(0, 2)} 
@@ -205,39 +172,12 @@ const App: React.FC = () => {
           </div>
         </MainLayout>
       } />
-
-      <Route path="/gallery" element={
-        <MainLayout {...commonProps}>
-          <GallerySection groups={photoGroups} />
-        </MainLayout>
-      } />
-      <Route path="/gallery/:id" element={
-        <DetailView items={photoGroups} type="gallery" logoUrl={profile.logoUrl} />
-      } />
-
-      <Route path="/thoughts" element={
-        <MainLayout {...commonProps}>
-          <ThoughtSection thoughts={thoughts} />
-        </MainLayout>
-      } />
-
-      <Route path="/blog" element={
-        <MainLayout {...commonProps}>
-          <BlogSection posts={posts} />
-        </MainLayout>
-      } />
-      <Route path="/blog/:id" element={
-        <DetailView items={posts} type="blog" logoUrl={profile.logoUrl} />
-      } />
-
-      <Route path="/aboutme" element={
-          aboutPage ? (
-              <DetailView items={[aboutPage]} forceId={aboutPage.id} type="blog" logoUrl={profile.logoUrl} />
-          ) : (
-              <Navigate to="/" replace />
-          )
-      } />
-
+      <Route path="/gallery" element={<MainLayout {...commonProps}><GallerySection groups={photoGroups} /></MainLayout>} />
+      <Route path="/gallery/:id" element={<DetailView items={photoGroups} type="gallery" logoUrl={profile.logoUrl} />} />
+      <Route path="/thoughts" element={<MainLayout {...commonProps}><ThoughtSection thoughts={thoughts} /></MainLayout>} />
+      <Route path="/blog" element={<MainLayout {...commonProps}><BlogSection posts={posts} /></MainLayout>} />
+      <Route path="/blog/:id" element={<DetailView items={posts} type="blog" logoUrl={profile.logoUrl} />} />
+      <Route path="/aboutme" element={aboutPage ? <DetailView items={[aboutPage]} forceId={aboutPage.id} type="blog" logoUrl={profile.logoUrl} /> : <Navigate to="/" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
