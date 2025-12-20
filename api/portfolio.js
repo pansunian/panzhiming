@@ -1,10 +1,8 @@
 const { Client } = require('@notionhq/client');
 
 module.exports = async function handler(req, res) {
-  // Updated: Increased s-maxage to 3600 (1 hour). 
-  // stale-while-revalidate=86400 means if the cache is stale (older than 1 hour), 
-  // Vercel serves the stale content first, then updates the cache in the background.
-  res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
+  // Reduced s-maxage to 60 (1 minute) for faster debugging
+  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=86400');
 
   const requiredEnv = [
     'NOTION_API_KEY',
@@ -56,14 +54,6 @@ module.exports = async function handler(req, res) {
       return '';
   };
 
-  const getAllFileUrls = (props, key) => {
-    const prop = props[key];
-    if (prop && prop.type === 'files') {
-        return prop.files.map(f => f.file?.url || f.external?.url).filter(Boolean);
-    }
-    return [];
-  };
-
   const cleanNotionId = (id) => {
       if (!id) return null;
       const match = id.match(/([a-f0-9]{32})/);
@@ -71,21 +61,15 @@ module.exports = async function handler(req, res) {
       return id;
   };
 
-  // Helper to fetch first image from content blocks
   const fetchFirstContentImage = async (pageId) => {
       try {
-          const blocks = await notion.blocks.children.list({
-              block_id: pageId,
-              page_size: 20 // Fetch small batch to find image quickly
-          });
+          const blocks = await notion.blocks.children.list({ block_id: pageId, page_size: 10 });
           for (const block of blocks.results) {
               if (block.type === 'image') {
                   return block.image.type === 'external' ? block.image.external.url : block.image.file.url;
               }
           }
-      } catch (e) {
-          console.warn(`Failed to fetch blocks for ${pageId}`, e.message);
-      }
+      } catch (e) { console.warn(`Block fetch failed for ${pageId}`, e.message); }
       return null;
   };
 
@@ -107,8 +91,6 @@ module.exports = async function handler(req, res) {
 
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });
 
-  // --- PARALLEL FETCHING SETUP ---
-  
   const fetchProfile = async () => {
       try {
           const profileRes = await notion.databases.query({ database_id: process.env.NOTION_PROFILE_DB_ID });
@@ -128,13 +110,10 @@ module.exports = async function handler(req, res) {
 
               const detectedSocials = [];
               const platformMapping = {
-                  'Instagram': 'INSTAGRAM', 'IG': 'INSTAGRAM', 'Twitter': 'TWITTER', 'X': 'TWITTER',
-                  'Weibo': 'WEIBO', '微博': 'WEIBO', 'GitHub': 'GITHUB', 'Github': 'GITHUB',
-                  'Bilibili': 'BILIBILI', 'B站': 'BILIBILI', 'Douban': 'DOUBAN', '豆瓣': 'DOUBAN',
-                  'Xiaohongshu': 'XIAOHONGSHU', 'XiaoHongShu': 'XIAOHONGSHU', '小红书': 'XIAOHONGSHU',
-                  'Red': 'XIAOHONGSHU', 'RED': 'XIAOHONGSHU', 'YouTube': 'YOUTUBE', 'Youtube': 'YOUTUBE',
-                  'LinkedIn': 'LINKEDIN', 'Email': 'EMAIL', '邮箱': 'EMAIL', 'Mail': 'EMAIL',
-                  'Jike': 'JIKE', '即刻': 'JIKE', 'WeChat': 'WECHAT', '公众号': 'WECHAT'
+                  'Instagram': 'INSTAGRAM', 'Twitter': 'TWITTER', 'X': 'TWITTER',
+                  'Weibo': 'WEIBO', 'GitHub': 'GITHUB', 'Bilibili': 'BILIBILI', 
+                  'Douban': 'DOUBAN', 'Xiaohongshu': 'XIAOHONGSHU', 'YouTube': 'YOUTUBE', 
+                  'LinkedIn': 'LINKEDIN', 'Email': 'EMAIL', 'Jike': 'JIKE', 'WeChat': 'WECHAT'
               };
               for (const [colName, platformCode] of Object.entries(platformMapping)) {
                   if (p[colName]) {
@@ -143,15 +122,7 @@ module.exports = async function handler(req, res) {
                           if (platformCode === 'EMAIL' && !rawVal.startsWith('mailto:')) {
                               detectedSocials.push({ platform: 'EMAIL', url: `mailto:${rawVal.trim()}`, handle: rawVal.trim() });
                           } else {
-                              let handle = '@Link';
-                              try {
-                                  const urlObj = new URL(rawVal);
-                                  const parts = urlObj.pathname.split('/').filter(x => x);
-                                  if (parts.length > 0) handle = '@' + parts[parts.length - 1];
-                              } catch {}
-                              if (!detectedSocials.some(s => s.platform === platformCode)) {
-                                 detectedSocials.push({ platform: platformCode, url: rawVal, handle: handle });
-                              }
+                              detectedSocials.push({ platform: platformCode, url: rawVal, handle: '@Link' });
                           }
                       }
                   }
@@ -160,116 +131,67 @@ module.exports = async function handler(req, res) {
               return { data: profileData, error: null };
           }
           return { data: null, error: null };
-      } catch (error) {
-          return { data: null, error: error.message };
-      }
+      } catch (error) { return { data: null, error: error.message }; }
   };
 
   const fetchAboutPage = async () => {
-      // We still use the same env var for convenience, but change the logic
-      const rawPageId = process.env.NOTION_MANUAL_PAGE_ID || process.env.NOTION_ABOUT_PAGE_ID;
+      const rawPageId = process.env.NOTION_ABOUT_PAGE_ID || process.env.NOTION_MANUAL_PAGE_ID;
       const cleanPageId = cleanNotionId(rawPageId);
       if (!cleanPageId) return null;
-
       try {
           const page = await notion.pages.retrieve({ page_id: cleanPageId });
-          let title = "我的说明书";
-          if (page.properties) {
-             const titleKey = Object.keys(page.properties).find(k => page.properties[k].type === 'title');
-             if (titleKey) title = getPropValue(page.properties[titleKey]);
-          }
-
           return {
               id: page.id,
-              title: title || "我的说明书",
-              excerpt: "About Me / Profile & Introduction",
-              date: new Date(page.last_edited_time).getFullYear().toString(),
+              title: getPropValue(Object.values(page.properties).find(p => p.type === 'title')) || "我的说明书",
+              excerpt: "About Me / Manual",
+              date: "2024",
               readTime: '∞',
               category: 'ABOUT',
               imageUrl: getImageUrl(page),
-              content: [],
               featured: false
           };
-      } catch (error) {
-          console.error("About Page Fetch Error:", error.message);
-          return null;
-      }
-  };
-
-  const fetchBlogPosts = async () => {
-      const dbId = process.env.NOTION_BLOG_DB_ID;
-      const res = await fetchDatabase(dbId, 'Blog', page => {
-          const p = page.properties;
-          return {
-              id: page.id,
-              title: getPropValue(p['Title'] || p['Name']),
-              excerpt: getPropValue(p['Excerpt']),
-              date: p['Date']?.date?.start || '', 
-              readTime: p['ReadTime']?.select?.name || '5 MIN',
-              category: p['Category']?.select?.name || '随笔',
-              fallbackImageUrl: getImageUrl(page, 'Cover', false),
-              content: [], 
-              featured: p['Featured']?.checkbox || false
-          };
-      });
-
-      if (res.error || !Array.isArray(res)) return res;
-
-      const enhancedPosts = await Promise.all(res.map(async (post) => {
-          const contentImage = await fetchFirstContentImage(post.id);
-          return {
-              ...post,
-              imageUrl: contentImage || post.fallbackImageUrl
-          };
-      }));
-
-      return enhancedPosts;
+      } catch (e) { return null; }
   };
 
   const [profileResult, galleryRes, thoughtsRes, postsRes, aboutPage] = await Promise.all([
       fetchProfile(),
-      fetchDatabase(process.env.NOTION_GALLERY_DB_ID, 'Gallery', page => {
-          const p = page.properties;
-          return {
-              id: page.id,
-              title: getPropValue(p['Title'] || p['Name']),
-              location: getPropValue(p['Location']),
-              count: p['Count']?.number || 0,
-              date: p['Date']?.date?.start || '',
-              ticketNumber: getPropValue(p['TicketNumber']),
-              description: getPropValue(p['Description']),
-              coverUrl: getImageUrl(page, 'Cover', false),
-              featured: p['Featured']?.checkbox || false
-          };
-      }),
-      fetchDatabase(process.env.NOTION_THOUGHTS_DB_ID, 'Thoughts', page => {
-          const p = page.properties;
-          return {
-              id: page.id,
-              content: getPropValue(p['Content'] || p['Name'] || p['Title']),
-              date: p['Date']?.date?.start || new Date(page.created_time).toISOString().split('T')[0],
-              time: '', 
-              tags: p['Tags']?.multi_select?.map(t => t.name) || [],
-              featured: p['Featured']?.checkbox || false
-          };
-      }),
-      fetchBlogPosts(),
+      fetchDatabase(process.env.NOTION_GALLERY_DB_ID, 'Gallery', page => ({
+          id: page.id,
+          title: getPropValue(page.properties['Title'] || page.properties['Name']),
+          location: getPropValue(page.properties['Location']),
+          count: page.properties['Count']?.number || 0,
+          date: page.properties['Date']?.date?.start || '',
+          ticketNumber: getPropValue(page.properties['TicketNumber']),
+          description: getPropValue(page.properties['Description']),
+          coverUrl: getImageUrl(page, 'Cover', false),
+          featured: page.properties['Featured']?.checkbox || false
+      })),
+      fetchDatabase(process.env.NOTION_THOUGHTS_DB_ID, 'Thoughts', page => ({
+          id: page.id,
+          content: getPropValue(page.properties['Content'] || page.properties['Name']),
+          date: page.properties['Date']?.date?.start || new Date(page.created_time).toISOString().split('T')[0],
+          time: '',
+          tags: page.properties['Tags']?.multi_select?.map(t => t.name) || [],
+          featured: page.properties['Featured']?.checkbox || false
+      })),
+      fetchDatabase(process.env.NOTION_BLOG_DB_ID, 'Blog', page => ({
+          id: page.id,
+          title: getPropValue(page.properties['Title'] || page.properties['Name']),
+          excerpt: getPropValue(page.properties['Excerpt']),
+          date: page.properties['Date']?.date?.start || '',
+          readTime: page.properties['ReadTime']?.select?.name || '5 MIN',
+          category: page.properties['Category']?.select?.name || 'Blog',
+          imageUrl: getImageUrl(page, 'Cover', true),
+          featured: page.properties['Featured']?.checkbox || false
+      })),
       fetchAboutPage()
   ]);
 
-  const responseData = {
+  res.status(200).json({
     profile: profileResult.data,
     about: aboutPage,
     gallery: Array.isArray(galleryRes) ? galleryRes : [],
     thoughts: Array.isArray(thoughtsRes) ? thoughtsRes : [],
-    posts: Array.isArray(postsRes) ? postsRes : [],
-    debug: {
-        profileError: profileResult.error,
-        galleryError: galleryRes.error ? galleryRes.message : null,
-        thoughtsError: thoughtsRes.error ? thoughtsRes.message : null,
-        postsError: postsRes.error ? postsRes.message : null,
-    }
-  };
-
-  res.status(200).json(responseData);
+    posts: Array.isArray(postsRes) ? postsRes : []
+  });
 }

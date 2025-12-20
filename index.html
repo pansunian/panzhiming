@@ -4,11 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#e3e1d5" />
+    <!-- v1.0.1 - Updated: 2024-03-21 为了强制清除缓存添加的版本标记 -->
     <title>先见志明｜潘志明的个人主页</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Importing Noto Serif SC (Songti) for artistic text and Noto Sans SC for body text -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@300;400;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
@@ -20,11 +20,11 @@
               mono: ['"MyCustomMono"', '"Space Mono"', 'monospace'],
             },
             colors: {
-              bg: '#e3e1d5', // Warm Grey/Beige background (Archive style)
-              paper: '#fdfbf7', // Very light off-white/cream for tickets
-              'paper-dark': '#f2efeb', // Slightly darker cream for accents
-              ink: '#2b2926', // Soft Charcoal instead of pure black
-              'brand-accent': '#8a6d50', // Coffee/Bronze color
+              bg: '#e3e1d5',
+              paper: '#fdfbf7',
+              'paper-dark': '#f2efeb',
+              ink: '#2b2926',
+              'brand-accent': '#8a6d50',
               'brand-blue': '#4a729a',
             },
             boxShadow: {
@@ -36,80 +36,21 @@
       }
     </script>
     <style>
-      /* --- CUSTOM FONTS SETUP --- */
-      @font-face {
-        font-family: 'MyCustomTitle';
-        src: url('/fonts/jinghualaosongti.woff') format('woff');
-        font-weight: 400;
-        font-style: normal;
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'MyCustomBody';
-        src: url('/fonts/XiXianTingMingTi.woff2') format('woff2');
-        font-weight: 400;
-        font-style: normal;
-        font-display: swap;
-      }
-      @font-face {
-        font-family: 'MyCustomMono';
-        src: url('/fonts/MyMono.woff2') format('woff2');
-        font-weight: 400;
-        font-style: normal;
-        font-display: swap;
-      }
+      @font-face { font-family: 'MyCustomTitle'; src: url('/fonts/jinghualaosongti.woff') format('woff'); font-weight: 400; font-style: normal; font-display: swap; }
+      @font-face { font-family: 'MyCustomBody'; src: url('/fonts/XiXianTingMingTi.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+      @font-face { font-family: 'MyCustomMono'; src: url('/fonts/MyMono.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
 
-      /* --- GLOBAL STYLES --- */
       :root {
         --bg-color: #e3e1d5;
         --noise-url: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
       }
 
-      body {
-        background-color: var(--bg-color); 
-        background-image: var(--noise-url);
-        background-attachment: fixed;
-        color: #2b2926;
-      }
-      
-      .bg-texture {
-        background-color: var(--bg-color);
-        background-image: var(--noise-url);
-        background-attachment: fixed;
-      }
-
-      .jagged-bottom {
-        -webkit-mask: linear-gradient(-135deg, transparent 6px, #000 0) 0 50%,
-                      linear-gradient(135deg, transparent 6px, #000 0) 0 50%;
-        -webkit-mask-size: 12px 100%;
-        -webkit-mask-repeat: repeat-x;
-        -webkit-mask-position: left bottom;
-      }
-
-      .jagged-top {
-        -webkit-mask: linear-gradient(45deg, transparent 6px, #000 0) 0 50%,
-                      linear-gradient(-45deg, transparent 6px, #000 0) 0 50%;
-        -webkit-mask-size: 12px 100%;
-        -webkit-mask-repeat: repeat-x;
-        -webkit-mask-position: left top;
-      }
-
-      .jagged-right {
-        -webkit-mask: radial-gradient(circle at 100% 50%, transparent 6px, #000 6.5px);
-        -webkit-mask-size: 100% 24px;
-        -webkit-mask-repeat: repeat-y;
-        -webkit-mask-position: right top;
-      }
-
-      .sawtooth-y {
-        background-image: linear-gradient(135deg, #ffffff 25%, transparent 25%), 
-                          linear-gradient(225deg, #ffffff 25%, transparent 25%);
-        background-position: 0 0;
-        background-size: 16px 16px;
-        height: 8px;
-        width: 100%;
-      }
-      
+      body { background-color: var(--bg-color); background-image: var(--noise-url); background-attachment: fixed; color: #2b2926; }
+      .bg-texture { background-color: var(--bg-color); background-image: var(--noise-url); background-attachment: fixed; }
+      .jagged-bottom { -webkit-mask: linear-gradient(-135deg, transparent 6px, #000 0) 0 50%, linear-gradient(135deg, transparent 6px, #000 0) 0 50%; -webkit-mask-size: 12px 100%; -webkit-mask-repeat: repeat-x; -webkit-mask-position: left bottom; }
+      .jagged-top { -webkit-mask: linear-gradient(45deg, transparent 6px, #000 0) 0 50%, linear-gradient(-45deg, transparent 6px, #000 0) 0 50%; -webkit-mask-size: 12px 100%; -webkit-mask-repeat: repeat-x; -webkit-mask-position: left top; }
+      .jagged-right { -webkit-mask: radial-gradient(circle at 100% 50%, transparent 6px, #000 6.5px); -webkit-mask-size: 100% 24px; -webkit-mask-repeat: repeat-y; -webkit-mask-position: right top; }
+      .sawtooth-y { background-image: linear-gradient(135deg, #ffffff 25%, transparent 25%), linear-gradient(225deg, #ffffff 25%, transparent 25%); background-position: 0 0; background-size: 16px 16px; height: 8px; width: 100%; }
       ::-webkit-scrollbar { width: 6px; }
       ::-webkit-scrollbar-track { background: transparent; }
       ::-webkit-scrollbar-thumb { background: #b0aba0; border-radius: 3px; }
@@ -118,12 +59,12 @@
 {
   "imports": {
     "vite": "https://esm.sh/vite@^7.3.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^18.2.0/",
+    "react/": "https://esm.sh/react@^18.2.0/",
+    "react": "https://esm.sh/react@^18.2.0",
     "react-router-dom": "https://esm.sh/react-router-dom@^6.22.3",
-    "lucide-react": "https://esm.sh/lucide-react@^0.561.0",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
+    "lucide-react": "https://esm.sh/lucide-react@^0.292.0",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^4.0.0"
   }
 }
 </script>
