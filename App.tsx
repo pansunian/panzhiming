@@ -104,9 +104,9 @@ interface MainLayoutProps {
 const MainLayout: React.FC<MainLayoutProps> = ({ children, hideNav, isDemoMode, logoUrl, isHome }) => (
   <div className="min-h-screen flex flex-col text-ink font-sans selection:bg-ink selection:text-paper">
     {isDemoMode && (
-      <div className="bg-stone-100 border-b border-stone-200 px-4 py-2 flex items-center justify-center gap-2 sticky top-0 z-[60]">
-        <Info className="text-stone-400 shrink-0" size={12} />
-        <p className="text-[10px] text-stone-500 font-mono tracking-wide">预览模式 / 演示数据</p>
+      <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center justify-center gap-2 sticky top-0 z-[60]">
+        <Info className="text-amber-500 shrink-0" size={12} />
+        <p className="text-[10px] text-amber-600 font-mono tracking-wide uppercase font-bold">PREVIEW MODE / v1.0.4 (ACTIVE)</p>
       </div>
     )}
     {!hideNav && <NavBar logoUrl={logoUrl} />}
@@ -134,7 +134,6 @@ const setGlobalTheme = (mode: 'home' | 'paper') => {
 const App: React.FC = () => {
   const location = useLocation();
   const [isDemoMode, setIsDemoMode] = useState(true);
-  const [loading, setLoading] = useState(false);
 
   const [profile, setProfile] = useState<Profile>(defaultProfile);
   const [photoGroups, setPhotoGroups] = useState<PhotoGroup[]>(defaultPhotoGroups);
@@ -142,11 +141,22 @@ const App: React.FC = () => {
   const [posts, setPosts] = useState<BlogPost[]>(defaultPosts);
   const [aboutPage, setAboutPage] = useState<BlogPost | null>(demoAbout);
 
-  // Updated CACHE_KEY to force fresh load
-  const CACHE_KEY = 'portfolio_data_v1_0_2';
+  // Hard bump to v1.0.4
+  const CURRENT_VERSION = 'v1.0.4';
+  const CACHE_KEY = `portfolio_data_${CURRENT_VERSION}`;
 
   useEffect(() => {
-    console.log("[System] Version 1.0.2 active");
+    console.log(`%c[System] Portfolio ${CURRENT_VERSION} Loading...`, "background: #8a6d50; color: #fff; padding: 2px 5px; border-radius: 2px;");
+    
+    // Auto-purge old caches
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('portfolio_data_') && key !== CACHE_KEY) {
+            console.log(`%c[System] Purging old cache: ${key}`, "color: #ff9900;");
+            localStorage.removeItem(key);
+        }
+    }
+
     const isHome = location.pathname === '/' || location.pathname === '';
     setGlobalTheme(isHome ? 'home' : 'paper');
     window.scrollTo(0, 0);
@@ -164,12 +174,11 @@ const App: React.FC = () => {
           setPosts(data.posts || defaultPosts);
           setAboutPage(data.about || data.manual || demoAbout);
           setIsDemoMode(false);
-        } catch (e) { console.warn("Cache error", e); }
+        } catch (e) { console.warn("Cache parse error", e); }
       }
 
       try {
-        // Add a timestamp to bypass potential API middleware caches
-        const res = await fetch(`/api/portfolio?t=${Date.now()}`);
+        const res = await fetch(`/api/portfolio?v=${CURRENT_VERSION}&t=${Date.now()}`);
         if (res.ok) {
            const data = await res.json();
            setProfile(data.profile || defaultProfile);
@@ -179,9 +188,10 @@ const App: React.FC = () => {
            setAboutPage(data.about || data.manual || demoAbout);
            localStorage.setItem(CACHE_KEY, JSON.stringify(data));
            setIsDemoMode(false); 
+           console.log(`%c[System] Data Sync Successful (${CURRENT_VERSION})`, "color: #22c55e; font-weight: bold;");
         }
       } catch (e) {
-        console.log("API not reachable, continuing in demo mode.");
+        console.log("API not reachable, using offline demo data.");
       }
     };
     initData();
