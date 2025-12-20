@@ -29,17 +29,15 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
             body: JSON.stringify(data)
         });
 
-        const result = await res.json();
+        const result = await res.ok ? await res.json() : null;
 
         if (res.ok) {
             setStatus('success');
         } else {
-            console.error('Contact Form Error:', result);
             setStatus('error');
-            setErrorMessage(result.details || result.error || 'Failed to send message');
+            setErrorMessage(result?.details || 'Failed to send message');
         }
     } catch (err: any) {
-        console.error('Network Error:', err);
         setStatus('error');
         setErrorMessage(err.message || 'Network connection failed');
     }
@@ -57,9 +55,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
         <div className="h-3 w-full jagged-top bg-paper"></div>
         
         <TicketBase className="rounded-none bg-paper">
-            {/* Form Section */}
             <div className="p-8 pb-12 relative">
-                {/* Decorative Stamp */}
                 <div className="absolute top-6 right-6 border border-stone-200 rounded p-1 opacity-20 rotate-12 pointer-events-none">
                      <div className="w-16 h-20 border border-dashed border-stone-300 flex items-center justify-center">
                         <span className="font-mono text-[8px] uppercase text-center leading-tight">Postage<br/>Paid</span>
@@ -144,19 +140,16 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
                 )}
             </div>
 
-            {/* Slogan Stub (Bottom Section) */}
             <div className="relative bg-[#d6d3c9] p-8 text-center text-ink">
                  <Notch className="-left-4 top-0 -translate-y-1/2" />
                  <Notch className="-right-4 top-0 -translate-y-1/2" />
                  <DashedLine className="absolute top-0 left-4 right-4 border-stone-500/20" />
 
                  <div className="my-6">
-                     {/* Updated: Font serif (Title), text-xl sm:text-2xl (Larger size), font-bold */}
                      <p className="font-serif font-bold text-xl sm:text-2xl tracking-widest mb-3 opacity-90">
                         有时热衷科技 &nbsp;有时沉溺文艺
                      </p>
                      
-                     {/* Signature */}
                      <div className="mt-4 flex justify-center opacity-80">
                          {logoUrl ? (
                              <img src={logoUrl} alt="Signature" className="h-10 w-auto object-contain mix-blend-multiply" />
@@ -166,19 +159,17 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
                      </div>
                  </div>
 
-                 {/* Barcode Section */}
                  <div className="mt-8 pt-4 border-t border-stone-500/10 flex justify-between items-center opacity-40 gap-2">
                      <span className="font-mono text-[9px] text-stone-600 whitespace-nowrap">PANZHIMING.COM</span>
                      <div className="flex-grow flex justify-center overflow-hidden">
                         <BarcodeHorizontal className="h-6 w-auto max-w-[120px] mix-blend-multiply" />
                      </div>
-                     <span className="font-mono text-[9px] text-stone-600 whitespace-nowrap">Power by Notion</span>
+                     <span className="font-mono text-[9px] text-stone-600 whitespace-nowrap">v1.0.2</span>
                  </div>
             </div>
 
         </TicketBase>
         
-        {/* Bottom Edge */}
         <div className="h-3 w-full jagged-bottom bg-[#d6d3c9]"></div>
       </div>
     </section>

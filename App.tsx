@@ -11,7 +11,6 @@ import { Profile, PhotoGroup, Thought, BlogPost } from './types';
 import { Info, Loader2 } from 'lucide-react';
 
 // --- Default Demo Data ---
-
 const defaultProfile: Profile = {
   name: "潘志明",
   role: "先见志明 | Photographer",
@@ -143,9 +142,11 @@ const App: React.FC = () => {
   const [posts, setPosts] = useState<BlogPost[]>(defaultPosts);
   const [aboutPage, setAboutPage] = useState<BlogPost | null>(demoAbout);
 
-  const CACHE_KEY = 'portfolio_data_v1';
+  // Updated CACHE_KEY to force fresh load
+  const CACHE_KEY = 'portfolio_data_v1_0_2';
 
   useEffect(() => {
+    console.log("[System] Version 1.0.2 active");
     const isHome = location.pathname === '/' || location.pathname === '';
     setGlobalTheme(isHome ? 'home' : 'paper');
     window.scrollTo(0, 0);
@@ -167,14 +168,14 @@ const App: React.FC = () => {
       }
 
       try {
-        const res = await fetch('/api/portfolio');
+        // Add a timestamp to bypass potential API middleware caches
+        const res = await fetch(`/api/portfolio?t=${Date.now()}`);
         if (res.ok) {
            const data = await res.json();
            setProfile(data.profile || defaultProfile);
            setPhotoGroups(data.gallery || defaultPhotoGroups);
            setThoughts(data.thoughts || defaultThoughts);
            setPosts(data.posts || defaultPosts);
-           // Handle transition from old key 'manual' to new key 'about'
            setAboutPage(data.about || data.manual || demoAbout);
            localStorage.setItem(CACHE_KEY, JSON.stringify(data));
            setIsDemoMode(false); 
