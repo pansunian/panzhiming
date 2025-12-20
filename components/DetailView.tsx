@@ -19,12 +19,13 @@ interface GalleryImage {
 
 const BrandLabel = ({ deviceString }: { deviceString: string }) => {
     const s = deviceString.toLowerCase();
-    if (s.includes('apple') || s.includes('iphone')) return <span className="font-sans font-black tracking-tight text-[11px] text-stone-500">APPLE</span>;
-    if (s.includes('sony')) return <span className="font-serif font-bold tracking-[0.1em] text-[10px] text-stone-500">SONY</span>;
-    if (s.includes('canon')) return <span className="font-serif font-bold italic text-[11px] text-stone-500">Canon</span>;
-    if (s.includes('nikon')) return <span className="font-sans font-black italic tracking-tighter uppercase text-[12px] text-stone-500">NIKON</span>;
-    if (s.includes('fuji')) return <span className="font-sans font-bold uppercase tracking-widest text-[9px] text-stone-500">FUJIFILM</span>;
-    return <span className="font-mono font-bold uppercase text-[9px] opacity-40">{deviceString.split(' ')[0] || 'SCAN'}</span>;
+    // 品牌标识也统一缩小字号，保持与第一行文字对齐
+    if (s.includes('apple') || s.includes('iphone')) return <span className="font-sans font-normal tracking-tight text-[10px] text-ink">APPLE</span>;
+    if (s.includes('sony')) return <span className="font-sans font-normal tracking-[0.1em] text-[10px] text-ink">SONY</span>;
+    if (s.includes('canon')) return <span className="font-sans font-normal italic text-[10px] text-ink">Canon</span>;
+    if (s.includes('nikon')) return <span className="font-sans font-normal italic tracking-tighter uppercase text-[11px] text-ink">NIKON</span>;
+    if (s.includes('fuji')) return <span className="font-sans font-normal uppercase tracking-widest text-[9px] text-ink">FUJIFILM</span>;
+    return <span className="font-mono font-normal uppercase text-[9px] opacity-40">{deviceString.split(' ')[0] || 'SCAN'}</span>;
 };
 
 const parseCaptionData = (caption: string) => {
@@ -58,11 +59,11 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
                 <img src={img.url} alt={parsed.locationMain} className={`w-full h-full object-cover transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} onLoad={handleImageLoad} />
              </div>
              
-             {/* 深度复刻元数据样式 - 字号微调版 */}
-             <div className="flex justify-between items-start mt-5 px-1">
+             {/* 影像元数据样式：第一行 10px, 无衬线, 不加粗, 黑色 */}
+             <div className="flex justify-between items-start mt-4 px-1 pb-2"> {/* pb-2 保证整体文本区域距离下方 8px */}
                   {/* 左侧：设备型号 + 日期 */}
                   <div className="flex flex-col">
-                      <span className="font-sans font-bold text-[11px] text-ink uppercase tracking-tight leading-tight">{parsed.device || 'Digital Camera'}</span>
+                      <span className="font-sans font-normal text-[10px] text-ink uppercase tracking-tight leading-none">{parsed.device || 'Digital Camera'}</span>
                       <span className="font-sans text-[9px] text-stone-400 mt-1">{parsed.date || 'Unknown Date'}</span>
                   </div>
                   
@@ -73,11 +74,11 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
                       </div>
                       
                       {/* 分割线 */}
-                      <div className="w-[1px] h-7 bg-stone-200"></div>
+                      <div className="w-[1px] h-6 bg-stone-200"></div>
                       
                       {/* 地点块 */}
                       <div className="flex flex-col text-right">
-                          <span className="font-serif font-bold text-[13px] text-ink leading-tight">{parsed.locationMain || 'Untitled'}</span>
+                          <span className="font-sans font-normal text-[10px] text-ink leading-none">{parsed.locationMain || 'Untitled'}</span>
                           <span className="font-sans text-[9px] text-stone-400 mt-1 uppercase tracking-wide">
                               {parsed.locationSub || 'Global Location'}
                           </span>
@@ -141,19 +142,15 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                                 <span className="font-mono text-[9px] font-bold uppercase tracking-widest text-ink">{isBlog ? blogPost?.readTime : `${photoGroup?.count} SHOTS`}</span>
                             </div>
                         </div>
-                        {/* 缩小了主标题字号 */}
                         <h1 className="font-serif font-bold text-2xl text-ink leading-snug mb-8 pr-4">{item?.title || 'Loading...'}</h1>
                         <DashedLine className="opacity-10" />
                     </div>
 
-                    {/* Image Section - Notches at 4 corners */}
+                    {/* Image Section - Removed top notches, kept bottom notches */}
                     {displayImage && (
                         <div className="relative w-full aspect-[16/9] bg-stone-100 overflow-visible">
-                            <Notch className="-left-4 top-0 -translate-y-1/2" />
-                            <Notch className="-right-4 top-0 -translate-y-1/2" />
-                            
                             <img src={displayImage} className="w-full h-full object-cover" alt="Cover" />
-                            
+                            {/* 仅在图片底部保留打孔，衔接内容区 */}
                             <Notch className="-left-4 bottom-0 translate-y-1/2" />
                             <Notch className="-right-4 bottom-0 translate-y-1/2" />
                         </div>
@@ -173,10 +170,12 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                         )}
                     </div>
 
-                    {/* Footer Section */}
-                    <div className="bg-paper-dark p-8 border-t border-dashed border-stone-300/50 mt-12">
+                    {/* Footer Section - Notches at the waistline junction */}
+                    <div className="bg-paper-dark p-8 border-t border-dashed border-stone-300/50 mt-12 relative">
+                        {/* 条形码色块腰线处的打孔效果 */}
                         <Notch className="-left-4 top-0 -translate-y-1/2" />
                         <Notch className="-right-4 top-0 -translate-y-1/2" />
+                        
                         <div className="flex justify-between items-center opacity-30">
                             <BarcodeVertical />
                             <div className="flex flex-col gap-1 text-center">
