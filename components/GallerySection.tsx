@@ -1,85 +1,100 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { PhotoGroup } from '../types';
-import { TicketBase, Notch, DashedLine } from './TicketUI';
-import { ArrowUpRight, ArrowRight, MapPin } from 'lucide-react';
+import { TicketBase, Notch } from './TicketUI';
+import { ArrowUpRight, ArrowRight } from 'lucide-react';
 
 interface Props {
   groups: PhotoGroup[];
-  onViewAll?: boolean;
+  id?: string;
+  onItemClick: (group: PhotoGroup) => void;
+  onViewAll?: () => void;
   title?: string;
 }
 
-const GalleryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ group, index }) => {
+// Sub-component to handle individual image loading state
+const GalleryCard: React.FC<{ group: PhotoGroup; index: number; onClick: (g: PhotoGroup) => void }> = ({ group, index, onClick }) => {
     const [isLoaded, setIsLoaded] = useState(false);
+    // Eager load the first 2 images for immediate viewport visibility
+    const isPriority = index < 2;
+
     return (
-        <Link 
-            to={`/gallery/${group.id}`}
-            className="group cursor-pointer flex flex-col h-auto hover:-translate-y-1 transition-transform duration-300 mb-4"
+        <TicketBase 
+            // Flat design: Removed shadow-ticket, using border for definition instead
+            className="group cursor-pointer rounded-sm flex flex-col h-auto hover:-translate-y-1 transition-transform duration-300"
         >
-            <div className="flex flex-col h-full relative">
-                {/* 封面区 */}
-                <div className="relative w-full aspect-[4/3] overflow-hidden rounded-t-sm bg-stone-200">
+            <div onClick={() => onClick(group)} className="flex flex-col h-full">
+                {/* Image Area */}
+                <div className="relative w-full aspect-video overflow-hidden rounded-t-sm bg-stone-200">
                     <img 
                         src={group.coverUrl} 
-                        alt={group.title} 
-                        onLoad={() => setIsLoaded(true)} 
-                        className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} 
+                        alt={group.title}
+                        loading={isPriority ? "eager" : "lazy"}
+                        decoding={isPriority ? "auto" : "async"}
+                        onLoad={() => setIsLoaded(true)}
+                        className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-105 filter grayscale-[20%] group-hover:grayscale-0 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
                     />
-                    <div className="absolute top-4 left-4 bg-paper/95 text-ink text-[9px] font-mono px-2 py-1.5 shadow-sm uppercase tracking-widest">
+                    <div className="absolute top-4 left-4 bg-paper/90 text-ink text-[10px] font-mono px-2 py-1 shadow-sm">
                         No. {group.ticketNumber}
                     </div>
                 </div>
-                
-                {/* 核心腰线实现：虚线 + 左右半圆打孔 */}
-                <div className="relative bg-paper px-6 py-6 border-x border-stone-200/50 flex-grow">
-                    <DashedLine className="absolute top-0 left-4 right-4 opacity-30" />
+
+                {/* Stub Area */}
+                <div className="bg-paper p-5 relative border-t-2 border-dashed border-stone-200 rounded-b-sm flex-grow flex flex-col justify-between">
+                    {/* Decorative Half Circles (Tear marks) */}
                     <Notch className="-left-4 top-0 -translate-y-1/2" />
                     <Notch className="-right-4 top-0 -translate-y-1/2" />
-                    
-                    <div className="flex justify-between items-start mb-6 pt-2">
+
+                    <div className="flex justify-between items-start mb-4">
                         <div>
-                            <h3 className="font-serif font-bold text-xl leading-tight mb-2 group-hover:text-brand-accent transition-colors">{group.title}</h3>
-                            <div className="flex items-center gap-1.5 opacity-50">
-                                <MapPin size={10} className="text-stone-500" />
-                                <p className="font-mono text-[9px] text-stone-600 uppercase tracking-widest">{group.location}</p>
-                            </div>
+                            <h3 className="font-serif font-bold text-xl leading-tight mb-1 group-hover:text-brand-accent transition-colors">
+                                {group.title}
+                            </h3>
+                            <p className="font-mono text-[10px] text-stone-500 uppercase tracking-widest">{group.location}</p>
                         </div>
-                        <ArrowUpRight size={18} className="text-stone-300 group-hover:text-brand-accent transition-colors" />
+                        <ArrowUpRight size={18} className="text-stone-400 group-hover:text-brand-accent transition-colors" />
                     </div>
-                    
-                    <div className="flex justify-between items-end border-t border-stone-100 pt-4 mt-auto">
+
+                    <div className="flex justify-between items-end border-t border-stone-100 pt-3">
                         <div className="flex flex-col">
-                             <span className="text-[8px] font-mono text-stone-300 uppercase tracking-widest mb-1">Quantity</span>
-                             <span className="font-serif text-sm font-bold">{group.count} Frames</span>
+                             <span className="text-[9px] font-mono text-stone-400 uppercase">Count</span>
+                             <span className="font-serif text-sm">{group.count} Frames</span>
                         </div>
                         <div className="flex flex-col text-right">
-                             <span className="text-[8px] font-mono text-stone-300 uppercase tracking-widest mb-1">Issue Date</span>
-                             <span className="font-mono text-[10px] font-bold text-stone-500">{group.date}</span>
+                             <span className="text-[9px] font-mono text-stone-400 uppercase">Date</span>
+                             <span className="font-mono text-xs">{group.date}</span>
                         </div>
                     </div>
                 </div>
             </div>
-        </Link>
+        </TicketBase>
     );
 };
 
-export const GallerySection: React.FC<Props> = ({ groups, onViewAll, title = "影像辑" }) => {
+export const GallerySection: React.FC<Props> = ({ groups, id, onItemClick, onViewAll, title = "影像辑" }) => {
   return (
-    <section className="mb-20 scroll-mt-24 w-full">
-      <div className="flex items-end justify-between mb-8 px-2">
+    <section id={id} className="mb-16 scroll-mt-24 w-full">
+      <div className="flex items-end justify-between mb-6 px-2">
          <div className="flex items-end gap-3">
             <h2 className="font-serif text-2xl font-bold text-ink">{title}</h2>
-            <span className="font-mono text-[10px] text-stone-400 mb-1 tracking-widest">/ GALLERY</span>
+            <span className="font-mono text-xs text-stone-500 mb-1">/ GALLERY</span>
          </div>
          {onViewAll && (
-             <Link to="/gallery" className="inline-flex items-center gap-1 font-mono text-[9px] text-stone-400 hover:text-ink transition-colors pb-1 tracking-widest">
+             <button onClick={onViewAll} className="inline-flex items-center gap-1 font-mono text-[10px] text-stone-400 hover:text-ink transition-colors pb-1">
                  VIEW ALL <ArrowRight size={10} />
-             </Link>
+             </button>
          )}
       </div>
-      <div className="flex flex-col gap-12 w-full">
-        {groups.map((group, idx) => <GalleryCard key={group.id} group={group} index={idx} />)}
+
+      {/* Single Column Ticket Stack */}
+      <div className="flex flex-col gap-8 w-full">
+        {groups.map((group, idx) => (
+            <GalleryCard 
+                key={group.id} 
+                group={group} 
+                index={idx} 
+                onClick={onItemClick} 
+            />
+        ))}
       </div>
     </section>
   );
