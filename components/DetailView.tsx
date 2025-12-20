@@ -3,7 +3,7 @@ import { useParams, Navigate } from 'react-router-dom';
 import { BlogPost, PhotoGroup } from '../types';
 import { TicketBase, DashedLine, Notch, BarcodeVertical } from './TicketUI';
 import { NavBar } from './NavBar';
-import { Clock, MapPin, Camera, Loader2 } from 'lucide-react';
+import { Clock, Camera, Loader2 } from 'lucide-react';
 
 interface DetailViewProps {
   items: (BlogPost | PhotoGroup)[];
@@ -19,28 +19,20 @@ interface GalleryImage {
 
 const BrandLabel = ({ deviceString }: { deviceString: string }) => {
     const s = deviceString.toLowerCase();
-    
-    if (s.includes('apple') || s.includes('iphone')) {
-        return <span className="font-sans font-black tracking-tight text-[13px] text-stone-600">APPLE</span>;
-    }
-    if (s.includes('sony') || s.includes('ilce') || s.includes('alpha')) {
-        return <span className="font-serif font-bold tracking-[0.1em] text-[12px] text-stone-600">SONY</span>;
-    }
-    if (s.includes('canon')) return <span className="font-serif font-bold italic text-[13px] text-stone-600">Canon</span>;
-    if (s.includes('nikon')) return <span className="font-sans font-black italic tracking-tighter uppercase text-[14px] text-stone-600">NIKON</span>;
-    if (s.includes('fuji')) return <span className="font-sans font-bold uppercase tracking-widest text-[11px] text-stone-600">FUJIFILM</span>;
-    if (s.includes('leica')) return <span className="font-serif font-bold text-[#e41e26] text-[12px]">Leica</span>;
-    
-    return <span className="font-mono font-bold uppercase text-[11px] opacity-40">{deviceString.split(' ')[0] || 'SCAN'}</span>;
+    if (s.includes('apple') || s.includes('iphone')) return <span className="font-sans font-black tracking-tight text-[11px] text-stone-500">APPLE</span>;
+    if (s.includes('sony')) return <span className="font-serif font-bold tracking-[0.1em] text-[10px] text-stone-500">SONY</span>;
+    if (s.includes('canon')) return <span className="font-serif font-bold italic text-[11px] text-stone-500">Canon</span>;
+    if (s.includes('nikon')) return <span className="font-sans font-black italic tracking-tighter uppercase text-[12px] text-stone-500">NIKON</span>;
+    if (s.includes('fuji')) return <span className="font-sans font-bold uppercase tracking-widest text-[9px] text-stone-500">FUJIFILM</span>;
+    return <span className="font-mono font-bold uppercase text-[9px] opacity-40">{deviceString.split(' ')[0] || 'SCAN'}</span>;
 };
 
 const parseCaptionData = (caption: string) => {
     if (!caption) return { device: '', date: '', locationMain: '', locationSub: '' };
     const parts = caption.split(/\||｜/).map(s => s.trim()).filter(Boolean);
     let device = '', date = '', others = [];
-    const deviceKeywords = ['SONY', 'Sony', 'Canon', 'Nikon', 'Fuji', 'Leica', 'Apple', 'iPhone', 'Panasonic', 'Lumix', 'Ricoh', 'Hasselblad', 'Olympus'];
+    const deviceKeywords = ['SONY', 'Sony', 'Canon', 'Nikon', 'Fuji', 'Leica', 'Apple', 'iPhone'];
     const dateRegex = /(\d{4}.*\d{1,2}.*\d{1,2})/;
-    
     parts.forEach(part => {
         if (!device && deviceKeywords.some(k => part.toLowerCase().includes(k.toLowerCase()))) device = part;
         else if (!date && dateRegex.test(part)) date = part;
@@ -61,37 +53,32 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
     };
 
     return (
-        <div className="w-full bg-white mb-24 last:mb-0">
+        <div className="w-full bg-white mb-20 last:mb-0">
              <div className={`w-full relative overflow-hidden ${aspectClass} rounded-sm`}>
-                <img 
-                    src={img.url} 
-                    alt={parsed.locationMain} 
-                    className={`w-full h-full object-cover transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} 
-                    onLoad={handleImageLoad} 
-                />
+                <img src={img.url} alt={parsed.locationMain} className={`w-full h-full object-cover transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} onLoad={handleImageLoad} />
              </div>
              
-             {/* 深度复刻截图元数据样式 */}
-             <div className="flex justify-between items-start mt-6 px-1">
+             {/* 深度复刻元数据样式 - 字号微调版 */}
+             <div className="flex justify-between items-start mt-5 px-1">
                   {/* 左侧：设备型号 + 日期 */}
                   <div className="flex flex-col">
-                      <span className="font-sans font-bold text-[14px] text-ink uppercase tracking-tight">{parsed.device || 'Digital Camera'}</span>
-                      <span className="font-sans text-[11px] text-stone-400 mt-1">{parsed.date || 'Unknown Date'}</span>
+                      <span className="font-sans font-bold text-[11px] text-ink uppercase tracking-tight leading-tight">{parsed.device || 'Digital Camera'}</span>
+                      <span className="font-sans text-[9px] text-stone-400 mt-1">{parsed.date || 'Unknown Date'}</span>
                   </div>
                   
                   {/* 右侧：品牌标识 | 地点信息 */}
-                  <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-4">
                       <div className="flex items-center">
                           <BrandLabel deviceString={parsed.device || 'Digital'} />
                       </div>
                       
                       {/* 分割线 */}
-                      <div className="w-[1px] h-9 bg-stone-200"></div>
+                      <div className="w-[1px] h-7 bg-stone-200"></div>
                       
                       {/* 地点块 */}
                       <div className="flex flex-col text-right">
-                          <span className="font-serif font-bold text-[15px] text-ink leading-none">{parsed.locationMain || 'Untitled'}</span>
-                          <span className="font-sans text-[10px] text-stone-400 mt-2 uppercase tracking-wide">
+                          <span className="font-serif font-bold text-[13px] text-ink leading-tight">{parsed.locationMain || 'Untitled'}</span>
+                          <span className="font-sans text-[9px] text-stone-400 mt-1 uppercase tracking-wide">
                               {parsed.locationSub || 'Global Location'}
                           </span>
                       </div>
@@ -129,11 +116,11 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
   }, [item?.id]);
 
   if (!item && isDataFetched) return <Navigate to="/" replace />;
-  if (!item && !loading) return <div className="min-h-screen bg-texture flex items-center justify-center font-mono text-[10px] opacity-20">NO ITEM FOUND</div>;
 
   const isBlog = type === 'blog';
   const blogPost = item as BlogPost;
   const photoGroup = item as PhotoGroup;
+  const displayImage = isBlog ? blogPost?.imageUrl : photoGroup?.coverUrl;
 
   return (
     <div className="min-h-screen w-full flex flex-col bg-texture">
@@ -142,30 +129,38 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
             <div className="px-4">
                 <div className="h-4 w-full jagged-top bg-paper"></div>
                 <TicketBase className="rounded-none bg-paper min-h-[80vh] border-x border-stone-200">
-                    <div className="p-8 pb-6 relative">
-                        <div className="flex justify-between items-start mb-6">
+                    {/* Header Section */}
+                    <div className="p-8 pb-8 relative">
+                        <div className="flex justify-between items-center mb-10">
                             <div className="flex flex-col">
-                                <span className="font-mono text-[9px] text-stone-400 uppercase tracking-[0.2em] mb-1">{isBlog ? (blogPost?.category || 'Blog') : 'GALLERY'}</span>
-                                <span className="font-mono text-xs font-bold text-ink bg-stone-100 px-2 py-0.5 inline-block rounded-sm">{isBlog ? blogPost?.date : photoGroup?.ticketNumber}</span>
+                                <span className="font-mono text-[9px] text-stone-400 uppercase tracking-[0.2em]">{isBlog ? (blogPost?.category || 'Blog') : 'GALLERY'}</span>
+                                <div className="h-[1.5px] w-6 bg-stone-100 mt-1"></div>
                             </div>
-                            <div className="border border-stone-200 px-2 py-1 flex items-center gap-1.5 opacity-60">
-                                {isBlog ? <Clock size={10} /> : <Camera size={10} />}
-                                <span className="font-mono text-[9px] font-bold uppercase">{isBlog ? blogPost?.readTime : `${photoGroup?.count} SHOTS`}</span>
+                            <div className="border border-stone-200 rounded-sm px-2 py-0.5 flex items-center gap-1.5 opacity-60">
+                                {isBlog ? <Clock size={10} className="text-stone-400" /> : <Camera size={10} className="text-stone-400" />}
+                                <span className="font-mono text-[9px] font-bold uppercase tracking-widest text-ink">{isBlog ? blogPost?.readTime : `${photoGroup?.count} SHOTS`}</span>
                             </div>
                         </div>
-                        <h1 className="font-serif font-bold text-3xl text-ink leading-tight mb-6">{item?.title || 'Loading...'}</h1>
-                        <DashedLine className="mt-8 opacity-20" />
-                        <Notch className="-left-4 bottom-[-1px] translate-y-1/2" />
-                        <Notch className="-right-4 bottom-[-1px] translate-y-1/2" />
+                        {/* 缩小了主标题字号 */}
+                        <h1 className="font-serif font-bold text-2xl text-ink leading-snug mb-8 pr-4">{item?.title || 'Loading...'}</h1>
+                        <DashedLine className="opacity-10" />
                     </div>
-                    {(isBlog ? blogPost?.imageUrl : photoGroup?.coverUrl) && (
-                        <div className="relative w-full aspect-[16/9] bg-stone-100 overflow-hidden">
-                            <img src={isBlog ? blogPost.imageUrl : photoGroup.coverUrl} className="w-full h-full object-cover" />
+
+                    {/* Image Section - Notches at 4 corners */}
+                    {displayImage && (
+                        <div className="relative w-full aspect-[16/9] bg-stone-100 overflow-visible">
+                            <Notch className="-left-4 top-0 -translate-y-1/2" />
+                            <Notch className="-right-4 top-0 -translate-y-1/2" />
+                            
+                            <img src={displayImage} className="w-full h-full object-cover" alt="Cover" />
+                            
+                            <Notch className="-left-4 bottom-0 translate-y-1/2" />
+                            <Notch className="-right-4 bottom-0 translate-y-1/2" />
                         </div>
                     )}
+
+                    {/* Content Section */}
                     <div className="p-8 pt-10">
-                        <Notch className="-left-4 top-0 -translate-y-1/2" />
-                        <Notch className="-right-4 top-0 -translate-y-1/2" />
                         {loading ? (
                             <div className="flex flex-col items-center py-20 text-stone-300 font-mono text-[10px] tracking-widest"><Loader2 className="animate-spin mb-3" size={16} />LOADING CONTENT...</div>
                         ) : (
@@ -177,14 +172,16 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                             </>
                         )}
                     </div>
-                    <div className="bg-paper-dark p-8 border-t border-dashed border-stone-300/50">
+
+                    {/* Footer Section */}
+                    <div className="bg-paper-dark p-8 border-t border-dashed border-stone-300/50 mt-12">
                         <Notch className="-left-4 top-0 -translate-y-1/2" />
                         <Notch className="-right-4 top-0 -translate-y-1/2" />
                         <div className="flex justify-between items-center opacity-30">
                             <BarcodeVertical />
                             <div className="flex flex-col gap-1 text-center">
-                                <span className="font-serif text-[11px] font-bold tracking-[0.3em]">先见志明</span>
-                                <span className="font-mono text-[8px] tracking-[0.4em] uppercase">END OF TICKET</span>
+                                <span className="font-serif text-[10px] font-bold tracking-[0.3em]">先见志明</span>
+                                <span className="font-mono text-[7px] tracking-[0.4em] uppercase">END OF TICKET</span>
                             </div>
                             <BarcodeVertical />
                         </div>
