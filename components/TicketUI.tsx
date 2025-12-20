@@ -3,13 +3,13 @@ import React from 'react';
 // 经典的半圆打孔，使用 bg-texture 确保与页面背景（噪声）完美融合
 export const Notch = ({ className = "" }: { className?: string }) => (
   <div 
-    className={`w-8 h-8 rounded-full absolute z-10 bg-texture ${className}`} 
+    className={`w-8 h-8 rounded-full absolute z-30 bg-texture shadow-[inset_0_3px_6px_rgba(0,0,0,0.12)] pointer-events-none ${className}`} 
   />
 );
 
-// 虚线装饰
+// 虚线装饰 (腰线核心)
 export const DashedLine = ({ vertical = false, className = "" }: { vertical?: boolean, className?: string }) => (
-  <div className={`${vertical ? 'h-full w-[1px] border-l-2' : 'w-full h-[1px] border-t-2'} border-dashed border-stone-300 ${className}`} />
+  <div className={`${vertical ? 'h-full w-[0px] border-l-2' : 'w-full h-[0px] border-t-2'} border-dashed border-stone-300 ${className}`} />
 );
 
 // 票根基础容器

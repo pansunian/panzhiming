@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PhotoGroup } from '../types';
 import { TicketBase, Notch, DashedLine } from './TicketUI';
-import { ArrowUpRight, ArrowRight } from 'lucide-react';
+import { ArrowUpRight, ArrowRight, MapPin } from 'lucide-react';
 
 interface Props {
   groups: PhotoGroup[];
@@ -15,17 +15,25 @@ const GalleryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ group, in
     return (
         <Link 
             to={`/gallery/${group.id}`}
-            className="group cursor-pointer rounded-sm flex flex-col h-auto hover:-translate-y-1 transition-transform duration-300"
+            className="group cursor-pointer flex flex-col h-auto hover:-translate-y-1 transition-transform duration-300 mb-4"
         >
             <div className="flex flex-col h-full relative">
+                {/* 封面区 */}
                 <div className="relative w-full aspect-[4/3] overflow-hidden rounded-t-sm bg-stone-200">
-                    <img src={group.coverUrl} alt={group.title} onLoad={() => setIsLoaded(true)} className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-105 filter grayscale-[20%] group-hover:grayscale-0 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} />
-                    <div className="absolute top-4 left-4 bg-paper/95 text-ink text-[9px] font-mono px-2 py-1.5 shadow-sm uppercase tracking-widest">No. {group.ticketNumber}</div>
+                    <img 
+                        src={group.coverUrl} 
+                        alt={group.title} 
+                        onLoad={() => setIsLoaded(true)} 
+                        className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} 
+                    />
+                    <div className="absolute top-4 left-4 bg-paper/95 text-ink text-[9px] font-mono px-2 py-1.5 shadow-sm uppercase tracking-widest">
+                        No. {group.ticketNumber}
+                    </div>
                 </div>
                 
-                {/* 核心腰线还原 */}
-                <div className="relative bg-paper p-6 border-x border-stone-200/50 flex-grow flex flex-col justify-between">
-                    <DashedLine className="absolute top-0 left-4 right-4 opacity-20" />
+                {/* 核心腰线实现：虚线 + 左右半圆打孔 */}
+                <div className="relative bg-paper px-6 py-6 border-x border-stone-200/50 flex-grow">
+                    <DashedLine className="absolute top-0 left-4 right-4 opacity-30" />
                     <Notch className="-left-4 top-0 -translate-y-1/2" />
                     <Notch className="-right-4 top-0 -translate-y-1/2" />
                     
@@ -56,13 +64,6 @@ const GalleryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ group, in
     );
 };
 
-// 辅助组件：MapPin
-const MapPin = ({ size, className }: { size: number, className?: string }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
-    </svg>
-);
-
 export const GallerySection: React.FC<Props> = ({ groups, onViewAll, title = "影像辑" }) => {
   return (
     <section className="mb-20 scroll-mt-24 w-full">
@@ -77,7 +78,7 @@ export const GallerySection: React.FC<Props> = ({ groups, onViewAll, title = "�
              </Link>
          )}
       </div>
-      <div className="flex flex-col gap-10 w-full">
+      <div className="flex flex-col gap-12 w-full">
         {groups.map((group, idx) => <GalleryCard key={group.id} group={group} index={idx} />)}
       </div>
     </section>

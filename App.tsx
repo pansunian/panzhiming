@@ -10,17 +10,18 @@ import { NavBar } from './components/NavBar';
 import { Profile, PhotoGroup, Thought, BlogPost } from './types';
 import { Info } from 'lucide-react';
 
-// --- 极致还原：12.19 版演示数据 ---
+// --- 全量演示数据：确保首页视觉饱满 ---
 const defaultProfile: Profile = {
   name: "潘志明",
   role: "先见志明 | Photographer",
   bio: "记录生活瞬间的数字存根。这里展示了我的影像作品、日常碎碎念以及深度思考的文章。欢迎探索这个由 Notion 驱动的数字票根世界。",
   location: "Shanghai, CN",
-  avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop",
+  avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&auto=format&fit=crop",
   socials: [
       { platform: "INSTAGRAM", url: "#", handle: "@panziming" },
       { platform: "XIAOHONGSHU", url: "#", handle: "先见志明" },
-      { platform: "GITHUB", url: "#", handle: "panziming" }
+      { platform: "GITHUB", url: "#", handle: "panziming" },
+      { platform: "EMAIL", url: "mailto:hello@example.com", handle: "Email Me" }
   ]
 };
 
@@ -29,11 +30,22 @@ const defaultPhotoGroups: PhotoGroup[] = [
     id: "demo-g1",
     title: "东京夜雨",
     location: "Shibuya, Tokyo",
-    count: 12,
+    count: 24,
     coverUrl: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=1000&auto=format&fit=crop",
     date: "2023-11-15",
     ticketNumber: "TKY-089",
-    description: "霓虹灯下的涉谷街头，雨水倒映着城市的喧嚣。",
+    description: "霓虹灯下的涉谷街头，雨水倒映着城市的喧嚣。使用 Sony Alpha 7R V 拍摄。",
+    featured: true
+  },
+  {
+    id: "demo-g2",
+    title: "京都散策",
+    location: "Arashiyama, Kyoto",
+    count: 18,
+    coverUrl: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=1000&auto=format&fit=crop",
+    date: "2023-11-20",
+    ticketNumber: "KYO-042",
+    description: "岚山的竹林与鸭川的微风，在这个深秋的午后显得人格外宁静。",
     featured: true
   }
 ];
@@ -66,7 +78,7 @@ const defaultPosts: BlogPost[] = [
   {
     id: "demo-p1",
     title: "为什么我们依然需要纸质的感觉？",
-    excerpt: "在这个数字化的浪潮中，触感、气味和不完美反而成为了最稀缺的奢侈品。",
+    excerpt: "在这个数字化的浪潮中，触感、气味和不完美反而成为了最稀缺的奢侈品。我们怀念纸张的纹理，因为它让时间有了触感。",
     date: "2024-01-12",
     readTime: "6 MIN",
     category: "ESSAY",
@@ -76,7 +88,7 @@ const defaultPosts: BlogPost[] = [
   {
     id: "demo-p2",
     title: "一个摄影师的京都散策：慢门下的时间流逝",
-    excerpt: "鸭川边的晚风，岚山的竹林，在慢速快门下，一切都化作了流动的诗。",
+    excerpt: "鸭川边的晚风，岚山的竹林，在慢速快门下，一切都化作了流动的诗。通过镜头，我试图捕捉那些转瞬即逝的光影。",
     date: "2023-11-20",
     readTime: "8 MIN",
     category: "TRAVEL",
@@ -85,7 +97,7 @@ const defaultPosts: BlogPost[] = [
   }
 ];
 
-// --- 极致还原：黄金 452px 宽度布局 ---
+// --- 布局：黄金 452px 宽度 ---
 interface MainLayoutProps {
     children?: React.ReactNode;
     hideNav?: boolean;
@@ -99,13 +111,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, hideNav, isDemoMode, 
     {isDemoMode && (
       <div className="bg-stone-100/90 backdrop-blur-sm border-b border-stone-200 px-4 py-2 flex items-center justify-center gap-2 sticky top-0 z-[60]">
         <Info className="text-stone-400 shrink-0" size={12} />
-        <p className="text-[10px] text-stone-500 font-mono tracking-[0.3em] uppercase">Preview Mode / v1.0.8</p>
+        <p className="text-[10px] text-stone-500 font-mono tracking-[0.3em] uppercase">Studio Preview Mode</p>
       </div>
     )}
     {!hideNav && <NavBar logoUrl={logoUrl} />}
     <div className={`flex-grow w-full ${isHome ? '' : 'bg-texture'}`}>
-      {/* 严格锁定 452px */}
-      <main className="w-full max-w-[452px] mx-auto px-4 pt-8 md:pt-12 pb-20">
+      <main className="w-full max-w-[452px] mx-auto px-4 pt-12 pb-20">
         {children}
       </main>
     </div>
@@ -129,7 +140,6 @@ const App: React.FC = () => {
   const location = useLocation();
   const [isDemoMode, setIsDemoMode] = useState(true);
 
-  // 初始化使用演示数据，确保首页内容充实
   const [profile, setProfile] = useState<Profile>(defaultProfile);
   const [photoGroups, setPhotoGroups] = useState<PhotoGroup[]>(defaultPhotoGroups);
   const [thoughts, setThoughts] = useState<Thought[]>(defaultThoughts);
@@ -151,10 +161,10 @@ const App: React.FC = () => {
         try {
           const data = JSON.parse(cached);
           if (data.profile) setProfile(data.profile);
-          if (data.gallery && data.gallery.length) setPhotoGroups(data.gallery);
-          if (data.thoughts && data.thoughts.length) setThoughts(data.thoughts);
-          if (data.posts && data.posts.length) setPosts(data.posts);
-          setAboutPage(data.about || data.manual || null);
+          if (data.gallery?.length) setPhotoGroups(data.gallery);
+          if (data.thoughts?.length) setThoughts(data.thoughts);
+          if (data.posts?.length) setPosts(data.posts);
+          setAboutPage(data.about || null);
           setIsDemoMode(false);
         } catch (e) { }
       }
@@ -164,10 +174,10 @@ const App: React.FC = () => {
         if (res.ok) {
            const data = await res.json();
            if (data.profile) setProfile(data.profile);
-           if (data.gallery && data.gallery.length) setPhotoGroups(data.gallery);
-           if (data.thoughts && data.thoughts.length) setThoughts(data.thoughts);
-           if (data.posts && data.posts.length) setPosts(data.posts);
-           setAboutPage(data.about || data.manual || null);
+           if (data.gallery?.length) setPhotoGroups(data.gallery);
+           if (data.thoughts?.length) setThoughts(data.thoughts);
+           if (data.posts?.length) setPosts(data.posts);
+           setAboutPage(data.about || null);
            localStorage.setItem(CACHE_KEY, JSON.stringify(data));
            setIsDemoMode(false); 
         }
@@ -183,19 +193,14 @@ const App: React.FC = () => {
       <Route path="/" element={
         <MainLayout {...commonProps} hideNav isHome>
           <ProfileSection profile={profile} />
-          <div className="flex flex-col gap-20 animate-in fade-in slide-in-from-bottom-6 duration-1000">
-            {photoGroups.length > 0 && (
-              <GallerySection 
+          <div className="flex flex-col gap-24 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            <GallerySection 
                 title="精选影像" 
-                groups={photoGroups.filter(g => g.featured).length ? photoGroups.filter(g => g.featured) : photoGroups.slice(0, 2)} 
+                groups={photoGroups.filter(g => g.featured).slice(0, 2)} 
                 onViewAll 
-              />
-            )}
-            
-            {/* 确保首页总是渲染碎碎念和文章 */}
+            />
             <ThoughtSection thoughts={thoughts.slice(0, 5)} showViewAll />
             <BlogSection title="精选文章" posts={posts.slice(0, 3)} showViewAll />
-            
             <ContactSection logoUrl={profile.logoUrl} />
           </div>
         </MainLayout>
