@@ -17,7 +17,7 @@ export const TicketBase: React.FC<{ children: React.ReactNode; className?: strin
 };
 
 export const BarcodeHorizontal = ({ className = "" }: { className?: string }) => (
-    <div className={`flex gap-[3px] h-8 ${className}`}>
+    <div className={`flex justify-center gap-[3px] h-8 ${className}`}>
         {[...Array(30)].map((_, i) => (
             <div key={i} className={`bg-ink h-full ${Math.random() > 0.5 ? 'w-[3px]' : 'w-[1px]'}`} />
         ))}

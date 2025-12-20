@@ -45,18 +45,6 @@ module.exports = async function handler(req, res) {
       return '';
   };
 
-  const fetchDatabase = async (dbId, name, mapper) => {
-    try {
-        const response = await notion.databases.query({ database_id: dbId });
-        let results = response.results.map(mapper);
-        results.sort((a, b) => (b.date || '0000').localeCompare(a.date || '0000'));
-        return results;
-    } catch (error) {
-        console.error(`Error fetching ${name}:`, error.message);
-        return [];
-    }
-  };
-
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });
 
   const fetchProfile = async () => {
@@ -77,24 +65,60 @@ module.exports = async function handler(req, res) {
                   socials: []
               };
 
+              // 平台映射表：Key 为 Notion 中的列名（支持中文），Value 为前端展示代码
               const platformMapping = {
-                  'instagram': 'INSTAGRAM', 'twitter': 'TWITTER', 'x': 'TWITTER',
-                  'weibo': 'WEIBO', 'github': 'GITHUB', 'bilibili': 'BILIBILI', 
-                  'douban': 'DOUBAN', 'xiaohongshu': 'XIAOHONGSHU', 'red': 'XIAOHONGSHU',
-                  'youtube': 'YOUTUBE', 'linkedin': 'LINKEDIN', 'email': 'EMAIL'
+                  '小红书': 'XIAOHONGSHU',
+                  'xiaohongshu': 'XIAOHONGSHU',
+                  'red': 'XIAOHONGSHU',
+                  '即刻': 'JIKE',
+                  'jike': 'JIKE',
+                  '哔哩哔哩': 'BILIBILI',
+                  'bilibili': 'BILIBILI',
+                  '小宇宙': 'XIAOYUZHOU',
+                  'cosmos': 'XIAOYUZHOU',
+                  '公众号': 'WECHAT',
+                  '微信': 'WECHAT',
+                  'instagram': 'INSTAGRAM',
+                  'twitter': 'TWITTER',
+                  'x': 'TWITTER',
+                  'weibo': 'WEIBO',
+                  '微博': 'WEIBO',
+                  'github': 'GITHUB',
+                  'email': 'EMAIL',
+                  '邮箱': 'EMAIL',
+                  'linkedin': 'LINKEDIN',
+                  'youtube': 'YOUTUBE'
               };
 
-              for (const [lowKey, platformCode] of Object.entries(platformMapping)) {
-                  const matchedKey = actualKeys.find(k => k.toLowerCase() === lowKey);
+              for (const [columnName, platformCode] of Object.entries(platformMapping)) {
+                  // 精确查找 Notion 列名
+                  const matchedKey = actualKeys.find(k => k.trim() === columnName);
                   if (matchedKey) {
                       const url = getPropValue(p[matchedKey]);
-                      if (url) profileData.socials.push({ platform: platformCode, url, handle: '@Link' });
+                      if (url) {
+                          profileData.socials.push({ 
+                              platform: platformCode, 
+                              url, 
+                              handle: matchedKey // 使用列名作为 Handle
+                          });
+                      }
                   }
               }
               return profileData;
           }
           return null;
       } catch (e) { return null; }
+  };
+
+  const fetchDatabase = async (dbId, name, mapper) => {
+    try {
+        const response = await notion.databases.query({ database_id: dbId });
+        let results = response.results.map(mapper);
+        results.sort((a, b) => (b.date || '0000').localeCompare(a.date || '0000'));
+        return results;
+    } catch (error) {
+        return [];
+    }
   };
 
   const [profile, gallery, thoughts, posts] = await Promise.all([

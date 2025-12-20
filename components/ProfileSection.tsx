@@ -4,7 +4,7 @@ import { Profile } from '../types';
 import { TicketBase, Notch, DashedLine, BarcodeHorizontal } from './TicketUI';
 import { 
     Instagram, Twitter, Github, Linkedin, Mail, Youtube, 
-    Globe, Zap, MessageCircle, Link as LinkIcon, Clapperboard, BookOpen 
+    Globe, Zap, MessageCircle, Link as LinkIcon, Tv, Radio, BookOpen 
 } from 'lucide-react';
 
 interface Props {
@@ -20,10 +20,10 @@ const SOCIAL_MAP: Record<string, { label: string; icon: React.ElementType }> = {
     EMAIL: { label: 'Email', icon: Mail },
     WEIBO: { label: '微博', icon: Globe },
     XIAOHONGSHU: { label: '小红书', icon: BookOpen },
-    RED: { label: '小红书', icon: BookOpen },
     JIKE: { label: '即刻', icon: Zap },
     WECHAT: { label: '公众号', icon: MessageCircle },
-    BILIBILI: { label: 'Bilibili', icon: Clapperboard },
+    BILIBILI: { label: 'Bilibili', icon: Tv },
+    XIAOYUZHOU: { label: '小宇宙', icon: Radio },
     DOUBAN: { label: '豆瓣', icon: BookOpen },
     LINK: { label: 'Link', icon: LinkIcon }
 };
@@ -54,9 +54,8 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
             </Link>
         </div>
 
-        {/* 核心信息区（带腰线和打孔） */}
+        {/* 核心信息区 */}
         <div className="relative bg-brand-accent text-white p-8">
-             {/* 物理级打孔 */}
              <Notch className="-left-4 top-0 -translate-y-1/2" />
              <Notch className="-right-4 top-0 -translate-y-1/2" />
              <DashedLine className="absolute top-0 left-4 right-4 border-white/30" />
@@ -72,7 +71,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                          <p className="font-mono text-sm">{profile.location}</p>
                      </div>
                  </div>
-                 <p className="font-serif text-sm leading-relaxed opacity-90 mb-8 border-l-2 border-white/30 pl-4 py-1">
+                 <p className="font-serif text-sm leading-relaxed opacity-90 mb-8 border-l-2 border-white/30 pl-4 py-1 text-justify">
                      {profile.bio}
                  </p>
                  
@@ -98,14 +97,14 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
              </div>
         </div>
 
-        {/* 社交链接底部 */}
+        {/* 社交链接与条形码（白色区域） */}
         <div className="bg-paper p-8 relative rounded-b-2xl">
              <Notch className="-left-4 top-0 -translate-y-1/2" />
              <Notch className="-right-4 top-0 -translate-y-1/2" />
              <DashedLine className="absolute top-0 left-4 right-4" />
              
-             <div className="mt-4 flex flex-col items-center gap-6">
-                 <div className="flex flex-wrap justify-center gap-x-6 gap-y-4 px-2">
+             <div className="mt-4 flex flex-col items-center gap-10">
+                 <div className="flex flex-wrap justify-center gap-x-6 gap-y-5 px-2">
                      {profile.socials.map(social => {
                          const { label, icon: Icon } = getSocialConfig(social.platform);
                          return (
@@ -116,9 +115,11 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                          );
                      })}
                  </div>
+                 
+                 {/* 条形码修正：确保容器居中 */}
                  <div className="w-full flex flex-col items-center opacity-40">
                     <BarcodeHorizontal className="h-8 w-48 mix-blend-multiply" />
-                    <p className="text-[9px] font-mono mt-2 tracking-[0.4em] uppercase">PanZhiMing.com</p>
+                    <p className="text-[9px] font-mono mt-3 tracking-[0.4em] uppercase text-center">PanZhiMing.com</p>
                  </div>
              </div>
         </div>
