@@ -21,22 +21,17 @@ export const NavBar: React.FC<NavBarProps> = ({ logoUrl }) => {
       <div className="max-w-[452px] mx-auto h-14 flex items-stretch justify-between relative px-0">
         
         {/* Left: Logo Area */}
-        <div className="flex items-center">
-            <Link 
-              to="/"
-              onClick={() => setIsMenuOpen(false)}
-              className="px-4 h-full flex flex-col justify-center items-start bg-transparent hover:bg-stone-50/50 transition-colors group z-20 relative"
-            >
-               {logoUrl ? (
-                 <img src={logoUrl} alt="Logo" className="h-9 w-auto object-contain opacity-90 group-hover:opacity-100 transition-opacity" />
-               ) : (
-                 <div className="flex items-baseline gap-1.5">
-                    <span className="font-serif font-bold text-base tracking-wide text-ink group-hover:text-brand-accent transition-colors">ARCHIVE</span>
-                    <span className="font-mono text-[7px] text-stone-300 opacity-60">v1.0.4</span>
-                 </div>
-               )}
-            </Link>
-        </div>
+        <Link 
+          to="/"
+          onClick={() => setIsMenuOpen(false)}
+          className="px-4 flex flex-col justify-center items-start bg-transparent hover:bg-stone-50/50 transition-colors group z-20 relative"
+        >
+           {logoUrl ? (
+             <img src={logoUrl} alt="Logo" className="h-9 w-auto object-contain opacity-90 group-hover:opacity-100 transition-opacity" />
+           ) : (
+             <span className="font-serif font-bold text-base tracking-wide text-ink group-hover:text-brand-accent transition-colors">ARCHIVE</span>
+           )}
+        </Link>
 
         {/* Right: Actions Area */}
         <div className="flex items-center h-full z-20">
