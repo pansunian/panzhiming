@@ -1,6 +1,7 @@
 const { Client } = require('@notionhq/client');
 
 module.exports = async function handler(req, res) {
+  // Reduced s-maxage to 60 (1 minute) for faster debugging
   res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=86400');
 
   const requiredEnv = [
@@ -20,6 +21,8 @@ module.exports = async function handler(req, res) {
   }
 
   const notion = new Client({ auth: process.env.NOTION_API_KEY });
+
+  // --- HELPER FUNCTIONS ---
 
   const getPropValue = (prop) => {
       if (!prop) return null;
@@ -58,6 +61,18 @@ module.exports = async function handler(req, res) {
       return id;
   };
 
+  const fetchFirstContentImage = async (pageId) => {
+      try {
+          const blocks = await notion.blocks.children.list({ block_id: pageId, page_size: 10 });
+          for (const block of blocks.results) {
+              if (block.type === 'image') {
+                  return block.image.type === 'external' ? block.image.external.url : block.image.file.url;
+              }
+          }
+      } catch (e) { console.warn(`Block fetch failed for ${pageId}`, e.message); }
+      return null;
+  };
+
   const fetchDatabase = async (dbId, name, mapper) => {
     try {
         const response = await notion.databases.query({ database_id: dbId });
@@ -94,22 +109,15 @@ module.exports = async function handler(req, res) {
               };
 
               const detectedSocials = [];
-              // 增强的平台映射：小写化以支持模糊匹配
               const platformMapping = {
-                  'instagram': 'INSTAGRAM', 'twitter': 'TWITTER', 'x': 'TWITTER',
-                  'weibo': 'WEIBO', 'github': 'GITHUB', 'bilibili': 'BILIBILI', 
-                  'douban': 'DOUBAN', 'xiaohongshu': 'XIAOHONGSHU', 'red': 'XIAOHONGSHU',
-                  'youtube': 'YOUTUBE', 'linkedin': 'LINKEDIN', 'email': 'EMAIL', 
-                  'jike': 'JIKE', 'wechat': 'WECHAT'
+                  'Instagram': 'INSTAGRAM', 'Twitter': 'TWITTER', 'X': 'TWITTER',
+                  'Weibo': 'WEIBO', 'GitHub': 'GITHUB', 'Bilibili': 'BILIBILI', 
+                  'Douban': 'DOUBAN', 'Xiaohongshu': 'XIAOHONGSHU', 'YouTube': 'YOUTUBE', 
+                  'LinkedIn': 'LINKEDIN', 'Email': 'EMAIL', 'Jike': 'JIKE', 'WeChat': 'WECHAT'
               };
-
-              const actualKeys = Object.keys(p);
-              
-              for (const [platformKey, platformCode] of Object.entries(platformMapping)) {
-                  // 寻找 Notion 中是否存在不区分大小写的对应列
-                  const foundKey = actualKeys.find(k => k.toLowerCase() === platformKey);
-                  if (foundKey) {
-                      let rawVal = getPropValue(p[foundKey]);
+              for (const [colName, platformCode] of Object.entries(platformMapping)) {
+                  if (p[colName]) {
+                      let rawVal = getPropValue(p[colName]);
                       if (rawVal && typeof rawVal === 'string' && rawVal.trim().length > 0) {
                           if (platformCode === 'EMAIL' && !rawVal.startsWith('mailto:')) {
                               detectedSocials.push({ platform: 'EMAIL', url: `mailto:${rawVal.trim()}`, handle: rawVal.trim() });
