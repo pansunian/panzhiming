@@ -11,7 +11,7 @@ interface Props {
 
 export const ThoughtSection: React.FC<Props> = ({ thoughts, showViewAll }) => {
   return (
-    <section className="mb-24 flex flex-col items-center w-full scroll-mt-12">
+    <section className="flex flex-col items-center w-full scroll-mt-12">
       <div className="flex items-end justify-between px-2 py-6 w-full border-b border-dashed border-stone-200 relative">
          <div className="flex items-end gap-3">
             <h2 className="font-serif text-2xl font-bold text-ink">碎碎念</h2>

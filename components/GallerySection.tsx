@@ -66,7 +66,7 @@ const GalleryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ group, in
 
 export const GallerySection: React.FC<Props> = ({ groups, onViewAll, title = "影像辑" }) => {
   return (
-    <section className="mb-20 scroll-mt-24 w-full">
+    <section className="scroll-mt-24 w-full">
       <div className="flex items-end justify-between mb-8 px-2">
          <div className="flex items-end gap-3">
             <h2 className="font-serif text-2xl font-bold text-ink">{title}</h2>

@@ -53,7 +53,7 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
 
 export const BlogSection: React.FC<Props> = ({ posts, showViewAll, title = "文章" }) => {
   return (
-    <section className="mb-16 scroll-mt-12 w-full">
+    <section className="scroll-mt-12 w-full">
       <div className="flex items-end justify-between mb-8 px-2">
          <div className="flex items-end gap-3">
              <h2 className="font-serif text-2xl font-bold text-ink">{title}</h2>

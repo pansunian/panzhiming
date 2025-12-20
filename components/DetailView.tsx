@@ -19,7 +19,6 @@ interface GalleryImage {
 
 const BrandLabel = ({ deviceString }: { deviceString: string }) => {
     const s = deviceString.toLowerCase();
-    // 品牌标识也统一缩小字号，保持与第一行文字对齐
     if (s.includes('apple') || s.includes('iphone')) return <span className="font-sans font-normal tracking-tight text-[10px] text-ink">APPLE</span>;
     if (s.includes('sony')) return <span className="font-sans font-normal tracking-[0.1em] text-[10px] text-ink">SONY</span>;
     if (s.includes('canon')) return <span className="font-sans font-normal italic text-[10px] text-ink">Canon</span>;
@@ -59,8 +58,8 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
                 <img src={img.url} alt={parsed.locationMain} className={`w-full h-full object-cover transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} onLoad={handleImageLoad} />
              </div>
              
-             {/* 影像元数据样式：第一行 10px, 无衬线, 不加粗, 黑色 */}
-             <div className="flex justify-between items-start mt-4 px-1 pb-2"> {/* pb-2 保证整体文本区域距离下方 8px */}
+             {/* 影像元数据样式：左右往中间缩进 3px (使用 mx-[3px]) */}
+             <div className="flex justify-between items-start mt-4 px-1 pb-2 mx-[3px]">
                   {/* 左侧：设备型号 + 日期 */}
                   <div className="flex flex-col">
                       <span className="font-sans font-normal text-[10px] text-ink uppercase tracking-tight leading-none">{parsed.device || 'Digital Camera'}</span>
@@ -142,15 +141,32 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                                 <span className="font-mono text-[9px] font-bold uppercase tracking-widest text-ink">{isBlog ? blogPost?.readTime : `${photoGroup?.count} SHOTS`}</span>
                             </div>
                         </div>
-                        <h1 className="font-serif font-bold text-2xl text-ink leading-snug mb-8 pr-4">{item?.title || 'Loading...'}</h1>
+                        <h1 className="font-serif font-bold text-2xl text-ink leading-snug mb-2 pr-4">{item?.title || 'Loading...'}</h1>
+                        
+                        {/* 标题下方增加小字展示地址/日期 */}
+                        <div className="flex items-center gap-3 mb-8 text-[9px] font-mono text-stone-400 uppercase tracking-widest">
+                            <span>{item?.date || 'Unknown Date'}</span>
+                            {!isBlog && photoGroup?.location && (
+                                <>
+                                    <span className="opacity-30">/</span>
+                                    <span>{photoGroup.location}</span>
+                                </>
+                            )}
+                        </div>
+                        
                         <DashedLine className="opacity-10" />
                     </div>
 
-                    {/* Image Section - Removed top notches, kept bottom notches */}
+                    {/* Image Section - 封面图四个角打孔回归 */}
                     {displayImage && (
                         <div className="relative w-full aspect-[16/9] bg-stone-100 overflow-visible">
+                            {/* 顶部打孔 */}
+                            <Notch className="-left-4 top-0 -translate-y-1/2" />
+                            <Notch className="-right-4 top-0 -translate-y-1/2" />
+                            
                             <img src={displayImage} className="w-full h-full object-cover" alt="Cover" />
-                            {/* 仅在图片底部保留打孔，衔接内容区 */}
+                            
+                            {/* 底部打孔 */}
                             <Notch className="-left-4 bottom-0 translate-y-1/2" />
                             <Notch className="-right-4 bottom-0 translate-y-1/2" />
                         </div>
@@ -170,19 +186,25 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                         )}
                     </div>
 
-                    {/* Footer Section - Notches at the waistline junction */}
+                    {/* Footer Section */}
                     <div className="bg-paper-dark p-8 border-t border-dashed border-stone-300/50 mt-12 relative">
-                        {/* 条形码色块腰线处的打孔效果 */}
                         <Notch className="-left-4 top-0 -translate-y-1/2" />
                         <Notch className="-right-4 top-0 -translate-y-1/2" />
                         
                         <div className="flex justify-between items-center opacity-30">
-                            <BarcodeVertical />
-                            <div className="flex flex-col gap-1 text-center">
-                                <span className="font-serif text-[10px] font-bold tracking-[0.3em]">先见志明</span>
-                                <span className="font-mono text-[7px] tracking-[0.4em] uppercase">END OF TICKET</span>
+                            {/* 缩小了条形码区域，让出更多空间给文字 */}
+                            <div className="w-8 h-10 overflow-hidden shrink-0">
+                                <BarcodeVertical />
                             </div>
-                            <BarcodeVertical />
+                            
+                            <div className="flex flex-col gap-1 text-center px-4">
+                                <span className="font-serif text-[10px] font-bold tracking-[0.3em] whitespace-nowrap">先见志明</span>
+                                <span className="font-mono text-[7px] tracking-[0.4em] uppercase whitespace-nowrap">END OF TICKET</span>
+                            </div>
+                            
+                            <div className="w-8 h-10 overflow-hidden shrink-0">
+                                <BarcodeVertical />
+                            </div>
                         </div>
                     </div>
                 </TicketBase>

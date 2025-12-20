@@ -24,8 +24,8 @@ export const BarcodeHorizontal = ({ className = "" }: { className?: string }) =>
     </div>
 );
 
-export const BarcodeVertical = () => (
-    <div className="flex flex-col gap-[2px] w-full h-full opacity-70">
+export const BarcodeVertical = ({ className = "" }: { className?: string }) => (
+    <div className={`flex flex-col gap-[2px] w-full h-full opacity-70 ${className}`}>
         {[...Array(15)].map((_, i) => (
             <div key={i} className={`bg-ink w-full ${Math.random() > 0.6 ? 'h-2' : 'h-[2px]'}`} />
         ))}

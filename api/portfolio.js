@@ -135,7 +135,8 @@ module.exports = async function handler(req, res) {
           id: page.id,
           content: getPropValue(page.properties['Content'] || page.properties['Name']),
           date: page.properties['Date']?.date?.start || new Date(page.created_time).toISOString().split('T')[0],
-          tags: page.properties['Tags']?.multi_select?.map(t => t.name) || []
+          tags: page.properties['Tags']?.multi_select?.map(t => t.name) || [],
+          featured: page.properties['Featured']?.checkbox || false
       })),
       fetchDatabase(process.env.NOTION_BLOG_DB_ID, page => ({
           id: page.id,
