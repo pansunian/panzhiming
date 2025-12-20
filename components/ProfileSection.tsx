@@ -98,15 +98,19 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
              <DashedLine className="absolute top-0 left-4 right-4" />
              <div className="mt-2 flex flex-col items-center gap-4">
                  <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 px-2">
-                     {profile.socials.map(social => {
-                         const { label, icon: Icon } = getSocialConfig(social.platform);
-                         return (
-                             <a key={social.platform + social.url} href={social.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs font-bold font-mono uppercase text-ink/70 hover:text-brand-accent transition-colors group">
-                                 <Icon size={14} className="group-hover:scale-110 transition-transform" />
-                                 <span className="border-b border-transparent group-hover:border-brand-accent leading-none pt-[2px]">{label}</span>
-                             </a>
-                         );
-                     })}
+                     {profile.socials && profile.socials.length > 0 ? (
+                        profile.socials.map(social => {
+                            const { label, icon: Icon } = getSocialConfig(social.platform);
+                            return (
+                                <a key={social.platform + social.url} href={social.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs font-bold font-mono uppercase text-ink/70 hover:text-brand-accent transition-colors group">
+                                    <Icon size={14} className="group-hover:scale-110 transition-transform" />
+                                    <span className="border-b border-transparent group-hover:border-brand-accent leading-none pt-[2px]">{label}</span>
+                                </a>
+                            );
+                        })
+                     ) : (
+                        <span className="text-[9px] font-mono text-stone-300 uppercase tracking-widest">Connect with me</span>
+                     )}
                  </div>
                  <BarcodeHorizontal className="h-10 opacity-60 mix-blend-multiply mt-2" />
                  <p className="text-[10px] font-mono text-stone-400">PANZHIMING.COM</p>

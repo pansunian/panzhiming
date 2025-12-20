@@ -10,16 +10,16 @@ import { NavBar } from './components/NavBar';
 import { Profile, PhotoGroup, Thought, BlogPost } from './types';
 import { Info } from 'lucide-react';
 
-// --- Enhanced Demo Data ---
+// --- 极致还原：12.19 版演示数据 ---
 const defaultProfile: Profile = {
   name: "潘志明",
   role: "先见志明 | Photographer",
-  bio: "这里是您的个人主页。目前显示的是演示数据。网站采用『票根』设计语言，将您的作品和文字转化为可以收藏的数字存根。",
+  bio: "记录生活瞬间的数字存根。这里展示了我的影像作品、日常碎碎念以及深度思考的文章。欢迎探索这个由 Notion 驱动的数字票根世界。",
   location: "Shanghai, CN",
   avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop",
   socials: [
       { platform: "INSTAGRAM", url: "#", handle: "@panziming" },
-      { platform: "TWITTER", url: "#", handle: "@panziming" },
+      { platform: "XIAOHONGSHU", url: "#", handle: "先见志明" },
       { platform: "GITHUB", url: "#", handle: "panziming" }
   ]
 };
@@ -52,6 +52,13 @@ const defaultThoughts: Thought[] = [
     date: "2024-03-18",
     time: "15:20",
     tags: ["书影音", "灵感"]
+  },
+  {
+    id: "demo-t3",
+    content: "生活不需要时刻都在线上。偶尔的断网，反而能让我们重新找回感官的敏锐。去呼吸、去触摸、去感受真实的温度。",
+    date: "2024-03-10",
+    time: "09:12",
+    tags: ["极简主义"]
   }
 ];
 
@@ -65,10 +72,20 @@ const defaultPosts: BlogPost[] = [
     category: "ESSAY",
     imageUrl: "https://images.unsplash.com/photo-1454165833222-7e737d97607a?q=80&w=1000&auto=format&fit=crop",
     featured: true
+  },
+  {
+    id: "demo-p2",
+    title: "一个摄影师的京都散策：慢门下的时间流逝",
+    excerpt: "鸭川边的晚风，岚山的竹林，在慢速快门下，一切都化作了流动的诗。",
+    date: "2023-11-20",
+    readTime: "8 MIN",
+    category: "TRAVEL",
+    imageUrl: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=1000&auto=format&fit=crop",
+    featured: true
   }
 ];
 
-// --- Layout Component ---
+// --- 极致还原：黄金 452px 宽度布局 ---
 interface MainLayoutProps {
     children?: React.ReactNode;
     hideNav?: boolean;
@@ -80,15 +97,15 @@ interface MainLayoutProps {
 const MainLayout: React.FC<MainLayoutProps> = ({ children, hideNav, isDemoMode, logoUrl, isHome }) => (
   <div className="min-h-screen flex flex-col text-ink font-sans selection:bg-ink selection:text-paper">
     {isDemoMode && (
-      <div className="bg-stone-100/80 backdrop-blur-sm border-b border-stone-200 px-4 py-1.5 flex items-center justify-center gap-2 sticky top-0 z-[60]">
+      <div className="bg-stone-100/90 backdrop-blur-sm border-b border-stone-200 px-4 py-2 flex items-center justify-center gap-2 sticky top-0 z-[60]">
         <Info className="text-stone-400 shrink-0" size={12} />
-        <p className="text-[10px] text-stone-500 font-mono tracking-widest uppercase">Preview Mode / v1.0.8</p>
+        <p className="text-[10px] text-stone-500 font-mono tracking-[0.3em] uppercase">Preview Mode / v1.0.8</p>
       </div>
     )}
     {!hideNav && <NavBar logoUrl={logoUrl} />}
     <div className={`flex-grow w-full ${isHome ? '' : 'bg-texture'}`}>
-      {/* 恢复经典宽度：452px 是票根设计的黄金宽度 */}
-      <main className="w-full max-w-[452px] mx-auto px-4 pt-8 md:pt-12 pb-12">
+      {/* 严格锁定 452px */}
+      <main className="w-full max-w-[452px] mx-auto px-4 pt-8 md:pt-12 pb-20">
         {children}
       </main>
     </div>
@@ -112,7 +129,7 @@ const App: React.FC = () => {
   const location = useLocation();
   const [isDemoMode, setIsDemoMode] = useState(true);
 
-  // 初始化使用演示数据，确保首页不为空
+  // 初始化使用演示数据，确保首页内容充实
   const [profile, setProfile] = useState<Profile>(defaultProfile);
   const [photoGroups, setPhotoGroups] = useState<PhotoGroup[]>(defaultPhotoGroups);
   const [thoughts, setThoughts] = useState<Thought[]>(defaultThoughts);
@@ -133,10 +150,10 @@ const App: React.FC = () => {
       if (cached) {
         try {
           const data = JSON.parse(cached);
-          setProfile(data.profile || defaultProfile);
-          setPhotoGroups(data.gallery || defaultPhotoGroups);
-          setThoughts(data.thoughts || defaultThoughts);
-          setPosts(data.posts || defaultPosts);
+          if (data.profile) setProfile(data.profile);
+          if (data.gallery && data.gallery.length) setPhotoGroups(data.gallery);
+          if (data.thoughts && data.thoughts.length) setThoughts(data.thoughts);
+          if (data.posts && data.posts.length) setPosts(data.posts);
           setAboutPage(data.about || data.manual || null);
           setIsDemoMode(false);
         } catch (e) { }
@@ -146,10 +163,10 @@ const App: React.FC = () => {
         const res = await fetch('/api/portfolio');
         if (res.ok) {
            const data = await res.json();
-           setProfile(data.profile || defaultProfile);
-           setPhotoGroups(data.gallery || defaultPhotoGroups);
-           setThoughts(data.thoughts || defaultThoughts);
-           setPosts(data.posts || defaultPosts);
+           if (data.profile) setProfile(data.profile);
+           if (data.gallery && data.gallery.length) setPhotoGroups(data.gallery);
+           if (data.thoughts && data.thoughts.length) setThoughts(data.thoughts);
+           if (data.posts && data.posts.length) setPosts(data.posts);
            setAboutPage(data.about || data.manual || null);
            localStorage.setItem(CACHE_KEY, JSON.stringify(data));
            setIsDemoMode(false); 
@@ -166,7 +183,7 @@ const App: React.FC = () => {
       <Route path="/" element={
         <MainLayout {...commonProps} hideNav isHome>
           <ProfileSection profile={profile} />
-          <div className="flex flex-col gap-14 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="flex flex-col gap-20 animate-in fade-in slide-in-from-bottom-6 duration-1000">
             {photoGroups.length > 0 && (
               <GallerySection 
                 title="精选影像" 
@@ -174,8 +191,11 @@ const App: React.FC = () => {
                 onViewAll 
               />
             )}
-            {thoughts.length > 0 && <ThoughtSection thoughts={thoughts.slice(0, 5)} showViewAll />}
-            {posts.length > 0 && <BlogSection title="精选文章" posts={posts.slice(0, 3)} showViewAll />}
+            
+            {/* 确保首页总是渲染碎碎念和文章 */}
+            <ThoughtSection thoughts={thoughts.slice(0, 5)} showViewAll />
+            <BlogSection title="精选文章" posts={posts.slice(0, 3)} showViewAll />
+            
             <ContactSection logoUrl={profile.logoUrl} />
           </div>
         </MainLayout>

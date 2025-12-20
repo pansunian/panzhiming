@@ -45,8 +45,13 @@
 
       body { background-color: var(--bg-color); background-image: var(--noise-url); background-attachment: fixed; color: #2b2926; margin: 0; padding: 0; }
       .bg-texture { background-image: var(--noise-url); }
+      
+      /* 极致票根：锯齿边缘遮罩 */
       .jagged-bottom { -webkit-mask: linear-gradient(-135deg, transparent 6px, #000 0) 0 50%, linear-gradient(135deg, transparent 6px, #000 0) 0 50%; -webkit-mask-size: 12px 100%; -webkit-mask-repeat: repeat-x; -webkit-mask-position: left bottom; }
       .jagged-top { -webkit-mask: linear-gradient(45deg, transparent 6px, #000 0) 0 50%, linear-gradient(-45deg, transparent 6px, #000 0) 0 50%; -webkit-mask-size: 12px 100%; -webkit-mask-repeat: repeat-x; -webkit-mask-position: left top; }
+      .jagged-right { -webkit-mask: linear-gradient(135deg, transparent 6px, #000 0) 50% 0, linear-gradient(225deg, transparent 6px, #000 0) 50% 0; -webkit-mask-size: 100% 12px; -webkit-mask-repeat: repeat-y; -webkit-mask-position: right top; }
+      
+      /* 经典锯齿背景 */
       .sawtooth-y { background-image: linear-gradient(135deg, #ffffff 25%, transparent 25%), linear-gradient(225deg, #ffffff 25%, transparent 25%); background-position: 0 0; background-size: 16px 16px; height: 8px; width: 100%; }
     </style>
   <script type="importmap">

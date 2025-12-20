@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BlogPost } from '../types';
-import { BarcodeSmall, DashedLine } from './TicketUI';
+import { BarcodeSmall, DashedLine, Notch } from './TicketUI';
 import { ArrowRight } from 'lucide-react';
 
 interface Props {
@@ -18,16 +18,21 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
             className="relative w-full h-32 group cursor-pointer transition-all duration-300 hover:-translate-y-1 block"
         >
             <div className="w-full h-full flex items-stretch">
+                {/* 封面左侧 */}
                 <div className="w-36 sm:w-[38%] h-full relative overflow-hidden rounded-l-sm bg-stone-200 shrink-0">
                     <img src={post.imageUrl || `https://picsum.photos/seed/${post.id}/500/300`} alt={post.title} onLoad={() => setIsLoaded(true)} className={`w-full h-full object-cover filter brightness-[0.95] contrast-[1.05] sepia-[0.1] transition-all duration-700 group-hover:scale-105 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} />
                     <div className="absolute bottom-2 left-2 text-white"><span className="font-mono text-[8px] bg-black/40 border border-white/30 px-1.5 py-0.5 backdrop-blur-sm tracking-wider uppercase">{post.category}</span></div>
                 </div>
+                
+                {/* 经典腰线打孔 */}
                 <div className="relative w-0 flex flex-col items-center z-20">
                     <DashedLine vertical className="h-full border-stone-300 opacity-60" />
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-texture rounded-full" />
-                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-3 h-3 bg-texture rounded-full" />
+                    <Notch className="-translate-x-1/2 -top-4 left-1/2" />
+                    <Notch className="-translate-x-1/2 -bottom-4 left-1/2" />
                 </div>
-                <div className="flex-grow h-full bg-paper p-3 sm:p-4 flex flex-col relative jagged-right rounded-r-none">
+                
+                {/* 内容右侧 */}
+                <div className="flex-grow h-full bg-paper p-3 sm:p-4 flex flex-col relative jagged-right rounded-r-none border-r border-stone-200/50">
                     <div className="flex justify-between items-center mb-1">
                             <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">Admit One</span>
                             <span className="font-mono text-[9px] text-stone-500 font-bold">{post.date}</span>
