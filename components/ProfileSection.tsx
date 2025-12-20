@@ -46,7 +46,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                  <h1 className="text-5xl font-serif font-bold tracking-tight leading-none mb-2">生活<br/>正在上映</h1>
             </div>
              <Link 
-                to="/manual"
+                to="/aboutme"
                 className="absolute bottom-4 right-4 text-white/70 text-[10px] font-mono border border-white/40 px-3 py-1 rounded-full hover:bg-white/10 hover:text-white transition-all cursor-pointer backdrop-blur-sm"
             >
                 我的说明书 &rarr;

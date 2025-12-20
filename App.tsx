@@ -10,18 +10,18 @@ import { NavBar } from './components/NavBar';
 import { Profile, PhotoGroup, Thought, BlogPost } from './types';
 import { Info, Loader2 } from 'lucide-react';
 
-// --- Default Demo Data (Used when API fails) ---
+// --- Default Demo Data ---
 
 const defaultProfile: Profile = {
-  name: "演示用户",
-  role: "Photographer & Coder",
-  bio: "这是演示数据。网站采用票根设计语言，将生活瞬间转化为数字存根。配置 Notion 后可加载真实内容。",
+  name: "潘志明",
+  role: "先见志明 | Photographer",
+  bio: "这里是您的个人主页。目前显示的是演示数据。网站采用『票根』设计语言，将您的作品和文字转化为可以收藏的数字存根。",
   location: "Shanghai, CN",
   avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop",
   socials: [
-      { platform: "INSTAGRAM", url: "#", handle: "@demo" },
-      { platform: "TWITTER", url: "#", handle: "@demo" },
-      { platform: "GITHUB", url: "#", handle: "@demo" }
+      { platform: "INSTAGRAM", url: "#", handle: "@panziming" },
+      { platform: "TWITTER", url: "#", handle: "@panziming" },
+      { platform: "GITHUB", url: "#", handle: "panziming" }
   ]
 };
 
@@ -34,7 +34,7 @@ const defaultPhotoGroups: PhotoGroup[] = [
     coverUrl: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=1000&auto=format&fit=crop",
     date: "2023-11-15",
     ticketNumber: "TKY-089",
-    description: "霓虹灯下的涉谷街头，雨水倒映着城市的喧嚣。使用 CineStill 800T 拍摄。",
+    description: "霓虹灯下的涉谷街头，雨水倒映着城市的喧嚣。",
     featured: true
   },
   {
@@ -56,15 +56,15 @@ const defaultThoughts: Thought[] = [
     content: "设计的本质不是为了装饰，而是为了解决问题。但在解决问题的过程中，我们不妨让它变得更浪漫一些。",
     date: "2024-02-14",
     time: "23:45",
-    tags: ["Design", "Life"],
+    tags: ["设计", "生活"],
     featured: true
   },
   {
     id: "demo-t2",
-    content: "今天在咖啡馆听到一首很老的爵士乐，突然意识到，所谓“复古”其实是我们对未曾经历的时代的乡愁。",
+    content: "所谓“复古”其实是我们对未曾经历的时代的乡愁。在数字时代，我们更需要一些有温度的触感。",
     date: "2024-02-12",
     time: "14:20",
-    tags: ["Music", "Mood"],
+    tags: ["感悟", "复古"],
     featured: true
   }
 ];
@@ -73,16 +73,52 @@ const defaultPosts: BlogPost[] = [
   {
     id: "demo-p1",
     title: "如何构建一个具有“票根感”的个人网站",
-    excerpt: "在这篇文章中，我将分享如何使用 Tailwind CSS 和 React 来实现这种独特的纸质质感和票据风格设计。",
+    excerpt: "分享如何使用 Tailwind CSS 和 React 来实现这种独特的纸质质感和票据风格设计。",
     date: "2024-03-01",
     readTime: "8 MIN",
-    category: "Code",
+    category: "技术",
     imageUrl: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=1000&auto=format&fit=crop",
     featured: true
   }
 ];
 
-// --- Theme Utility ---
+const demoAbout: BlogPost = {
+    id: "demo-about",
+    title: "我的说明书",
+    excerpt: "一份关于我自己的操作指南、个人简介与维护手册。",
+    date: "2024",
+    readTime: "∞",
+    category: "ABOUT",
+    imageUrl: "https://images.unsplash.com/photo-1454165833222-7e737d97607a?q=80&w=1000&auto=format&fit=crop",
+    featured: false
+};
+
+// --- Layout Component ---
+interface MainLayoutProps {
+    children?: React.ReactNode;
+    hideNav?: boolean;
+    isDemoMode?: boolean;
+    logoUrl?: string;
+    isHome?: boolean;
+}
+
+const MainLayout: React.FC<MainLayoutProps> = ({ children, hideNav, isDemoMode, logoUrl, isHome }) => (
+  <div className="min-h-screen flex flex-col text-ink font-sans selection:bg-ink selection:text-paper">
+    {isDemoMode && (
+      <div className="bg-stone-100 border-b border-stone-200 px-4 py-2 flex items-center justify-center gap-2 sticky top-0 z-[60]">
+        <Info className="text-stone-400 shrink-0" size={12} />
+        <p className="text-[10px] text-stone-500 font-mono tracking-wide">预览模式 / 演示数据</p>
+      </div>
+    )}
+    {!hideNav && <NavBar logoUrl={logoUrl} />}
+    <div className={`flex-grow w-full ${isHome ? '' : 'bg-texture'}`}>
+      <main className="w-full max-w-[452px] mx-auto px-4 pt-8 md:pt-12 pb-12">
+        {children}
+      </main>
+    </div>
+  </div>
+);
+
 const setGlobalTheme = (mode: 'home' | 'paper') => {
     const meta = document.querySelector('meta[name="theme-color"]');
     if (mode === 'home') {
@@ -98,19 +134,19 @@ const setGlobalTheme = (mode: 'home' | 'paper') => {
 
 const App: React.FC = () => {
   const location = useLocation();
-  const [loading, setLoading] = useState(true);
-  const [isDemoMode, setIsDemoMode] = useState(false);
+  const [isDemoMode, setIsDemoMode] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [profile, setProfile] = useState<Profile>(defaultProfile);
-  const [photoGroups, setPhotoGroups] = useState<PhotoGroup[]>([]);
-  const [thoughts, setThoughts] = useState<Thought[]>([]);
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [manualPage, setManualPage] = useState<BlogPost | null>(null);
+  const [photoGroups, setPhotoGroups] = useState<PhotoGroup[]>(defaultPhotoGroups);
+  const [thoughts, setThoughts] = useState<Thought[]>(defaultThoughts);
+  const [posts, setPosts] = useState<BlogPost[]>(defaultPosts);
+  const [aboutPage, setAboutPage] = useState<BlogPost | null>(demoAbout);
 
   const CACHE_KEY = 'portfolio_data_v1';
 
   useEffect(() => {
-    const isHome = location.pathname === '/';
+    const isHome = location.pathname === '/' || location.pathname === '';
     setGlobalTheme(isHome ? 'home' : 'paper');
     window.scrollTo(0, 0);
   }, [location.pathname]);
@@ -121,85 +157,62 @@ const App: React.FC = () => {
       if (cached) {
         try {
           const data = JSON.parse(cached);
-          if (data) {
-            setProfile(data.profile || defaultProfile);
-            setPhotoGroups(data.gallery || []);
-            setThoughts(data.thoughts || []);
-            setPosts(data.posts || []);
-            setManualPage(data.manual || null);
-            setLoading(false);
-          }
+          setProfile(data.profile || defaultProfile);
+          setPhotoGroups(data.gallery || defaultPhotoGroups);
+          setThoughts(data.thoughts || defaultThoughts);
+          setPosts(data.posts || defaultPosts);
+          setAboutPage(data.about || data.manual || demoAbout);
+          setIsDemoMode(false);
         } catch (e) { console.warn("Cache error", e); }
       }
 
       try {
         const res = await fetch('/api/portfolio');
-        if (!res.ok) throw new Error('API unavailable');
-        
-        const data = await res.json();
-        setProfile(data.profile || defaultProfile);
-        setPhotoGroups(data.gallery || []);
-        setThoughts(data.thoughts || []);
-        setPosts(data.posts || []);
-        setManualPage(data.manual || null);
-        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-        setIsDemoMode(false); 
-      } catch (e) {
-        // If fetch fails and no cache, use Demo Data
-        if (!cached) {
-            setProfile(defaultProfile);
-            setPhotoGroups(defaultPhotoGroups);
-            setThoughts(defaultThoughts);
-            setPosts(defaultPosts);
-            setIsDemoMode(true);
+        if (res.ok) {
+           const data = await res.json();
+           setProfile(data.profile || defaultProfile);
+           setPhotoGroups(data.gallery || defaultPhotoGroups);
+           setThoughts(data.thoughts || defaultThoughts);
+           setPosts(data.posts || defaultPosts);
+           // Handle transition from old key 'manual' to new key 'about'
+           setAboutPage(data.about || data.manual || demoAbout);
+           localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+           setIsDemoMode(false); 
         }
-      } finally {
-        setLoading(false);
+      } catch (e) {
+        console.log("API not reachable, continuing in demo mode.");
       }
     };
     initData();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-texture flex items-center justify-center font-mono text-xs text-stone-400">
-        <Loader2 className="animate-spin mr-2" size={16} />
-        LOADING PORTFOLIO...
-      </div>
-    );
-  }
-
-  const MainLayout = ({ children, hideNav = false }: { children?: React.ReactNode, hideNav?: boolean }) => (
-    <div className="min-h-screen flex flex-col text-ink font-sans selection:bg-ink selection:text-paper">
-      {isDemoMode && (
-        <div className="bg-stone-100 border-b border-stone-200 px-4 py-2 flex items-center justify-center gap-2 sticky top-0 z-[60]">
-          <Info className="text-stone-400 shrink-0" size={12} />
-          <p className="text-[10px] text-stone-500 font-mono tracking-wide">PREVIEW MODE / DEMO DATA</p>
-        </div>
-      )}
-      {!hideNav && <NavBar logoUrl={profile.logoUrl} />}
-      <div className={`flex-grow w-full ${location.pathname === '/' ? '' : 'bg-texture'}`}>
-        <main className="w-full max-w-[452px] mx-auto px-4 pt-8 md:pt-12 pb-12">
-          {children}
-        </main>
-      </div>
-    </div>
-  );
+  const commonProps = { isDemoMode, logoUrl: profile.logoUrl };
 
   return (
     <Routes>
       <Route path="/" element={
-        <MainLayout hideNav>
+        <MainLayout {...commonProps} hideNav isHome>
           <ProfileSection profile={profile} />
           <div className="flex flex-col gap-11 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {photoGroups.filter(g => g.featured).length > 0 && (
-              <GallerySection title="精选影像" groups={photoGroups.filter(g => g.featured)} onViewAll />
+            {photoGroups.length > 0 && (
+              <GallerySection 
+                title="精选影像" 
+                groups={photoGroups.filter(g => g.featured).length ? photoGroups.filter(g => g.featured) : photoGroups.slice(0, 2)} 
+                onViewAll 
+              />
             )}
-            {thoughts.filter(t => t.featured).length > 0 && (
-              <ThoughtSection thoughts={thoughts.filter(t => t.featured).slice(0, 10)} showViewAll />
+            {thoughts.length > 0 && (
+              <ThoughtSection 
+                thoughts={thoughts.filter(t => t.featured).length ? thoughts.filter(t => t.featured).slice(0, 5) : thoughts.slice(0, 5)} 
+                showViewAll 
+              />
             )}
-            {posts.filter(p => p.featured).length > 0 && (
-              <BlogSection title="精选文章" posts={posts.filter(p => p.featured)} showViewAll />
+            {posts.length > 0 && (
+              <BlogSection 
+                title="精选文章" 
+                posts={posts.filter(p => p.featured).length ? posts.filter(p => p.featured).slice(0, 3) : posts.slice(0, 3)} 
+                showViewAll 
+              />
             )}
             <ContactSection logoUrl={profile.logoUrl} />
           </div>
@@ -207,34 +220,32 @@ const App: React.FC = () => {
       } />
 
       <Route path="/gallery" element={
-        <MainLayout>
+        <MainLayout {...commonProps}>
           <GallerySection groups={photoGroups} />
         </MainLayout>
       } />
-
       <Route path="/gallery/:id" element={
         <DetailView items={photoGroups} type="gallery" logoUrl={profile.logoUrl} />
       } />
 
       <Route path="/thoughts" element={
-        <MainLayout>
+        <MainLayout {...commonProps}>
           <ThoughtSection thoughts={thoughts} />
         </MainLayout>
       } />
 
       <Route path="/blog" element={
-        <MainLayout>
+        <MainLayout {...commonProps}>
           <BlogSection posts={posts} />
         </MainLayout>
       } />
-
       <Route path="/blog/:id" element={
         <DetailView items={posts} type="blog" logoUrl={profile.logoUrl} />
       } />
 
-      <Route path="/manual" element={
-          manualPage ? (
-              <DetailView items={[manualPage]} forceId={manualPage.id} type="blog" logoUrl={profile.logoUrl} />
+      <Route path="/aboutme" element={
+          aboutPage ? (
+              <DetailView items={[aboutPage]} forceId={aboutPage.id} type="blog" logoUrl={profile.logoUrl} />
           ) : (
               <Navigate to="/" replace />
           )

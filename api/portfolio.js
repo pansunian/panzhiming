@@ -82,12 +82,6 @@ module.exports = async function handler(req, res) {
               if (block.type === 'image') {
                   return block.image.type === 'external' ? block.image.external.url : block.image.file.url;
               }
-              // Check inside column list for images
-              if (block.type === 'column_list') {
-                  // We skip deep recursion for performance in list view, 
-                  // but could add it if strictly necessary. 
-                  // Assuming main image is usually top-level or standard.
-              }
           }
       } catch (e) {
           console.warn(`Failed to fetch blocks for ${pageId}`, e.message);
@@ -107,11 +101,7 @@ module.exports = async function handler(req, res) {
         return results;
     } catch (error) {
         console.error(`Error fetching ${name}:`, error.message);
-        let msg = error.message;
-        if (msg.includes('accessible by this API bot')) {
-            msg = `PERMISSION DENIED: Please add your Notion Integration to the database page for ${name}.`;
-        }
-        return { error: true, message: msg };
+        return { error: true, message: error.message };
     }
   };
 
@@ -119,7 +109,6 @@ module.exports = async function handler(req, res) {
 
   // --- PARALLEL FETCHING SETUP ---
   
-  // 1. Define Profile Fetcher
   const fetchProfile = async () => {
       try {
           const profileRes = await notion.databases.query({ database_id: process.env.NOTION_PROFILE_DB_ID });
@@ -138,7 +127,6 @@ module.exports = async function handler(req, res) {
               };
 
               const detectedSocials = [];
-              // Strategy 1: Explicit Columns
               const platformMapping = {
                   'Instagram': 'INSTAGRAM', 'IG': 'INSTAGRAM', 'Twitter': 'TWITTER', 'X': 'TWITTER',
                   'Weibo': 'WEIBO', '微博': 'WEIBO', 'GitHub': 'GITHUB', 'Github': 'GITHUB',
@@ -146,7 +134,7 @@ module.exports = async function handler(req, res) {
                   'Xiaohongshu': 'XIAOHONGSHU', 'XiaoHongShu': 'XIAOHONGSHU', '小红书': 'XIAOHONGSHU',
                   'Red': 'XIAOHONGSHU', 'RED': 'XIAOHONGSHU', 'YouTube': 'YOUTUBE', 'Youtube': 'YOUTUBE',
                   'LinkedIn': 'LINKEDIN', 'Email': 'EMAIL', '邮箱': 'EMAIL', 'Mail': 'EMAIL',
-                  'Jike': 'JIKE', '即刻': 'JIKE', 'WeChat': 'WECHAT', 'WeChat Public': 'WECHAT', '公众号': 'WECHAT'
+                  'Jike': 'JIKE', '即刻': 'JIKE', 'WeChat': 'WECHAT', '公众号': 'WECHAT'
               };
               for (const [colName, platformCode] of Object.entries(platformMapping)) {
                   if (p[colName]) {
@@ -168,62 +156,23 @@ module.exports = async function handler(req, res) {
                       }
                   }
               }
-              // Strategy 2: The "Socials" Column
-              const socialCol = p['Socials'] || p['Social'];
-              if (socialCol) {
-                  const socialText = getPropValue(socialCol);
-                  if (socialText) {
-                      let isJson = false;
-                      if (socialText.trim().startsWith('[') || socialText.trim().startsWith('{')) {
-                          try { 
-                              const parsed = JSON.parse(socialText);
-                              let list = Array.isArray(parsed) ? parsed : [parsed];
-                              list.forEach(item => { if (!detectedSocials.some(s => s.platform === item.platform)) detectedSocials.push(item); });
-                              isJson = true;
-                          } catch(e) {}
-                      }
-                      if (!isJson) {
-                          const parts = socialText.split(/\||\n/).map(s => s.trim()).filter(s => s);
-                          for (const part of parts) {
-                              const urlMatch = part.match(/(https?:\/\/[^\s]+)/);
-                              if (urlMatch) {
-                                  const url = urlMatch[0];
-                                  let platform = part.replace(url, '').replace(/[:：]/g, '').trim();
-                                  if (!platform) {
-                                      try {
-                                        const h = new URL(url).hostname.toLowerCase();
-                                        if (h.includes('instagram')) platform = 'INSTAGRAM';
-                                        else if (h.includes('twitter') || h.includes('x.com')) platform = 'TWITTER';
-                                        else if (h.includes('github')) platform = 'GITHUB';
-                                        else platform = 'LINK';
-                                      } catch { platform = 'LINK'; }
-                                  }
-                                  if (!detectedSocials.some(s => s.platform === platform.toUpperCase())) {
-                                      detectedSocials.push({ platform: platform.toUpperCase(), url: url, handle: '@Link' });
-                                  }
-                              }
-                          }
-                      }
-                  }
-              }
               profileData.socials = detectedSocials;
               return { data: profileData, error: null };
           }
           return { data: null, error: null };
       } catch (error) {
-          console.error("Profile Fetch Error:", error.message);
           return { data: null, error: error.message };
       }
   };
 
-  // 2. Define Manual Fetcher
-  const fetchManual = async () => {
-      const rawManualId = process.env.NOTION_MANUAL_PAGE_ID;
-      const cleanManualId = cleanNotionId(rawManualId);
-      if (!cleanManualId) return null;
+  const fetchAboutPage = async () => {
+      // We still use the same env var for convenience, but change the logic
+      const rawPageId = process.env.NOTION_MANUAL_PAGE_ID || process.env.NOTION_ABOUT_PAGE_ID;
+      const cleanPageId = cleanNotionId(rawPageId);
+      if (!cleanPageId) return null;
 
       try {
-          const page = await notion.pages.retrieve({ page_id: cleanManualId });
+          const page = await notion.pages.retrieve({ page_id: cleanPageId });
           let title = "我的说明书";
           if (page.properties) {
              const titleKey = Object.keys(page.properties).find(k => page.properties[k].type === 'title');
@@ -233,21 +182,20 @@ module.exports = async function handler(req, res) {
           return {
               id: page.id,
               title: title || "我的说明书",
-              excerpt: "User Manual / Operating Instructions",
+              excerpt: "About Me / Profile & Introduction",
               date: new Date(page.last_edited_time).getFullYear().toString(),
               readTime: '∞',
-              category: 'MANUAL',
+              category: 'ABOUT',
               imageUrl: getImageUrl(page),
               content: [],
               featured: false
           };
       } catch (error) {
-          console.error("Manual Page Fetch Error:", error.message);
+          console.error("About Page Fetch Error:", error.message);
           return null;
       }
   };
 
-  // 3. Define Blog Fetcher (with Content Image Extraction)
   const fetchBlogPosts = async () => {
       const dbId = process.env.NOTION_BLOG_DB_ID;
       const res = await fetchDatabase(dbId, 'Blog', page => {
@@ -259,7 +207,6 @@ module.exports = async function handler(req, res) {
               date: p['Date']?.date?.start || '', 
               readTime: p['ReadTime']?.select?.name || '5 MIN',
               category: p['Category']?.select?.name || '随笔',
-              // Initially map standard cover to fallback
               fallbackImageUrl: getImageUrl(page, 'Cover', false),
               content: [], 
               featured: p['Featured']?.checkbox || false
@@ -268,8 +215,6 @@ module.exports = async function handler(req, res) {
 
       if (res.error || !Array.isArray(res)) return res;
 
-      // Enhance posts with first content image
-      // Use Promise.all to fetch concurrently. Note: Rate limiting might apply for large DBs.
       const enhancedPosts = await Promise.all(res.map(async (post) => {
           const contentImage = await fetchFirstContentImage(post.id);
           return {
@@ -281,9 +226,7 @@ module.exports = async function handler(req, res) {
       return enhancedPosts;
   };
 
-  // --- EXECUTE ALL REQUESTS IN PARALLEL ---
-  
-  const [profileResult, galleryRes, thoughtsRes, postsRes, manualPage] = await Promise.all([
+  const [profileResult, galleryRes, thoughtsRes, postsRes, aboutPage] = await Promise.all([
       fetchProfile(),
       fetchDatabase(process.env.NOTION_GALLERY_DB_ID, 'Gallery', page => {
           const p = page.properties;
@@ -296,7 +239,6 @@ module.exports = async function handler(req, res) {
               ticketNumber: getPropValue(p['TicketNumber']),
               description: getPropValue(p['Description']),
               coverUrl: getImageUrl(page, 'Cover', false),
-              images: getAllFileUrls(p, 'Images'),
               featured: p['Featured']?.checkbox || false
           };
       }),
@@ -311,13 +253,13 @@ module.exports = async function handler(req, res) {
               featured: p['Featured']?.checkbox || false
           };
       }),
-      fetchBlogPosts(), // Use the new specialized fetcher
-      fetchManual()
+      fetchBlogPosts(),
+      fetchAboutPage()
   ]);
 
   const responseData = {
     profile: profileResult.data,
-    manual: manualPage,
+    about: aboutPage,
     gallery: Array.isArray(galleryRes) ? galleryRes : [],
     thoughts: Array.isArray(thoughtsRes) ? thoughtsRes : [],
     posts: Array.isArray(postsRes) ? postsRes : [],

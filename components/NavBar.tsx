@@ -36,7 +36,7 @@ export const NavBar: React.FC<NavBarProps> = ({ logoUrl }) => {
         {/* Right: Actions Area */}
         <div className="flex items-center h-full z-20">
             <Link 
-                to="/manual"
+                to="/aboutme"
                 onClick={() => setIsMenuOpen(false)}
                 className="flex items-center gap-2 px-4 h-full hover:bg-stone-50/50 transition-colors group"
             >
