@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { ProfileSection } from './components/ProfileSection';
 import { GallerySection } from './components/GallerySection';
 import { ThoughtSection } from './components/ThoughtSection';
@@ -7,20 +8,20 @@ import { ContactSection } from './components/ContactSection';
 import { DetailView } from './components/DetailView';
 import { NavBar } from './components/NavBar';
 import { Profile, PhotoGroup, Thought, BlogPost } from './types';
-import { AlertCircle, Info } from 'lucide-react';
+import { Info, Loader2 } from 'lucide-react';
 
-// --- Default/Fallback Data (Demo Content) ---
+// --- Default Demo Data (Used when API fails) ---
 
 const defaultProfile: Profile = {
   name: "演示用户",
   role: "Photographer & Coder",
-  bio: "这里是演示数据。请在 Vercel 环境变量中配置您的 Notion 数据库 ID 以加载真实内容。",
+  bio: "这是演示数据。网站采用票根设计语言，将生活瞬间转化为数字存根。配置 Notion 后可加载真实内容。",
   location: "Shanghai, CN",
   avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop",
-  logoUrl: undefined, 
   socials: [
       { platform: "INSTAGRAM", url: "#", handle: "@demo" },
-      { platform: "TWITTER", url: "#", handle: "@demo" }
+      { platform: "TWITTER", url: "#", handle: "@demo" },
+      { platform: "GITHUB", url: "#", handle: "@demo" }
   ]
 };
 
@@ -34,7 +35,7 @@ const defaultPhotoGroups: PhotoGroup[] = [
     date: "2023-11-15",
     ticketNumber: "TKY-089",
     description: "霓虹灯下的涉谷街头，雨水倒映着城市的喧嚣。使用 CineStill 800T 拍摄。",
-    featured: true // Show on Home
+    featured: true
   },
   {
     id: "demo-g2",
@@ -45,18 +46,7 @@ const defaultPhotoGroups: PhotoGroup[] = [
     date: "2023-08-22",
     ticketNumber: "ICL-002",
     description: "孤独的环岛公路，仿佛通向世界尽头。",
-    featured: false
-  },
-  {
-    id: "demo-g3",
-    title: "胶片日常",
-    location: "Home, Sunday",
-    count: 8,
-    coverUrl: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1000&auto=format&fit=crop",
-    date: "2024-01-10",
-    ticketNumber: "LIF-104",
-    description: "记录生活中的细碎光影。",
-    featured: false
+    featured: true
   }
 ];
 
@@ -76,14 +66,6 @@ const defaultThoughts: Thought[] = [
     time: "14:20",
     tags: ["Music", "Mood"],
     featured: true
-  },
-  {
-    id: "demo-t3",
-    content: "保持好奇心，保持饥饿。Stay foolish, stay hungry.",
-    date: "2024-02-01",
-    time: "09:00",
-    tags: ["Quote"],
-    featured: true
   }
 ];
 
@@ -96,132 +78,79 @@ const defaultPosts: BlogPost[] = [
     readTime: "8 MIN",
     category: "Code",
     imageUrl: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=1000&auto=format&fit=crop",
-    featured: true // Show on Home
-  },
-  {
-    id: "demo-p2",
-    title: "摄影与记忆的显影",
-    excerpt: "按下快门的那一刻，我们究竟留住了什么？是光影，还是当时的情绪？",
-    date: "2024-01-20",
-    readTime: "5 MIN",
-    category: "Essay",
-    imageUrl: "https://images.unsplash.com/photo-1452587925148-ce544ae77c7a?q=80&w=1000&auto=format&fit=crop",
-    featured: false
+    featured: true
   }
 ];
 
-// --- Default Data Types ---
-type ViewState = 'home' | 'gallery' | 'thoughts' | 'blog';
-
-// --- Utility: Set Theme Color ---
+// --- Theme Utility ---
 const setGlobalTheme = (mode: 'home' | 'paper') => {
     const meta = document.querySelector('meta[name="theme-color"]');
     if (mode === 'home') {
         document.body.style.backgroundColor = '#e3e1d5';
-        // Re-enable global noise on body for home
         document.body.style.backgroundImage = 'var(--noise-url)';
         if (meta) meta.setAttribute('content', '#e3e1d5');
     } else {
         document.body.style.backgroundColor = '#fdfbf7';
-        // Disable noise on body for paper views (noise is applied to content div)
         document.body.style.backgroundImage = 'none';
         if (meta) meta.setAttribute('content', '#fdfbf7');
     }
 };
 
-// --- Application Component ---
-
 const App: React.FC = () => {
-  // Navigation State
-  const [currentView, setCurrentView] = useState<ViewState>('home');
-  const [selectedItem, setSelectedItem] = useState<{ type: 'blog' | 'gallery', data: BlogPost | PhotoGroup } | null>(null);
-  
-  // Data State
+  const location = useLocation();
   const [loading, setLoading] = useState(true);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isDemoMode, setIsDemoMode] = useState(false);
 
   const [profile, setProfile] = useState<Profile>(defaultProfile);
-  const [photoGroups, setPhotoGroups] = useState<PhotoGroup[]>(defaultPhotoGroups);
-  const [thoughts, setThoughts] = useState<Thought[]>(defaultThoughts);
-  const [posts, setPosts] = useState<BlogPost[]>(defaultPosts);
-  
-  // New state for Manual Page
+  const [photoGroups, setPhotoGroups] = useState<PhotoGroup[]>([]);
+  const [thoughts, setThoughts] = useState<Thought[]>([]);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [manualPage, setManualPage] = useState<BlogPost | null>(null);
 
   const CACHE_KEY = 'portfolio_data_v1';
 
-  // --- Theme Management Effect ---
   useEffect(() => {
-    if (selectedItem) return; // Handled by DetailView
-    
-    if (currentView === 'home') {
-        setGlobalTheme('home');
-    } else {
-        setGlobalTheme('paper');
-    }
-  }, [currentView, selectedItem]);
+    const isHome = location.pathname === '/';
+    setGlobalTheme(isHome ? 'home' : 'paper');
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   useEffect(() => {
     const initData = async () => {
-      // 1. Try to load from LocalStorage first for immediate rendering (Stale-While-Revalidate)
       const cached = localStorage.getItem(CACHE_KEY);
       if (cached) {
         try {
           const data = JSON.parse(cached);
           if (data) {
-            if (data.profile) setProfile(data.profile);
-            if (data.gallery) setPhotoGroups(data.gallery);
-            if (data.thoughts) setThoughts(data.thoughts);
-            if (data.posts) setPosts(data.posts);
-            if (data.manual) setManualPage(data.manual);
-            setLoading(false); // Stop showing loading screen immediately
+            setProfile(data.profile || defaultProfile);
+            setPhotoGroups(data.gallery || []);
+            setThoughts(data.thoughts || []);
+            setPosts(data.posts || []);
+            setManualPage(data.manual || null);
+            setLoading(false);
           }
-        } catch (e) {
-          console.warn("Cache parse error", e);
-        }
+        } catch (e) { console.warn("Cache error", e); }
       }
 
-      // 2. Fetch fresh data in the background
       try {
         const res = await fetch('/api/portfolio');
+        if (!res.ok) throw new Error('API unavailable');
         
-        // Handle API Failure (e.g. 404 in Dev or 500 in Prod with missing Env)
-        if (!res.ok) {
-           console.warn(`API unavailable (Status: ${res.status}). Switching to Demo Mode.`);
-           if (!cached) {
-               // If we don't have cached data, we rely on the default state initialized above.
-               // We flag this as Demo Mode to the user.
-               setIsDemoMode(true);
-           }
-           return; 
-        }
-
         const data = await res.json();
-        
-        // Update state with fresh data
-        if (data.profile) setProfile(data.profile);
-        if (data.gallery && data.gallery.length > 0) setPhotoGroups(data.gallery);
-        if (data.thoughts && data.thoughts.length > 0) setThoughts(data.thoughts);
-        if (data.posts && data.posts.length > 0) setPosts(data.posts);
-        if (data.manual) setManualPage(data.manual);
-        
-        // Update Cache
+        setProfile(data.profile || defaultProfile);
+        setPhotoGroups(data.gallery || []);
+        setThoughts(data.thoughts || []);
+        setPosts(data.posts || []);
+        setManualPage(data.manual || null);
         localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-        
-        // Reset Demo Mode if fetch successful
         setIsDemoMode(false); 
-        
-        if (data.debug) {
-            const errors = Object.values(data.debug).filter(Boolean);
-            if (errors.length > 0) {
-                console.warn("Some data failed to load:", errors);
-            }
-        }
-      } catch (e: any) {
-        console.warn("Network/Fetch error, using fallback data:", e);
-        // If fetch fails completely (e.g. network error), fallback to demo data
+      } catch (e) {
+        // If fetch fails and no cache, use Demo Data
         if (!cached) {
+            setProfile(defaultProfile);
+            setPhotoGroups(defaultPhotoGroups);
+            setThoughts(defaultThoughts);
+            setPosts(defaultPosts);
             setIsDemoMode(true);
         }
       } finally {
@@ -231,196 +160,88 @@ const App: React.FC = () => {
     initData();
   }, []);
 
-  const handleNavigate = (view: ViewState) => {
-    setCurrentView(view);
-    setSelectedItem(null);
-    window.scrollTo(0, 0);
-  };
-
-  const handleItemClick = (type: 'blog' | 'gallery', item: BlogPost | PhotoGroup) => {
-    setSelectedItem({ type, data: item });
-  };
-
-  const handleOpenManual = () => {
-      if (manualPage) {
-          setSelectedItem({ type: 'blog', data: manualPage });
-      } else {
-          const fallbackManual: BlogPost = {
-              id: 'manual_page', 
-              title: '我的说明书',
-              excerpt: 'User Manual / Operating Instructions',
-              date: new Date().getFullYear().toString(),
-              readTime: 'INF',
-              category: 'MANUAL',
-              content: [
-                  'Content not loaded. Please configure NOTION_MANUAL_PAGE_ID in your Vercel environment variables.',
-                  '这个页面需要您在 Vercel 环境变量中设置 NOTION_MANUAL_PAGE_ID 才能显示真实内容。'
-              ],
-              imageUrl: profile.avatarUrl,
-              featured: false
-          };
-          setSelectedItem({ type: 'blog', data: fallbackManual });
-      }
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-texture flex items-center justify-center font-mono text-xs text-stone-400">
+        <Loader2 className="animate-spin mr-2" size={16} />
         LOADING PORTFOLIO...
       </div>
     );
   }
 
-  // If Detail View is active
-  if (selectedItem) {
-    return (
-      <DetailView 
-        item={selectedItem.data} 
-        type={selectedItem.type} 
-        onNavigate={handleNavigate}
-        onManualClick={handleOpenManual}
-        logoUrl={profile.logoUrl}
-      />
-    );
-  }
-
-  // Filter Data for Home Page (Featured Only)
-  const featuredGallery = photoGroups.filter(g => g.featured);
-  const featuredPosts = posts.filter(p => p.featured);
-  const featuredThoughts = thoughts.filter(t => t.featured).slice(0, 10);
-
-  return (
-    // Updated: Root is transparent to let body background show through. 
-    // This allows the address bar to match the body background naturally.
+  const MainLayout = ({ children, hideNav = false }: { children?: React.ReactNode, hideNav?: boolean }) => (
     <div className="min-h-screen flex flex-col text-ink font-sans selection:bg-ink selection:text-paper">
-      
-      {/* Demo Mode Banner (Replaces Error Banner) */}
       {isDemoMode && (
         <div className="bg-stone-100 border-b border-stone-200 px-4 py-2 flex items-center justify-center gap-2 sticky top-0 z-[60]">
           <Info className="text-stone-400 shrink-0" size={12} />
-          <p className="text-[10px] text-stone-500 font-mono tracking-wide">
-             PREVIEW MODE / DEMO DATA (API Unavailable)
-          </p>
+          <p className="text-[10px] text-stone-500 font-mono tracking-wide">PREVIEW MODE / DEMO DATA</p>
         </div>
       )}
-
-      {/* Error Banner */}
-      {errorMsg && !isDemoMode && (
-        <div className="bg-red-50 border-b border-red-200 p-4 flex items-start gap-3 sticky top-0 z-[60]">
-          <AlertCircle className="text-red-500 shrink-0 mt-0.5" size={16} />
-          <div className="text-xs text-red-700 font-mono">
-            <p className="font-bold mb-1">SYSTEM ERROR</p>
-            <p>{errorMsg}</p>
-          </div>
-        </div>
-      )}
-
-      {/* Navigation - Relative (scrolls with page) */}
-      {currentView !== 'home' && (
-          <NavBar 
-              onNavigate={handleNavigate} 
-              onManualClick={handleOpenManual}
-              activeView={currentView}
-              logoUrl={profile.logoUrl}
-          />
-      )}
-
-      {/* Main Layout Container */}
-      {/* Updated: Only apply bg-texture if NOT on home, because Home body has texture already. */}
-      {/* This ensures we don't have double texture or texture overlaying the transparent top area on home. */}
-      <div className={`flex-grow w-full ${currentView === 'home' ? '' : 'bg-texture'}`}>
-          <main className="w-full max-w-[452px] mx-auto px-4 pt-8 md:pt-12 pb-12">
-            
-            {/* Profile is always at top in single column flow */}
-            {currentView === 'home' && (
-                <ProfileSection 
-                    profile={profile} 
-                    onNavigate={handleNavigate} 
-                    onOpenManual={handleOpenManual}
-                />
-            )}
-
-            {/* Content Feeds */}
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-                
-                {/* HOME VIEW */}
-                {currentView === 'home' && (
-                /* Updated: gap-16 (64px) -> gap-11 (44px) to reduce spacing by 20px */
-                <div className="flex flex-col gap-11">
-                    
-                    {/* FEATURED GALLERY */}
-                    {featuredGallery.length > 0 && (
-                        <div>
-                        <GallerySection 
-                            title="精选影像"
-                            groups={featuredGallery} 
-                            onItemClick={(g) => handleItemClick('gallery', g)} 
-                            onViewAll={() => handleNavigate('gallery')}
-                        />
-                        </div>
-                    )}
-
-                    {/* RECENT THOUGHTS */}
-                    {featuredThoughts.length > 0 && (
-                        <div>
-                            <ThoughtSection 
-                            thoughts={featuredThoughts} 
-                            onViewAll={() => handleNavigate('thoughts')}
-                            />
-                        </div>
-                    )}
-
-                    {/* FEATURED BLOG */}
-                    {featuredPosts.length > 0 && (
-                        <div>
-                        <BlogSection 
-                            title="精选文章"
-                            posts={featuredPosts} 
-                            onItemClick={(p) => handleItemClick('blog', p)}
-                            onViewAll={() => handleNavigate('blog')}
-                        />
-                        </div>
-                    )}
-                    
-                    {/* Updated: Passing logoUrl to ContactSection */}
-                    <ContactSection logoUrl={profile.logoUrl} />
-
-                    {/* Removed old footer div that was here */}
-                </div>
-                )}
-
-                {/* GALLERY VIEW */}
-                {currentView === 'gallery' && (
-                <div>
-                    <GallerySection 
-                    groups={photoGroups} 
-                    onItemClick={(g) => handleItemClick('gallery', g)} 
-                    />
-                </div>
-                )}
-
-                {/* THOUGHTS VIEW */}
-                {currentView === 'thoughts' && (
-                <div>
-                    <ThoughtSection thoughts={thoughts} />
-                </div>
-                )}
-
-                {/* BLOG VIEW */}
-                {currentView === 'blog' && (
-                <div>
-                    <BlogSection 
-                    posts={posts} 
-                    onItemClick={(p) => handleItemClick('blog', p)} 
-                    />
-                </div>
-                )}
-
-            </div>
-
-          </main>
+      {!hideNav && <NavBar logoUrl={profile.logoUrl} />}
+      <div className={`flex-grow w-full ${location.pathname === '/' ? '' : 'bg-texture'}`}>
+        <main className="w-full max-w-[452px] mx-auto px-4 pt-8 md:pt-12 pb-12">
+          {children}
+        </main>
       </div>
     </div>
+  );
+
+  return (
+    <Routes>
+      <Route path="/" element={
+        <MainLayout hideNav>
+          <ProfileSection profile={profile} />
+          <div className="flex flex-col gap-11 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            {photoGroups.filter(g => g.featured).length > 0 && (
+              <GallerySection title="精选影像" groups={photoGroups.filter(g => g.featured)} onViewAll />
+            )}
+            {thoughts.filter(t => t.featured).length > 0 && (
+              <ThoughtSection thoughts={thoughts.filter(t => t.featured).slice(0, 10)} showViewAll />
+            )}
+            {posts.filter(p => p.featured).length > 0 && (
+              <BlogSection title="精选文章" posts={posts.filter(p => p.featured)} showViewAll />
+            )}
+            <ContactSection logoUrl={profile.logoUrl} />
+          </div>
+        </MainLayout>
+      } />
+
+      <Route path="/gallery" element={
+        <MainLayout>
+          <GallerySection groups={photoGroups} />
+        </MainLayout>
+      } />
+
+      <Route path="/gallery/:id" element={
+        <DetailView items={photoGroups} type="gallery" logoUrl={profile.logoUrl} />
+      } />
+
+      <Route path="/thoughts" element={
+        <MainLayout>
+          <ThoughtSection thoughts={thoughts} />
+        </MainLayout>
+      } />
+
+      <Route path="/blog" element={
+        <MainLayout>
+          <BlogSection posts={posts} />
+        </MainLayout>
+      } />
+
+      <Route path="/blog/:id" element={
+        <DetailView items={posts} type="blog" logoUrl={profile.logoUrl} />
+      } />
+
+      <Route path="/manual" element={
+          manualPage ? (
+              <DetailView items={[manualPage]} forceId={manualPage.id} type="blog" logoUrl={profile.logoUrl} />
+          ) : (
+              <Navigate to="/" replace />
+          )
+      } />
+
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 };
 
