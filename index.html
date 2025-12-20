@@ -2,153 +2,99 @@
 <html lang="zh-CN" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5.0" />
     <meta name="theme-color" content="#e3e1d5" />
-    <title>先见志明｜潘志明的个人主页</title>
+    <title>先见志明｜个人作品集</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Importing Noto Serif SC (Songti) for artistic text and Noto Sans SC for body text -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@300;400;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
-              // Configuration: 
-              // serif -> Title Font (JingHuaLaoSongTi)
-              // sans  -> Body Font (XiXianTingMingTi) - We map 'sans' class to this serif-style font for body text ease of use
               serif: ['"MyCustomTitle"', '"Noto Serif SC"', 'serif'],
               sans: ['"MyCustomBody"', '"Noto Sans SC"', 'sans-serif'],
               mono: ['"MyCustomMono"', '"Space Mono"', 'monospace'],
             },
             colors: {
-              bg: '#e3e1d5', // Warm Grey/Beige background (Archive style)
-              paper: '#fdfbf7', // Very light off-white/cream for tickets
-              'paper-dark': '#f2efeb', // Slightly darker cream for accents
-              ink: '#2b2926', // Soft Charcoal instead of pure black
-              'brand-accent': '#8a6d50', // Coffee/Bronze color
+              bg: '#e3e1d5',
+              paper: '#fdfbf7',
+              'paper-dark': '#f2efeb',
+              ink: '#2b2926',
+              'brand-accent': '#8a6d50',
               'brand-blue': '#4a729a',
-            },
-            boxShadow: {
-              'ticket': '0 2px 20px -2px rgba(43, 41, 38, 0.1), 0 8px 30px -4px rgba(43, 41, 38, 0.05)',
-              'ticket-hover': '0 10px 40px -4px rgba(43, 41, 38, 0.15)',
             }
           }
         }
       }
     </script>
     <style>
-      /* --- CUSTOM FONTS SETUP --- */
-
-      /* 1. Title Font (JingHuaLaoSongTi) - 用于标题 */
-      @font-face {
-        font-family: 'MyCustomTitle';
-        /* User specified filename */
-        src: url('/fonts/jinghualaosongti.woff') format('woff');
-        font-weight: 400;
-        font-style: normal;
-        font-display: swap;
-      }
-
-      /* 2. Body Font (XiXianTingMingTi) - 用于详情页正文和描述 */
-      @font-face {
-        font-family: 'MyCustomBody';
-        /* User specified filename */
-        src: url('/fonts/XiXianTingMingTi.woff2') format('woff2');
-        font-weight: 400;
-        font-style: normal;
-        font-display: swap;
-      }
-
-      /* 3. Mono Font (Data/Code) - 等宽字体 (保持默认或您可自行替换) */
-      @font-face {
-        font-family: 'MyCustomMono';
-        src: url('/fonts/MyMono.woff2') format('woff2');
-        font-weight: 400;
-        font-style: normal;
-        font-display: swap;
-      }
-
-      /* --- GLOBAL STYLES --- */
+      @font-face { font-family: 'MyCustomTitle'; src: url('/fonts/jinghualaosongti.woff') format('woff'); font-weight: 400; font-style: normal; font-display: swap; }
+      @font-face { font-family: 'MyCustomBody'; src: url('/fonts/XiXianTingMingTi.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+      @font-face { font-family: 'MyCustomMono'; src: url('/fonts/MyMono.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
 
       :root {
         --bg-color: #e3e1d5;
         --noise-url: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
       }
 
-      body {
-        /* Default to Home style (Grey Texture) */
+      body { 
         background-color: var(--bg-color); 
-        background-image: var(--noise-url);
-        background-attachment: fixed;
-        color: #2b2926;
+        background-image: var(--noise-url); 
+        background-attachment: fixed; 
+        color: #2b2926; 
+        margin: 0; 
+        padding: 0; 
       }
-      
-      .bg-texture {
+      .bg-texture { 
         background-color: var(--bg-color);
-        background-image: var(--noise-url);
+        background-image: var(--noise-url); 
         background-attachment: fixed;
       }
-
-      .jagged-bottom {
-        -webkit-mask: linear-gradient(-135deg, transparent 6px, #000 0) 0 50%,
-                      linear-gradient(135deg, transparent 6px, #000 0) 0 50%;
-        -webkit-mask-size: 12px 100%;
-        -webkit-mask-repeat: repeat-x;
-        -webkit-mask-position: left bottom;
+      
+      /* 极致票根：锯齿边缘遮罩 */
+      .jagged-bottom { 
+        -webkit-mask: linear-gradient(-135deg, transparent 6px, #000 0) 0 50%, linear-gradient(135deg, transparent 6px, #000 0) 0 50%; 
+        -webkit-mask-size: 12px 100%; 
+        -webkit-mask-repeat: repeat-x; 
+        -webkit-mask-position: left bottom; 
       }
-
-      .jagged-top {
-        -webkit-mask: linear-gradient(45deg, transparent 6px, #000 0) 0 50%,
-                      linear-gradient(-45deg, transparent 6px, #000 0) 0 50%;
-        -webkit-mask-size: 12px 100%;
-        -webkit-mask-repeat: repeat-x;
-        -webkit-mask-position: left top;
+      .jagged-top { 
+        -webkit-mask: linear-gradient(45deg, transparent 6px, #000 0) 0 50%, linear-gradient(-45deg, transparent 6px, #000 0) 0 50%; 
+        -webkit-mask-size: 12px 100%; 
+        -webkit-mask-repeat: repeat-x; 
+        -webkit-mask-position: left top; 
       }
-
-      /* 
-       * Updated Jagged Right (Perforated Style)
-       * User requested smaller semi-circles and more vertical space.
-       * - Circle radius: 6px (Diameter 12px)
-       * - Mask height: 24px
-       * - Result: 12px hole centered in a 24px block, creating 12px solid spacing between holes.
-       */
-      .jagged-right {
-        -webkit-mask: radial-gradient(circle at 100% 50%, transparent 6px, #000 6.5px);
-        -webkit-mask-size: 100% 24px;
-        -webkit-mask-repeat: repeat-y;
-        -webkit-mask-position: right top;
-      }
-
-      .sawtooth-y {
-        background-image: linear-gradient(135deg, #ffffff 25%, transparent 25%), 
-                          linear-gradient(225deg, #ffffff 25%, transparent 25%);
-        background-position: 0 0;
-        background-size: 16px 16px;
-        height: 8px;
-        width: 100%;
+      .jagged-right { 
+        -webkit-mask: linear-gradient(135deg, transparent 6px, #000 0) 50% 0, linear-gradient(225deg, transparent 6px, #000 0) 50% 0; 
+        -webkit-mask-size: 100% 12px; 
+        -webkit-mask-repeat: repeat-y; 
+        -webkit-mask-position: right top; 
       }
       
-      ::-webkit-scrollbar {
-        width: 6px;
-      }
-      ::-webkit-scrollbar-track {
-        background: transparent;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #b0aba0;
-        border-radius: 3px;
+      /* 经典锯齿背景 */
+      .sawtooth-y { 
+        background-image: linear-gradient(135deg, #ffffff 25%, transparent 25%), linear-gradient(225deg, #ffffff 25%, transparent 25%); 
+        background-position: 0 0; 
+        background-size: 16px 16px; 
+        height: 8px; 
+        width: 100%; 
       }
     </style>
-<script type="importmap">
+  <script type="importmap">
 {
   "imports": {
-    "vite": "https://esm.sh/vite@^7.3.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/",
     "react": "https://esm.sh/react@^19.2.3",
-    "lucide-react": "https://esm.sh/lucide-react@^0.561.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.11.0",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "vite": "https://esm.sh/vite@^7.3.0",
     "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
   }
 }
@@ -156,6 +102,6 @@
 </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+    <script type="module" src="./index.tsx"></script>
   </body>
 </html>

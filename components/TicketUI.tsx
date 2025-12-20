@@ -1,47 +1,33 @@
 import React from 'react';
 
-// A clean semi-circle notch.
-// Reverted to use 'bg-texture' so it inherits the global noise background.
-// This ensures the "hole" blends perfectly with the page background, eliminating color difference.
+// 扁平化半圆打孔，移除任何阴影，实现纯粹的切割感
 export const Notch = ({ className = "" }: { className?: string }) => (
   <div 
-    className={`w-8 h-8 rounded-full absolute z-10 bg-texture ${className}`} 
+    className={`w-8 h-8 rounded-full absolute z-30 bg-texture pointer-events-none ${className}`} 
   />
 );
 
-// A clean dashed line
+// 虚线装饰
 export const DashedLine = ({ vertical = false, className = "" }: { vertical?: boolean, className?: string }) => (
-  <div className={`${vertical ? 'h-full w-[1px] border-l-2' : 'w-full h-[1px] border-t-2'} border-dashed border-stone-300 ${className}`} />
+  <div className={`${vertical ? 'h-full w-[0px] border-l-2' : 'w-full h-[0px] border-t-2'} border-dashed border-stone-300 ${className}`} />
 );
 
-// Basic wrapper for ticket aesthetic
-interface TicketBaseProps {
-  children: React.ReactNode;
-  className?: string;
-  color?: string;
-}
-
-export const TicketBase: React.FC<TicketBaseProps> = ({ children, className = "", color = "bg-paper" }) => {
-  return (
-    // Updated: Removed 'overflow-hidden' so child elements (like Notches) can overlap borders
-    <div className={`${color} text-ink relative ${className}`}>
-      {children}
-    </div>
-  );
+export const TicketBase: React.FC<{ children: React.ReactNode; className?: string; color?: string; }> = ({ children, className = "", color = "bg-paper" }) => {
+  return <div className={`${color} text-ink relative ${className}`}>{children}</div>;
 };
+
+export const BarcodeHorizontal = ({ className = "" }: { className?: string }) => (
+    <div className={`flex justify-center gap-[3px] h-8 ${className}`}>
+        {[...Array(30)].map((_, i) => (
+            <div key={i} className={`bg-ink h-full ${Math.random() > 0.5 ? 'w-[3px]' : 'w-[1px]'}`} />
+        ))}
+    </div>
+);
 
 export const BarcodeVertical = () => (
     <div className="flex flex-col gap-[2px] w-full h-full opacity-70">
         {[...Array(15)].map((_, i) => (
             <div key={i} className={`bg-ink w-full ${Math.random() > 0.6 ? 'h-2' : 'h-[2px]'}`} />
-        ))}
-    </div>
-);
-
-export const BarcodeHorizontal = ({ className = "" }: { className?: string }) => (
-    <div className={`flex gap-[3px] h-8 ${className}`}>
-        {[...Array(30)].map((_, i) => (
-            <div key={i} className={`bg-ink h-full ${Math.random() > 0.5 ? 'w-[3px]' : 'w-[1px]'}`} />
         ))}
     </div>
 );
