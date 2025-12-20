@@ -65,11 +65,9 @@ module.exports = async function handler(req, res) {
                   socials: []
               };
 
-              // 平台映射表：Key 为 Notion 中的列名（支持中文），Value 为前端展示代码
               const platformMapping = {
                   '小红书': 'XIAOHONGSHU',
                   'xiaohongshu': 'XIAOHONGSHU',
-                  'red': 'XIAOHONGSHU',
                   '即刻': 'JIKE',
                   'jike': 'JIKE',
                   '哔哩哔哩': 'BILIBILI',
@@ -91,7 +89,6 @@ module.exports = async function handler(req, res) {
               };
 
               for (const [columnName, platformCode] of Object.entries(platformMapping)) {
-                  // 精确查找 Notion 列名
                   const matchedKey = actualKeys.find(k => k.trim() === columnName);
                   if (matchedKey) {
                       const url = getPropValue(p[matchedKey]);
@@ -99,7 +96,7 @@ module.exports = async function handler(req, res) {
                           profileData.socials.push({ 
                               platform: platformCode, 
                               url, 
-                              handle: matchedKey // 使用列名作为 Handle
+                              handle: matchedKey 
                           });
                       }
                   }
@@ -110,7 +107,7 @@ module.exports = async function handler(req, res) {
       } catch (e) { return null; }
   };
 
-  const fetchDatabase = async (dbId, name, mapper) => {
+  const fetchDatabase = async (dbId, mapper) => {
     try {
         const response = await notion.databases.query({ database_id: dbId });
         let results = response.results.map(mapper);
@@ -123,7 +120,7 @@ module.exports = async function handler(req, res) {
 
   const [profile, gallery, thoughts, posts] = await Promise.all([
       fetchProfile(),
-      fetchDatabase(process.env.NOTION_GALLERY_DB_ID, 'Gallery', page => ({
+      fetchDatabase(process.env.NOTION_GALLERY_DB_ID, page => ({
           id: page.id,
           title: getPropValue(page.properties['Title'] || page.properties['Name']),
           location: getPropValue(page.properties['Location']),
@@ -134,13 +131,13 @@ module.exports = async function handler(req, res) {
           coverUrl: getImageUrl(page, 'Cover', false),
           featured: page.properties['Featured']?.checkbox || false
       })),
-      fetchDatabase(process.env.NOTION_THOUGHTS_DB_ID, 'Thoughts', page => ({
+      fetchDatabase(process.env.NOTION_THOUGHTS_DB_ID, page => ({
           id: page.id,
           content: getPropValue(page.properties['Content'] || page.properties['Name']),
           date: page.properties['Date']?.date?.start || new Date(page.created_time).toISOString().split('T')[0],
           tags: page.properties['Tags']?.multi_select?.map(t => t.name) || []
       })),
-      fetchDatabase(process.env.NOTION_BLOG_DB_ID, 'Blog', page => ({
+      fetchDatabase(process.env.NOTION_BLOG_DB_ID, page => ({
           id: page.id,
           title: getPropValue(page.properties['Title'] || page.properties['Name']),
           excerpt: getPropValue(page.properties['Excerpt']),
@@ -152,5 +149,12 @@ module.exports = async function handler(req, res) {
       }))
   ]);
 
-  res.status(200).json({ profile, gallery, thoughts, posts });
+  // 自动识别“关于页”：标题包含“关于”或“About”
+  const about = posts.find(p => 
+    p.title.includes('关于') || 
+    p.title.toLowerCase().includes('about') || 
+    p.category.toLowerCase() === 'about'
+  );
+
+  res.status(200).json({ profile, gallery, thoughts, posts, about });
 }

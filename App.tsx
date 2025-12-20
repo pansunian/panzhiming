@@ -25,60 +25,9 @@ const defaultProfile: Profile = {
   ]
 };
 
-const defaultPhotoGroups: PhotoGroup[] = [
-  {
-    id: "demo-g1",
-    title: "东京夜雨",
-    location: "Shibuya, Tokyo",
-    count: 24,
-    coverUrl: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=1000&auto=format&fit=crop",
-    date: "2023-11-15",
-    ticketNumber: "TKY-089",
-    description: "霓虹灯下的涉谷街头，雨水倒映着城市的喧嚣。使用 Sony Alpha 7R V 拍摄。",
-    featured: true
-  },
-  {
-    id: "demo-g2",
-    title: "京都散策",
-    location: "Arashiyama, Kyoto",
-    count: 18,
-    coverUrl: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=1000&auto=format&fit=crop",
-    date: "2023-11-20",
-    ticketNumber: "KYO-042",
-    description: "岚山的竹林与鸭川的微风，在这个深秋的午后显得人格外宁静。",
-    featured: true
-  }
-];
-
-const defaultThoughts: Thought[] = [
-  {
-    id: "demo-t1",
-    content: "在这个追求效率的时代，我依然迷恋胶片那不可预知的显影过程。每一张照片都是时间的化身，而不仅仅是像素的堆砌。",
-    date: "2024-03-20",
-    time: "22:45",
-    tags: ["摄影思考", "日常"]
-  },
-  {
-    id: "demo-t2",
-    content: "设计的本质是沟通。不仅是人与物的沟通，更是人与自我的对话。今天又在书店坐了一下午，满载而归。",
-    date: "2024-03-18",
-    time: "15:20",
-    tags: ["书影音", "灵感"]
-  }
-];
-
-const defaultPosts: BlogPost[] = [
-  {
-    id: "demo-p1",
-    title: "为什么我们依然需要纸质的感觉？",
-    excerpt: "在这个数字化的浪潮中，触感、气味和不完美反而成为了最稀缺的奢侈品。我们怀念纸张的纹理，因为它让时间有了触感。",
-    date: "2024-01-12",
-    readTime: "6 MIN",
-    category: "ESSAY",
-    imageUrl: "https://images.unsplash.com/photo-1454165833222-7e737d97607a?q=80&w=1000&auto=format&fit=crop",
-    featured: true
-  }
-];
+const defaultPhotoGroups: PhotoGroup[] = [];
+const defaultThoughts: Thought[] = [];
+const defaultPosts: BlogPost[] = [];
 
 // --- 布局：黄金 420px 宽度 ---
 interface MainLayoutProps {
@@ -145,7 +94,7 @@ const App: React.FC = () => {
            if (data.gallery?.length) setPhotoGroups(data.gallery);
            if (data.thoughts?.length) setThoughts(data.thoughts);
            if (data.posts?.length) setPosts(data.posts);
-           setAboutPage(data.about || null);
+           if (data.about) setAboutPage(data.about);
            setIsDemoMode(false); 
         }
       } catch (e) { }
@@ -177,7 +126,13 @@ const App: React.FC = () => {
       <Route path="/thoughts" element={<MainLayout {...commonProps}><ThoughtSection thoughts={thoughts} /></MainLayout>} />
       <Route path="/blog" element={<MainLayout {...commonProps}><BlogSection posts={posts} /></MainLayout>} />
       <Route path="/blog/:id" element={<DetailView items={posts} type="blog" logoUrl={profile.logoUrl} />} />
-      <Route path="/aboutme" element={aboutPage ? <DetailView items={[aboutPage]} forceId={aboutPage.id} type="blog" logoUrl={profile.logoUrl} /> : <Navigate to="/" replace />} />
+      <Route path="/aboutme" element={
+        aboutPage ? (
+          <DetailView items={[aboutPage]} forceId={aboutPage.id} type="blog" logoUrl={profile.logoUrl} />
+        ) : (
+          <MainLayout {...commonProps}><div className="py-20 text-center font-mono text-xs opacity-20 tracking-widest">LOADING MANUAL...</div></MainLayout>
+        )
+      } />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

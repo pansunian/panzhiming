@@ -19,20 +19,20 @@ interface GalleryImage {
 
 const BrandLogotype = ({ deviceString, className = "" }: { deviceString: string, className?: string }) => {
     const s = deviceString.toLowerCase();
-    const baseClass = `leading-none select-none ${className}`;
+    const baseClass = `h-3.5 w-auto object-contain select-none opacity-90 ${className}`;
 
     if (s.includes('apple') || s.includes('iphone')) {
-        return <span className={`${baseClass} font-sans font-black tracking-tight text-[12px] text-ink`}> iPhone</span>;
+        return <img src="/fonts/apple.svg" alt="Apple" className={baseClass} />;
     }
     if (s.includes('sony') || s.includes('ilce') || s.includes('alpha')) {
-        return <span className={`${baseClass} font-serif font-bold tracking-[0.2em] text-[10px] text-ink`}>SONY</span>;
+        return <img src="/fonts/logo-sony.svg" alt="Sony" className={baseClass} />;
     }
-    if (s.includes('canon')) return <span className={`${baseClass} font-serif font-bold tracking-wide text-[13px] italic text-ink`}>Canon</span>;
-    if (s.includes('nikon')) return <span className={`${baseClass} font-sans font-black italic tracking-tighter uppercase text-[14px] text-ink`}>Nikon</span>;
-    if (s.includes('fuji')) return <span className={`${baseClass} font-sans font-bold uppercase tracking-widest text-[11px] text-ink`}>FUJIFILM</span>;
-    if (s.includes('leica')) return <span className={`${baseClass} font-serif font-bold text-[#e41e26] text-[12px]`}>Leica</span>;
+    if (s.includes('canon')) return <span className="font-serif font-bold tracking-wide text-[13px] italic text-ink leading-none">Canon</span>;
+    if (s.includes('nikon')) return <span className="font-sans font-black italic tracking-tighter uppercase text-[14px] text-ink leading-none">Nikon</span>;
+    if (s.includes('fuji')) return <span className="font-sans font-bold uppercase tracking-widest text-[11px] text-ink leading-none">FUJIFILM</span>;
+    if (s.includes('leica')) return <span className="font-serif font-bold text-[#e41e26] text-[12px] leading-none">Leica</span>;
     
-    return <span className={`${baseClass} font-mono font-bold uppercase text-[11px] opacity-40`}>{deviceString.split(' ')[0] || 'DIGITAL'}</span>;
+    return <span className="font-mono font-bold uppercase text-[11px] opacity-40 leading-none">{deviceString.split(' ')[0] || 'DIGITAL'}</span>;
 };
 
 const parseCaptionData = (caption: string) => {
@@ -62,7 +62,7 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
     };
 
     return (
-        <div className="w-full bg-white mb-20 last:mb-0">
+        <div className="w-full bg-white mb-24 last:mb-0">
              <div className={`w-full relative overflow-hidden ${aspectClass} rounded-sm`}>
                 <img 
                     src={img.url} 
@@ -71,16 +71,19 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
                     onLoad={handleImageLoad} 
                 />
              </div>
-             <div className="flex justify-between items-center mt-6 px-1">
+             {/* 印刷级元数据栏 */}
+             <div className="flex justify-between items-start mt-6 px-1">
                   <div className="flex items-center gap-4">
-                      <BrandLogotype deviceString={parsed.device || 'Digital'} />
+                      <div className="flex items-center h-4">
+                          <BrandLogotype deviceString={parsed.device || 'Digital'} />
+                      </div>
                       <div className="w-[1px] h-4 bg-stone-200"></div>
-                      <span className="font-mono text-[10px] font-bold text-stone-400 tracking-widest">{parsed.device ? 'EXIF' : 'SCAN'}</span>
+                      <span className="font-mono text-[9px] font-bold text-stone-300 tracking-[0.2em]">{parsed.device ? 'EXIF' : 'SCAN'}</span>
                   </div>
-                  <div className="flex flex-col items-end">
-                      <span className="font-serif font-bold text-xs text-ink">{parsed.locationMain || '无题'}</span>
-                      <span className="text-[9px] font-mono text-stone-400 mt-1 uppercase tracking-tighter">
-                          {parsed.date || 'DATA MISSING'} / {parsed.locationSub || 'UNKNOWN'}
+                  <div className="flex flex-col items-end text-right">
+                      <span className="font-serif font-bold text-sm text-ink leading-none">{parsed.locationMain || 'Untitled Shot'}</span>
+                      <span className="text-[9px] font-mono text-stone-400 mt-2 uppercase tracking-widest">
+                          {parsed.date || '---'} / {parsed.locationSub || 'Unknown Area'}
                       </span>
                   </div>
              </div>
@@ -114,7 +117,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
     }
   }, [item?.id]);
 
-  if (!item) return <Navigate to="/" replace />;
+  if (!item && !loading) return <Navigate to="/" replace />;
 
   const isBlog = type === 'blog';
   const blogPost = item as BlogPost;
@@ -130,22 +133,24 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                     <div className="p-8 pb-6 relative">
                         <div className="flex justify-between items-start mb-6">
                             <div className="flex flex-col">
-                                <span className="font-mono text-[9px] text-stone-400 uppercase tracking-[0.2em] mb-1">{isBlog ? blogPost.category : 'GALLERY'}</span>
-                                <span className="font-mono text-xs font-bold text-ink bg-stone-100 px-2 py-0.5 inline-block rounded-sm">{isBlog ? blogPost.date : photoGroup.ticketNumber}</span>
+                                <span className="font-mono text-[9px] text-stone-400 uppercase tracking-[0.2em] mb-1">{isBlog ? (blogPost?.category || 'Blog') : 'GALLERY'}</span>
+                                <span className="font-mono text-xs font-bold text-ink bg-stone-100 px-2 py-0.5 inline-block rounded-sm">{isBlog ? blogPost?.date : photoGroup?.ticketNumber}</span>
                             </div>
                             <div className="border border-stone-200 px-2 py-1 flex items-center gap-1.5 opacity-60">
                                 {isBlog ? <Clock size={10} /> : <Camera size={10} />}
-                                <span className="font-mono text-[9px] font-bold uppercase">{isBlog ? blogPost.readTime : `${photoGroup.count} SHOTS`}</span>
+                                <span className="font-mono text-[9px] font-bold uppercase">{isBlog ? blogPost?.readTime : `${photoGroup?.count} SHOTS`}</span>
                             </div>
                         </div>
-                        <h1 className="font-serif font-bold text-3xl text-ink leading-tight mb-6">{item.title}</h1>
+                        <h1 className="font-serif font-bold text-3xl text-ink leading-tight mb-6">{item?.title || 'Loading...'}</h1>
                         <DashedLine className="mt-8 opacity-20" />
                         <Notch className="-left-4 bottom-[-1px] translate-y-1/2" />
                         <Notch className="-right-4 bottom-[-1px] translate-y-1/2" />
                     </div>
-                    <div className="relative w-full aspect-[16/9] bg-stone-100">
-                        <img src={isBlog ? blogPost.imageUrl : photoGroup.coverUrl} className="w-full h-full object-cover" />
-                    </div>
+                    {(isBlog ? blogPost?.imageUrl : photoGroup?.coverUrl) && (
+                        <div className="relative w-full aspect-[16/9] bg-stone-100 overflow-hidden">
+                            <img src={isBlog ? blogPost.imageUrl : photoGroup.coverUrl} className="w-full h-full object-cover" />
+                        </div>
+                    )}
                     <div className="p-8 pt-10">
                         <Notch className="-left-4 top-0 -translate-y-1/2" />
                         <Notch className="-right-4 top-0 -translate-y-1/2" />
