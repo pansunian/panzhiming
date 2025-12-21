@@ -70,12 +70,13 @@ const RichText: React.FC<{ content: any[] }> = ({ content }) => {
 const BrandLabel = ({ deviceString }: { deviceString: string }) => {
     const s = deviceString.toLowerCase();
     
-    // 修正：在 Vite 中，public/fonts/apple.svg 的访问路径应为 /fonts/apple.svg
+    // Apple Logo: 较为方正，需放大至 15px 以便在视觉高度上与文字对齐
     if (s.includes('apple') || s.includes('iphone')) {
-        return <img src="/fonts/apple.svg" className="h-[11px] w-auto opacity-90 brightness-0" alt="Apple" />;
+        return <img src="/fonts/apple.svg" className="h-[15px] w-auto opacity-90 brightness-0 inline-block align-middle select-none" alt="Apple" />;
     }
+    // Sony Logo: 纯横版设计，高度保持 8px 即可，过大会导致视觉上显得太宽
     if (s.includes('sony')) {
-        return <img src="/fonts/logo-sony.svg" className="h-[8px] w-auto opacity-90 brightness-0" alt="Sony" />;
+        return <img src="/fonts/logo-sony.svg" className="h-[8px] w-auto opacity-90 brightness-0 inline-block align-middle select-none" alt="Sony" />;
     }
 
     // 其他品牌回退样式
@@ -143,7 +144,7 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
 
 // 块渲染引擎
 const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGallery }) => {
-    // 关键修复：如果在影像辑页面，跳过渲染 Notion 正文中的普通图片块，防止重复
+    // 如果在影像辑页面，跳过渲染 Notion 正文中的普通图片块，统一由 GalleryItem 渲染以带上票根元数据
     if (isGallery && block.type === 'image') return null;
 
     switch (block.type) {
