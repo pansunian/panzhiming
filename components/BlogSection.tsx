@@ -24,24 +24,24 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
                     <div className="absolute bottom-2 left-2 text-white"><span className="font-mono text-[8px] bg-black/40 border border-white/30 px-1.5 py-0.5 backdrop-blur-sm tracking-wider uppercase">{post.category}</span></div>
                 </div>
                 
-                {/* 经典腰线打孔 */}
+                {/* 经典腰线打孔 - 尺寸改为 w-4 h-4 */}
                 <div className="relative w-0 flex flex-col items-center z-20">
                     <DashedLine vertical className="h-full border-stone-300 opacity-60" />
-                    <Notch className="-translate-x-1/2 -top-4 left-1/2" />
-                    <Notch className="-translate-x-1/2 -bottom-4 left-1/2" />
+                    <Notch className="!w-4 !h-4 -translate-x-1/2 -top-2 left-1/2" />
+                    <Notch className="!w-4 !h-4 -translate-x-1/2 -bottom-2 left-1/2" />
                 </div>
                 
-                {/* 内容右侧 */}
-                <div className="flex-grow h-full bg-paper p-3 sm:p-4 flex flex-col relative jagged-right rounded-r-none border-r border-stone-200/50">
+                {/* 内容右侧 - 使用新的 jagged-right-round 样式 */}
+                <div className="flex-grow h-full bg-paper p-3 sm:p-4 flex flex-col relative jagged-right-round rounded-r-none border-r border-stone-200/50">
                     <div className="flex justify-between items-center mb-1">
                             <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">Admit One</span>
                             <span className="font-mono text-[9px] text-stone-500 font-bold">{post.date}</span>
                     </div>
-                    <div className="flex-grow flex flex-col justify-center mb-1 pr-4">
+                    <div className="flex-grow flex flex-col justify-center mb-1 pr-6">
                         <h3 className="font-serif font-bold text-ink text-sm sm:text-base leading-tight mb-1 group-hover:text-brand-accent transition-colors line-clamp-2">{post.title}</h3>
                         <p className="font-serif text-[10px] sm:text-xs text-stone-500 leading-snug line-clamp-1 opacity-80">{post.excerpt}</p>
                     </div>
-                    <div className="mt-auto pt-2 border-t border-stone-100 flex items-end justify-between">
+                    <div className="mt-auto pt-2 border-t border-stone-100 flex items-end justify-between pr-2">
                         <BarcodeSmall className="h-3 w-1/2 opacity-40" />
                         <span className="font-mono text-[8px] text-stone-300">NO.00{index + 1}</span>
                     </div>

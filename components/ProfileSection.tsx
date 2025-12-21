@@ -35,7 +35,7 @@ const getSocialConfig = (platform: string) => {
 export const ProfileSection: React.FC<Props> = ({ profile }) => {
   return (
     <div className="flex justify-center w-full mb-16">
-      <TicketBase className="w-full rounded-2xl flex flex-col shadow-xl">
+      <TicketBase className="w-full rounded-2xl flex flex-col">
         {/* 顶部海报区 */}
         <div className="relative aspect-[3/4] w-full rounded-t-2xl overflow-hidden">
             <img src={profile.avatarUrl} alt="Profile" className="w-full h-full object-cover filter brightness-[0.85] contrast-110" />

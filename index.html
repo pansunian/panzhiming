@@ -36,21 +36,21 @@
     <style>
       @font-face { 
         font-family: 'MyCustomTitle'; 
-        src: url('/public/fonts/jinghualaosongti.woff') format('woff'); 
+        src: url('/fonts/jinghualaosongti.woff') format('woff'); 
         font-weight: 400; 
         font-style: normal; 
         font-display: swap; 
       }
       @font-face { 
         font-family: 'MyCustomBody'; 
-        src: url('/public/fonts/XiXianTingMingTi.woff2') format('woff2'); 
+        src: url('/fonts/XiXianTingMingTi.woff2') format('woff2'); 
         font-weight: 400; 
         font-style: normal; 
         font-display: swap; 
       }
       @font-face { 
         font-family: 'MyCustomMono'; 
-        src: url('/public/fonts/MyMono.woff2') format('woff2'); 
+        src: url('/fonts/MyMono.woff2') format('woff2'); 
         font-weight: 400; 
         font-style: normal; 
         font-display: swap; 
@@ -92,6 +92,12 @@
         -webkit-mask-size: 100% 12px; 
         -webkit-mask-repeat: repeat-y; 
         -webkit-mask-position: right top; 
+      }
+      .jagged-right-round {
+        -webkit-mask-image: radial-gradient(circle at right, transparent 6px, #000 7px);
+        -webkit-mask-size: 100% 18px;
+        -webkit-mask-repeat: repeat-y;
+        -webkit-mask-position: right top;
       }
       
       .sawtooth-y { 

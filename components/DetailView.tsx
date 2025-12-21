@@ -67,22 +67,37 @@ const RichText: React.FC<{ content: any[] }> = ({ content }) => {
     );
 };
 
-const BrandLabel = ({ deviceString }: { deviceString: string }) => {
+// 品牌 Logo 组件，带加载失败回退
+const BrandLogo: React.FC<{ src: string, alt: string, hClass: string, fallback: string }> = ({ src, alt, hClass, fallback }) => {
+    const [hasError, setHasError] = useState(false);
+    if (hasError) return <span className="font-sans font-bold italic text-[10px] text-ink">{fallback}</span>;
+    return (
+        <img 
+            src={src} 
+            className={`${hClass} w-auto opacity-90 brightness-0 inline-block align-middle select-none`} 
+            alt={alt} 
+            onError={() => setHasError(true)}
+        />
+    );
+};
+
+const BrandLabel: React.FC<{ deviceString: string }> = ({ deviceString }) => {
     const s = deviceString.toLowerCase();
     
-    // Apple Logo: 尺寸调整为 22px
+    // Apple Logo: 22px
     if (s.includes('apple') || s.includes('iphone')) {
-        return <img src="/fonts/apple.svg" className="h-[22px] w-auto opacity-90 brightness-0 inline-block align-middle select-none" alt="Apple" />;
+        return <BrandLogo src="/fonts/apple.svg" alt="Apple" hClass="h-[22px]" fallback="Apple" />;
     }
     // Sony Logo: 横版，保持 8px
     if (s.includes('sony')) {
-        return <img src="/fonts/logo-sony.svg" className="h-[8px] w-auto opacity-90 brightness-0 inline-block align-middle select-none" alt="Sony" />;
+        return <BrandLogo src="/fonts/logo-sony.svg" alt="Sony" hClass="h-[8px]" fallback="SONY" />;
     }
 
-    // 其他品牌回退样式
+    // 其他品牌文字回退样式
     if (s.includes('canon')) return <span className="font-sans font-normal italic text-[10px] text-ink">Canon</span>;
     if (s.includes('nikon')) return <span className="font-sans font-normal italic tracking-tighter uppercase text-[11px] text-ink">NIKON</span>;
     if (s.includes('fuji')) return <span className="font-sans font-normal uppercase tracking-widest text-[9px] text-ink">FUJIFILM</span>;
+    if (s.includes('leica')) return <span className="font-serif font-bold italic text-[11px] text-ink">Leica</span>;
     
     return <span className="font-mono font-normal uppercase text-[9px] opacity-40">{deviceString.split(' ')[0] || 'SCAN'}</span>;
 };
@@ -130,7 +145,7 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
                           <BrandLabel deviceString={parsed.device || 'Digital'} />
                       </div>
                       <div className="w-[1px] h-6 bg-stone-200"></div>
-                      <div className="flex flex-col text-left"> {/* 已修改：由 text-right 改为 text-left */}
+                      <div className="flex flex-col text-left"> 
                           <span className="font-sans font-normal text-[10px] text-ink leading-none">{parsed.locationMain || 'Untitled'}</span>
                           <span className="font-sans text-[9px] text-stone-400 mt-1 uppercase tracking-wide">
                               {parsed.locationSub || 'Global Location'}
@@ -144,7 +159,6 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
 
 // 块渲染引擎
 const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGallery }) => {
-    // 如果在影像辑页面，跳过渲染 Notion 正文中的普通图片块，统一由 GalleryItem 渲染以带上票根元数据
     if (isGallery && block.type === 'image') return null;
 
     switch (block.type) {
@@ -288,10 +302,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                             <div className="flex flex-col items-center py-20 text-stone-300 font-mono text-[10px] tracking-widest"><Loader2 className="animate-spin mb-3" size={16} />LOADING CONTENT...</div>
                         ) : (
                             <>
-                                {/* 渲染文章正文，影像辑模式下会自动过滤图片块 */}
                                 {blogBlocks.map((block, idx) => <NotionBlock key={idx} block={block} isGallery={!isBlog} />)}
-                                
-                                {/* 渲染影像辑专属图片列表 */}
                                 {!isBlog && contentImages.map((img, idx) => <GalleryItem key={idx} img={img} />)}
                             </>
                         )}
@@ -304,7 +315,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                             <div className="w-8 h-10 overflow-hidden shrink-0"><BarcodeVertical /></div>
                             <div className="flex flex-col gap-1 text-center px-4">
                                 <span className="font-serif text-[10px] font-bold tracking-[0.3em] whitespace-nowrap">先见志明</span>
-                                <span className="font-mono text-[7px] tracking-[0.4em] uppercase whitespace-nowrap">END OF TICKET</span>
+                                <span className="font-mono text-[7px] tracking-[0.4em] uppercase whitespace-nowrap">PANZHIMING.COM</span>
                             </div>
                             <div className="w-8 h-10 overflow-hidden shrink-0"><BarcodeVertical /></div>
                         </div>
