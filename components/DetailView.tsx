@@ -70,11 +70,11 @@ const RichText: React.FC<{ content: any[] }> = ({ content }) => {
 const BrandLabel = ({ deviceString }: { deviceString: string }) => {
     const s = deviceString.toLowerCase();
     
-    // Apple Logo: 较为方正，需放大至 15px 以便在视觉高度上与文字对齐
+    // Apple Logo: 根据反馈放大至 22px，确保在视觉高度上更加协调显眼
     if (s.includes('apple') || s.includes('iphone')) {
-        return <img src="/fonts/apple.svg" className="h-[15px] w-auto opacity-90 brightness-0 inline-block align-middle select-none" alt="Apple" />;
+        return <img src="/fonts/apple.svg" className="h-[22px] w-auto opacity-90 brightness-0 inline-block align-middle select-none" alt="Apple" />;
     }
-    // Sony Logo: 纯横版设计，高度保持 8px 即可，过大会导致视觉上显得太宽
+    // Sony Logo: 纯横版设计，保持 8px
     if (s.includes('sony')) {
         return <img src="/fonts/logo-sony.svg" className="h-[8px] w-auto opacity-90 brightness-0 inline-block align-middle select-none" alt="Sony" />;
     }
@@ -283,7 +283,8 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                         </div>
                     )}
 
-                    <div className="p-8 pt-10">
+                    {/* 修改: 将 pt-10 减少到 pt-2，以删除封面图下方的多余空白 */}
+                    <div className="p-8 pt-2">
                         {loading ? (
                             <div className="flex flex-col items-center py-20 text-stone-300 font-mono text-[10px] tracking-widest"><Loader2 className="animate-spin mb-3" size={16} />LOADING CONTENT...</div>
                         ) : (
