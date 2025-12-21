@@ -55,7 +55,7 @@ const RichText: React.FC<{ content: any[] }> = ({ content }) => {
                 if (annotations.color && COLOR_MAP[annotations.color]) className += ` ${COLOR_MAP[annotations.color]}`;
 
                 const element = href ? (
-                    <a key={i} href={href} target="_blank" rel="noopener noreferrer" className={`${className} text-brand-blue hover:underline decoration-1 underline-offset-2`}>
+                    <a key={i} href={href} target="_blank" rel="noopener noreferrer" className={`${className} text-brand-accent hover:text-brand-accent/80 transition-colors underline decoration-brand-accent/30 decoration-1 underline-offset-4`}>
                         {text}
                     </a>
                 ) : (
