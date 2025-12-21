@@ -19,11 +19,20 @@ interface GalleryImage {
 
 const BrandLabel = ({ deviceString }: { deviceString: string }) => {
     const s = deviceString.toLowerCase();
-    if (s.includes('apple') || s.includes('iphone')) return <span className="font-sans font-normal tracking-tight text-[10px] text-ink">APPLE</span>;
-    if (s.includes('sony')) return <span className="font-sans font-normal tracking-[0.1em] text-[10px] text-ink">SONY</span>;
+    
+    // 优先使用图标 Logo
+    if (s.includes('apple') || s.includes('iphone')) {
+        return <img src="/fonts/apple.svg" className="h-[11px] w-auto opacity-90 brightness-0" alt="Apple" />;
+    }
+    if (s.includes('sony')) {
+        return <img src="/fonts/logo-sony.svg" className="h-[8px] w-auto opacity-90 brightness-0" alt="Sony" />;
+    }
+
+    // 其他品牌回退到文本样式，使用 10px 无衬线
     if (s.includes('canon')) return <span className="font-sans font-normal italic text-[10px] text-ink">Canon</span>;
     if (s.includes('nikon')) return <span className="font-sans font-normal italic tracking-tighter uppercase text-[11px] text-ink">NIKON</span>;
     if (s.includes('fuji')) return <span className="font-sans font-normal uppercase tracking-widest text-[9px] text-ink">FUJIFILM</span>;
+    
     return <span className="font-mono font-normal uppercase text-[9px] opacity-40">{deviceString.split(' ')[0] || 'SCAN'}</span>;
 };
 
@@ -58,7 +67,7 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
                 <img src={img.url} alt={parsed.locationMain} className={`w-full h-full object-cover transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} onLoad={handleImageLoad} />
              </div>
              
-             {/* 影像元数据样式：左右往中间缩进 3px (使用 mx-[3px]) */}
+             {/* 影像元数据样式：第一行 10px, 无衬线 (MyCustomBody), 不加粗, 黑色; 左右缩进 3px */}
              <div className="flex justify-between items-start mt-4 px-1 pb-2 mx-[3px]">
                   {/* 左侧：设备型号 + 日期 */}
                   <div className="flex flex-col">
@@ -66,9 +75,9 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
                       <span className="font-sans text-[9px] text-stone-400 mt-1">{parsed.date || 'Unknown Date'}</span>
                   </div>
                   
-                  {/* 右侧：品牌标识 | 地点信息 */}
+                  {/* 右侧：品牌 Logo | 地点信息 */}
                   <div className="flex items-center gap-4">
-                      <div className="flex items-center">
+                      <div className="flex items-center h-4">
                           <BrandLabel deviceString={parsed.device || 'Digital'} />
                       </div>
                       
@@ -141,9 +150,10 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                                 <span className="font-mono text-[9px] font-bold uppercase tracking-widest text-ink">{isBlog ? blogPost?.readTime : `${photoGroup?.count} SHOTS`}</span>
                             </div>
                         </div>
+                        {/* 标题采用 serif (Jinghua) */}
                         <h1 className="font-serif font-bold text-2xl text-ink leading-snug mb-2 pr-4">{item?.title || 'Loading...'}</h1>
                         
-                        {/* 标题下方增加小字展示地址/日期 */}
+                        {/* 标题下方小字 */}
                         <div className="flex items-center gap-3 mb-8 text-[9px] font-mono text-stone-400 uppercase tracking-widest">
                             <span>{item?.date || 'Unknown Date'}</span>
                             {!isBlog && photoGroup?.location && (
@@ -157,29 +167,25 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                         <DashedLine className="opacity-10" />
                     </div>
 
-                    {/* Image Section - 封面图四个角打孔回归 */}
+                    {/* Image Section - 封面图四个角打孔 */}
                     {displayImage && (
                         <div className="relative w-full aspect-[16/9] bg-stone-100 overflow-visible">
-                            {/* 顶部打孔 */}
                             <Notch className="-left-4 top-0 -translate-y-1/2" />
                             <Notch className="-right-4 top-0 -translate-y-1/2" />
-                            
                             <img src={displayImage} className="w-full h-full object-cover" alt="Cover" />
-                            
-                            {/* 底部打孔 */}
                             <Notch className="-left-4 bottom-0 translate-y-1/2" />
                             <Notch className="-right-4 bottom-0 translate-y-1/2" />
                         </div>
                     )}
 
-                    {/* Content Section */}
+                    {/* Content Section - 正文采用 sans (XiXian) */}
                     <div className="p-8 pt-10">
                         {loading ? (
                             <div className="flex flex-col items-center py-20 text-stone-300 font-mono text-[10px] tracking-widest"><Loader2 className="animate-spin mb-3" size={16} />LOADING CONTENT...</div>
                         ) : (
                             <>
                                 {blogBlocks.map((block, idx) => (
-                                    block.type === 'paragraph' ? <p key={idx} className="mb-6 leading-loose text-ink/90 font-serif text-[15px]">{block.content.map(t => t.text).join('')}</p> : null
+                                    block.type === 'paragraph' ? <p key={idx} className="mb-6 leading-loose text-ink/90 font-sans text-[15px]">{block.content.map(t => t.text).join('')}</p> : null
                                 ))}
                                 {!isBlog && contentImages.map((img, idx) => <GalleryItem key={idx} img={img} />)}
                             </>
@@ -192,7 +198,6 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                         <Notch className="-right-4 top-0 -translate-y-1/2" />
                         
                         <div className="flex justify-between items-center opacity-30">
-                            {/* 缩小了条形码区域，让出更多空间给文字 */}
                             <div className="w-8 h-10 overflow-hidden shrink-0">
                                 <BarcodeVertical />
                             </div>
