@@ -20,12 +20,12 @@ interface GalleryImage {
 const BrandLabel = ({ deviceString }: { deviceString: string }) => {
     const s = deviceString.toLowerCase();
     
-    // 优先使用图标 Logo
+    // 修正 Logo 路径为 /public/fonts/
     if (s.includes('apple') || s.includes('iphone')) {
-        return <img src="/fonts/apple.svg" className="h-[11px] w-auto opacity-90 brightness-0" alt="Apple" />;
+        return <img src="/public/fonts/apple.svg" className="h-[11px] w-auto opacity-90 brightness-0" alt="Apple" />;
     }
     if (s.includes('sony')) {
-        return <img src="/fonts/logo-sony.svg" className="h-[8px] w-auto opacity-90 brightness-0" alt="Sony" />;
+        return <img src="/public/fonts/logo-sony.svg" className="h-[8px] w-auto opacity-90 brightness-0" alt="Sony" />;
     }
 
     // 其他品牌回退到文本样式，使用 10px 无衬线
