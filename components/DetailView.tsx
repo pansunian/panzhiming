@@ -70,11 +70,11 @@ const RichText: React.FC<{ content: any[] }> = ({ content }) => {
 const BrandLabel = ({ deviceString }: { deviceString: string }) => {
     const s = deviceString.toLowerCase();
     
-    // Apple Logo: 根据反馈放大至 22px，确保在视觉高度上更加协调显眼
+    // Apple Logo: 尺寸调整为 22px
     if (s.includes('apple') || s.includes('iphone')) {
         return <img src="/fonts/apple.svg" className="h-[22px] w-auto opacity-90 brightness-0 inline-block align-middle select-none" alt="Apple" />;
     }
-    // Sony Logo: 纯横版设计，保持 8px
+    // Sony Logo: 横版，保持 8px
     if (s.includes('sony')) {
         return <img src="/fonts/logo-sony.svg" className="h-[8px] w-auto opacity-90 brightness-0 inline-block align-middle select-none" alt="Sony" />;
     }
@@ -130,7 +130,7 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
                           <BrandLabel deviceString={parsed.device || 'Digital'} />
                       </div>
                       <div className="w-[1px] h-6 bg-stone-200"></div>
-                      <div className="flex flex-col text-right">
+                      <div className="flex flex-col text-left"> {/* 已修改：由 text-right 改为 text-left */}
                           <span className="font-sans font-normal text-[10px] text-ink leading-none">{parsed.locationMain || 'Untitled'}</span>
                           <span className="font-sans text-[9px] text-stone-400 mt-1 uppercase tracking-wide">
                               {parsed.locationSub || 'Global Location'}
@@ -283,7 +283,6 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                         </div>
                     )}
 
-                    {/* 修改: 将 pt-10 减少到 pt-2，以删除封面图下方的多余空白 */}
                     <div className="p-8 pt-2">
                         {loading ? (
                             <div className="flex flex-col items-center py-20 text-stone-300 font-mono text-[10px] tracking-widest"><Loader2 className="animate-spin mb-3" size={16} />LOADING CONTENT...</div>
