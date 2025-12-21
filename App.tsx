@@ -16,7 +16,7 @@ const defaultProfile: Profile = {
   role: "先见志明 | Photographer",
   bio: "记录生活瞬间的数字存根。",
   location: "Shanghai, CN",
-  avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&auto=format&fit=crop",
+  avatarUrl: "", // 默认演示数据改为色块，不放图片
   socials: []
 };
 
@@ -89,7 +89,6 @@ const App: React.FC = () => {
       <Route path="/" element={
         <MainLayout {...commonProps} hideNav isHome>
           <ProfileSection profile={profile} />
-          {/* 将 gap-24 减小，配合内部组件 margin 的移除，大幅压缩间距 */}
           <div className="flex flex-col gap-8">
             <GallerySection title="精选影像" groups={photoGroups.filter(g => g.featured).slice(0, 2)} onViewAll />
             <ThoughtSection thoughts={thoughts.filter(t => t.featured)} showViewAll />

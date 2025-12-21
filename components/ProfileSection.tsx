@@ -35,20 +35,27 @@ const getSocialConfig = (platform: string) => {
 export const ProfileSection: React.FC<Props> = ({ profile }) => {
   return (
     <div className="flex justify-center w-full mb-16">
-      <TicketBase className="w-full rounded-2xl flex flex-col shadow-xl">
-        {/* 顶部海报区 */}
-        <div className="relative aspect-[3/4] w-full rounded-t-2xl overflow-hidden">
-            <img src={profile.avatarUrl} alt="Profile" className="w-full h-full object-cover filter brightness-[0.85] contrast-110" />
-            <div className="absolute top-8 left-0 w-full text-center text-white mix-blend-overlay opacity-80">
+      <TicketBase className="w-full rounded-2xl flex flex-col shadow-xl overflow-hidden">
+        {/* 顶部海报区 - 增加色块逻辑 */}
+        <div className="relative aspect-[3/4] w-full rounded-t-2xl overflow-hidden bg-[#d6d3c9]">
+            {profile.avatarUrl ? (
+                <img src={profile.avatarUrl} alt="Profile" className="w-full h-full object-cover filter brightness-[0.85] contrast-110" />
+            ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center relative opacity-20">
+                     <div className="w-full h-full bg-texture absolute inset-0 mix-blend-overlay"></div>
+                     <span className="font-serif italic text-2xl tracking-[0.5em] text-ink select-none">PAN</span>
+                </div>
+            )}
+            <div className="absolute top-8 left-0 w-full text-center text-ink/40 mix-blend-multiply opacity-80">
                 <p className="font-mono text-[10px] tracking-[0.6em] uppercase">Life Archives</p>
             </div>
-            <div className="absolute bottom-12 left-8 right-8 text-white">
-                 <h2 className="text-xs font-mono mb-2 tracking-widest opacity-80">NOW RECORDING</h2>
+            <div className="absolute bottom-12 left-8 right-8 text-ink">
+                 <h2 className="text-xs font-mono mb-2 tracking-widest opacity-40 uppercase">Now Recording</h2>
                  <h1 className="text-5xl font-serif font-bold tracking-tight leading-none mb-2">生活<br/>正在上映</h1>
             </div>
              <Link 
                 to="/aboutme"
-                className="absolute bottom-4 right-4 text-white/70 text-[10px] font-mono border border-white/30 px-3 py-1 rounded-full hover:bg-white/10 hover:text-white transition-all cursor-pointer backdrop-blur-sm"
+                className="absolute bottom-4 right-4 text-ink/60 text-[10px] font-mono border border-ink/20 px-3 py-1 rounded-full hover:bg-ink/5 hover:text-ink transition-all cursor-pointer backdrop-blur-sm"
             >
                 我的说明书 &rarr;
             </Link>
@@ -98,7 +105,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
         </div>
 
         {/* 社交链接与条形码（白色区域） */}
-        <div className="bg-paper p-8 relative rounded-b-2xl">
+        <div className="bg-paper p-8 relative">
              <Notch className="-left-4 top-0 -translate-y-1/2" />
              <Notch className="-right-4 top-0 -translate-y-1/2" />
              <DashedLine className="absolute top-0 left-4 right-4" />
@@ -116,7 +123,6 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                      })}
                  </div>
                  
-                 {/* 条形码修正：确保容器居中 */}
                  <div className="w-full flex flex-col items-center opacity-40">
                     <BarcodeHorizontal className="h-8 w-48 mix-blend-multiply" />
                     <p className="text-[9px] font-mono mt-3 tracking-[0.4em] uppercase text-center">PanZhiMing.com</p>
