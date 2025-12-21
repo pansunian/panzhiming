@@ -11,6 +11,8 @@ interface Props {
   profile: Profile;
 }
 
+const FALLBACK_AVATAR = "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=1000&auto=format&fit=crop";
+
 const SOCIAL_MAP: Record<string, { label: string; icon: React.ElementType }> = {
     INSTAGRAM: { label: 'Instagram', icon: Instagram },
     TWITTER: { label: 'Twitter', icon: Twitter },
@@ -37,8 +39,12 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
     <div className="flex justify-center w-full mb-16">
       <TicketBase className="w-full rounded-2xl flex flex-col">
         {/* 顶部海报区 */}
-        <div className="relative aspect-[3/4] w-full rounded-t-2xl overflow-hidden">
-            <img src={profile.avatarUrl} alt="Profile" className="w-full h-full object-cover filter brightness-[0.85] contrast-110" />
+        <div className="relative aspect-[3/4] w-full rounded-t-2xl overflow-hidden bg-stone-900">
+            <img 
+                src={profile.avatarUrl || FALLBACK_AVATAR} 
+                alt="Profile" 
+                className="w-full h-full object-cover filter brightness-[0.85] contrast-110" 
+            />
             <div className="absolute top-8 left-0 w-full text-center text-white mix-blend-overlay opacity-80">
                 <p className="font-mono text-[10px] tracking-[0.6em] uppercase">Life Archives</p>
             </div>

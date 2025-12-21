@@ -128,7 +128,7 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
     };
 
     return (
-        <div className="w-full bg-white mb-12 last:mb-0">
+        <div className="w-full bg-white mb-10 last:mb-0">
              <div className={`w-full relative overflow-hidden ${aspectClass} rounded-sm`}>
                 <img src={img.url} alt={parsed.locationMain} className={`w-full h-full object-cover transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} onLoad={handleImageLoad} />
              </div>
@@ -159,22 +159,23 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
 
 // 块渲染引擎
 const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGallery }) => {
-    if (isGallery && block.type === 'image') return null;
+    // 影像辑模式下隐藏所有图片块和空段落块
+    if (isGallery && (block.type === 'image' || (block.type === 'paragraph' && !block.content?.length))) return null;
 
     switch (block.type) {
         case 'paragraph':
-            return <p className="mb-[1.2em] leading-loose text-ink/90 font-sans text-[15px] text-justify min-h-[1em]"><RichText content={block.content} /></p>;
+            return <p className="mb-[1.2em] leading-loose text-ink/90 font-sans text-[15px] text-justify min-h-[1em] first:mt-0"><RichText content={block.content} /></p>;
         case 'heading_1':
-            return <h2 className="font-serif font-bold text-xl mt-12 mb-6 border-b border-stone-100 pb-2"><RichText content={block.content} /></h2>;
+            return <h2 className="font-serif font-bold text-xl mt-10 mb-6 border-b border-stone-100 pb-2 first:mt-0"><RichText content={block.content} /></h2>;
         case 'heading_2':
-            return <h3 className="font-serif font-bold text-lg mt-8 mb-4"><RichText content={block.content} /></h3>;
+            return <h3 className="font-serif font-bold text-lg mt-8 mb-4 first:mt-0"><RichText content={block.content} /></h3>;
         case 'heading_3':
-            return <h4 className="font-serif font-bold text-base mt-6 mb-3"><RichText content={block.content} /></h4>;
+            return <h4 className="font-serif font-bold text-base mt-6 mb-3 first:mt-0"><RichText content={block.content} /></h4>;
         case 'quote':
-            return <blockquote className="border-l-4 border-stone-200 pl-6 my-8 italic text-stone-500 font-sans text-[15px] leading-loose"><RichText content={block.content} /></blockquote>;
+            return <blockquote className="border-l-4 border-stone-200 pl-6 my-8 italic text-stone-500 font-sans text-[15px] leading-loose first:mt-0"><RichText content={block.content} /></blockquote>;
         case 'callout':
             return (
-                <div className="bg-stone-50/80 border border-stone-100 p-5 rounded-lg my-8 flex gap-4 items-start shadow-sm">
+                <div className="bg-stone-50/80 border border-stone-100 p-5 rounded-lg my-8 flex gap-4 items-start shadow-sm first:mt-0">
                     {block.icon && <span className="text-xl shrink-0">{block.icon.emoji || '💡'}</span>}
                     <div className="font-sans text-sm leading-relaxed text-stone-600"><RichText content={block.content} /></div>
                 </div>
@@ -182,14 +183,14 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
         case 'list_item':
             const bullet = block.listType === 'ol' ? 'counter' : '•';
             return (
-                <div className="flex gap-3 mb-3 pl-2 font-sans text-[15px] leading-relaxed">
+                <div className="flex gap-3 mb-3 pl-2 font-sans text-[15px] leading-relaxed first:mt-0">
                     <span className="text-stone-300 shrink-0 font-mono text-sm">{bullet === 'counter' ? '' : bullet}</span>
                     <div className="text-ink/90"><RichText content={block.content} /></div>
                 </div>
             );
         case 'toggle':
             return (
-                <details className="group mb-4 bg-stone-50/30 rounded-md border border-stone-100/50">
+                <details className="group mb-4 bg-stone-50/30 rounded-md border border-stone-100/50 first:mt-0">
                     <summary className="cursor-pointer list-none p-4 flex items-center gap-3 font-sans font-bold text-sm text-ink/80 hover:bg-stone-50/50 transition-colors">
                         <ChevronRight size={14} className="text-stone-300 transition-transform group-open:rotate-90" />
                         <RichText content={block.content} />
@@ -199,7 +200,7 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
             );
         case 'bookmark':
             return (
-                <a href={block.url} target="_blank" rel="noopener noreferrer" className="block border border-stone-200 rounded-lg p-4 my-8 hover:bg-stone-50 transition-all group overflow-hidden">
+                <a href={block.url} target="_blank" rel="noopener noreferrer" className="block border border-stone-200 rounded-lg p-4 my-8 hover:bg-stone-50 transition-all group overflow-hidden first:mt-0">
                     <div className="flex items-center gap-4">
                         <div className="w-10 h-10 bg-stone-100 rounded flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform"><BookmarkIcon size={18} className="text-stone-400" /></div>
                         <div className="min-w-0">
@@ -210,10 +211,10 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
                 </a>
             );
         case 'divider':
-            return <DashedLine className="my-12 opacity-30" />;
+            return <DashedLine className="my-12 opacity-30 first:mt-0" />;
         case 'image':
             return (
-                <div className="my-10">
+                <div className="my-10 first:mt-0">
                     <div className="rounded-sm overflow-hidden bg-stone-100">
                         <img src={block.src} className="w-full h-auto" alt="Embedded" />
                     </div>
@@ -266,7 +267,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
             <div className="px-4">
                 <div className="h-4 w-full jagged-top bg-paper"></div>
                 <TicketBase className="rounded-none bg-paper min-h-[80vh] border-x border-stone-200">
-                    <div className="p-8 pb-8 relative">
+                    <div className="px-8 pt-8 pb-6 relative">
                         <div className="flex justify-between items-center mb-10">
                             <div className="flex flex-col">
                                 <span className="font-mono text-[9px] text-stone-400 uppercase tracking-[0.2em]">{isBlog ? (blogPost?.category || 'Blog') : 'GALLERY'}</span>
@@ -297,14 +298,14 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                         </div>
                     )}
 
-                    <div className="px-8 pb-8 pt-[50px]">
+                    <div className="px-8 pb-8 pt-12">
                         {loading ? (
                             <div className="flex flex-col items-center py-20 text-stone-300 font-mono text-[10px] tracking-widest"><Loader2 className="animate-spin mb-3" size={16} />LOADING CONTENT...</div>
                         ) : (
-                            <>
+                            <div className="[&>*:first-child]:mt-0">
                                 {blogBlocks.map((block, idx) => <NotionBlock key={idx} block={block} isGallery={!isBlog} />)}
                                 {!isBlog && contentImages.map((img, idx) => <GalleryItem key={idx} img={img} />)}
-                            </>
+                            </div>
                         )}
                     </div>
 

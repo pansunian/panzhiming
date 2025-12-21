@@ -10,13 +10,16 @@ import { NavBar } from './components/NavBar';
 import { Profile, PhotoGroup, Thought, BlogPost } from './types';
 import { Info } from 'lucide-react';
 
+// --- 默认占位图：深色抽象背景 ---
+const FALLBACK_AVATAR = "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=1000&auto=format&fit=crop";
+
 // --- 基础状态 ---
 const defaultProfile: Profile = {
   name: "潘志明",
   role: "先见志明 | Photographer",
   bio: "记录生活瞬间的数字存根。",
   location: "Shanghai, CN",
-  avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&auto=format&fit=crop",
+  avatarUrl: FALLBACK_AVATAR,
   socials: []
 };
 
@@ -89,7 +92,6 @@ const App: React.FC = () => {
       <Route path="/" element={
         <MainLayout {...commonProps} hideNav isHome>
           <ProfileSection profile={profile} />
-          {/* 将 gap-24 减小，配合内部组件 margin 的移除，大幅压缩间距 */}
           <div className="flex flex-col gap-8">
             <GallerySection title="精选影像" groups={photoGroups.filter(g => g.featured).slice(0, 2)} onViewAll />
             <ThoughtSection thoughts={thoughts.filter(t => t.featured)} showViewAll />
