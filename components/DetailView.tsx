@@ -3,7 +3,7 @@ import { useParams, Navigate } from 'react-router-dom';
 import { BlogPost, PhotoGroup } from '../types';
 import { TicketBase, DashedLine, Notch, BarcodeVertical } from './TicketUI';
 import { NavBar } from './NavBar';
-import { Clock, Camera, Loader2 } from 'lucide-react';
+import { Clock, Camera, Loader2, Bookmark as BookmarkIcon, ChevronRight } from 'lucide-react';
 
 interface DetailViewProps {
   items: (BlogPost | PhotoGroup)[];
@@ -17,22 +17,67 @@ interface GalleryImage {
     caption: string;
 }
 
+// Notion 颜色映射
+const COLOR_MAP: Record<string, string> = {
+    'gray': 'text-stone-400',
+    'brown': 'text-[#976d47]',
+    'orange': 'text-[#df730c]',
+    'yellow': 'text-[#dfab01]',
+    'green': 'text-[#0f7b6c]',
+    'blue': 'text-[#0b6e99]',
+    'purple': 'text-[#6940a5]',
+    'pink': 'text-[#ad1a72]',
+    'red': 'text-[#e03e3e]',
+    'gray_background': 'bg-stone-100 px-1 rounded-sm',
+    'brown_background': 'bg-[#f4eeee] px-1 rounded-sm',
+    'orange_background': 'bg-[#fbe4cf] px-1 rounded-sm',
+    'yellow_background': 'bg-[#fbf3db] px-1 rounded-sm',
+    'green_background': 'bg-[#ddedea] px-1 rounded-sm',
+    'blue_background': 'bg-[#ddebf1] px-1 rounded-sm',
+    'purple_background': 'bg-[#eae4f2] px-1 rounded-sm',
+    'pink_background': 'bg-[#f4dfeb] px-1 rounded-sm',
+    'red_background': 'bg-[#fbe4e4] px-1 rounded-sm',
+};
+
+// 富文本渲染组件
+const RichText: React.FC<{ content: any[] }> = ({ content }) => {
+    if (!content) return null;
+    return (
+        <>
+            {content.map((part, i) => {
+                const { annotations, text, href } = part;
+                let className = "";
+                if (annotations.bold) className += " font-bold";
+                if (annotations.italic) className += " italic";
+                if (annotations.underline) className += " underline";
+                if (annotations.strikethrough) className += " line-through";
+                if (annotations.code) className += " font-mono bg-stone-100 text-[#e03e3e] px-1.5 py-0.5 rounded text-[0.9em]";
+                if (annotations.color && COLOR_MAP[annotations.color]) className += ` ${COLOR_MAP[annotations.color]}`;
+
+                const element = href ? (
+                    <a key={i} href={href} target="_blank" rel="noopener noreferrer" className={`${className} text-brand-blue hover:underline decoration-1 underline-offset-2`}>
+                        {text}
+                    </a>
+                ) : (
+                    <span key={i} className={className}>{text}</span>
+                );
+                return element;
+            })}
+        </>
+    );
+};
+
 const BrandLabel = ({ deviceString }: { deviceString: string }) => {
     const s = deviceString.toLowerCase();
-    
-    // 修正 Logo 路径为 /public/fonts/
     if (s.includes('apple') || s.includes('iphone')) {
         return <img src="/public/fonts/apple.svg" className="h-[11px] w-auto opacity-90 brightness-0" alt="Apple" />;
     }
     if (s.includes('sony')) {
         return <img src="/public/fonts/logo-sony.svg" className="h-[8px] w-auto opacity-90 brightness-0" alt="Sony" />;
     }
-
-    // 其他品牌回退到文本样式，使用 10px 无衬线
     if (s.includes('canon')) return <span className="font-sans font-normal italic text-[10px] text-ink">Canon</span>;
     if (s.includes('nikon')) return <span className="font-sans font-normal italic tracking-tighter uppercase text-[11px] text-ink">NIKON</span>;
     if (s.includes('fuji')) return <span className="font-sans font-normal uppercase tracking-widest text-[9px] text-ink">FUJIFILM</span>;
-    
     return <span className="font-mono font-normal uppercase text-[9px] opacity-40">{deviceString.split(' ')[0] || 'SCAN'}</span>;
 };
 
@@ -54,47 +99,101 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
     const [aspectClass, setAspectClass] = useState("aspect-[3/2]");
     const [isLoaded, setIsLoaded] = useState(false);
     const parsed = parseCaptionData(img.caption);
-    
     const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
         const { naturalWidth, naturalHeight } = e.currentTarget;
         setAspectClass(naturalHeight > naturalWidth ? "aspect-[4/5]" : "aspect-[3/2]");
         setIsLoaded(true);
     };
-
     return (
         <div className="w-full bg-white mb-20 last:mb-0">
              <div className={`w-full relative overflow-hidden ${aspectClass} rounded-sm`}>
                 <img src={img.url} alt={parsed.locationMain} className={`w-full h-full object-cover transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} onLoad={handleImageLoad} />
              </div>
-             
-             {/* 影像元数据样式：第一行 10px, 无衬线 (MyCustomBody), 不加粗, 黑色; 左右缩进 3px */}
              <div className="flex justify-between items-start mt-4 px-1 pb-2 mx-[3px]">
-                  {/* 左侧：设备型号 + 日期 */}
                   <div className="flex flex-col">
                       <span className="font-sans font-normal text-[10px] text-ink uppercase tracking-tight leading-none">{parsed.device || 'Digital Camera'}</span>
                       <span className="font-sans text-[9px] text-stone-400 mt-1">{parsed.date || 'Unknown Date'}</span>
                   </div>
-                  
-                  {/* 右侧：品牌 Logo | 地点信息 */}
                   <div className="flex items-center gap-4">
                       <div className="flex items-center h-4">
                           <BrandLabel deviceString={parsed.device || 'Digital'} />
                       </div>
-                      
-                      {/* 分割线 */}
                       <div className="w-[1px] h-6 bg-stone-200"></div>
-                      
-                      {/* 地点块 */}
                       <div className="flex flex-col text-right">
                           <span className="font-sans font-normal text-[10px] text-ink leading-none">{parsed.locationMain || 'Untitled'}</span>
-                          <span className="font-sans text-[9px] text-stone-400 mt-1 uppercase tracking-wide">
-                              {parsed.locationSub || 'Global Location'}
-                          </span>
+                          <span className="font-sans text-[9px] text-stone-400 mt-1 uppercase tracking-wide">{parsed.locationSub || 'Global Location'}</span>
                       </div>
                   </div>
              </div>
         </div>
     );
+};
+
+// 块渲染引擎
+const NotionBlock: React.FC<{ block: any }> = ({ block }) => {
+    switch (block.type) {
+        case 'paragraph':
+            return <p className="mb-6 leading-loose text-ink/90 font-sans text-[15px] text-justify min-h-[1em]"><RichText content={block.content} /></p>;
+        case 'heading_1':
+            return <h2 className="font-serif font-bold text-xl mt-12 mb-6 border-b border-stone-100 pb-2"><RichText content={block.content} /></h2>;
+        case 'heading_2':
+            return <h3 className="font-serif font-bold text-lg mt-8 mb-4"><RichText content={block.content} /></h3>;
+        case 'heading_3':
+            return <h4 className="font-serif font-bold text-base mt-6 mb-3"><RichText content={block.content} /></h4>;
+        case 'quote':
+            return <blockquote className="border-l-4 border-stone-200 pl-6 my-8 italic text-stone-500 font-sans text-[15px] leading-loose"><RichText content={block.content} /></blockquote>;
+        case 'callout':
+            return (
+                <div className="bg-stone-50/80 border border-stone-100 p-5 rounded-lg my-8 flex gap-4 items-start shadow-sm">
+                    {block.icon && <span className="text-xl shrink-0">{block.icon.emoji || '💡'}</span>}
+                    <div className="font-sans text-sm leading-relaxed text-stone-600"><RichText content={block.content} /></div>
+                </div>
+            );
+        case 'list_item':
+            const Tag = block.listType === 'ol' ? 'li' : 'li';
+            const bullet = block.listType === 'ol' ? 'counter' : '•';
+            return (
+                <div className="flex gap-3 mb-3 pl-2 font-sans text-[15px] leading-relaxed">
+                    <span className="text-stone-300 shrink-0 font-mono text-sm">{bullet === 'counter' ? '' : bullet}</span>
+                    <Tag className="text-ink/90"><RichText content={block.content} /></Tag>
+                </div>
+            );
+        case 'toggle':
+            return (
+                <details className="group mb-4 bg-stone-50/30 rounded-md border border-stone-100/50">
+                    <summary className="cursor-pointer list-none p-4 flex items-center gap-3 font-sans font-bold text-sm text-ink/80 hover:bg-stone-50/50 transition-colors">
+                        <ChevronRight size={14} className="text-stone-300 transition-transform group-open:rotate-90" />
+                        <RichText content={block.content} />
+                    </summary>
+                    {block.hasChildren && <div className="px-11 pb-4 pt-1 opacity-80"><p className="text-xs font-mono text-stone-300 italic">Content inside Notion Toggle...</p></div>}
+                </details>
+            );
+        case 'bookmark':
+            return (
+                <a href={block.url} target="_blank" rel="noopener noreferrer" className="block border border-stone-200 rounded-lg p-4 my-8 hover:bg-stone-50 transition-all group overflow-hidden">
+                    <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-stone-100 rounded flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform"><BookmarkIcon size={18} className="text-stone-400" /></div>
+                        <div className="min-w-0">
+                            <p className="font-sans font-bold text-sm truncate text-ink">{block.url}</p>
+                            <p className="font-sans text-[10px] text-stone-400 truncate mt-1">Visit External Link</p>
+                        </div>
+                    </div>
+                </a>
+            );
+        case 'divider':
+            return <DashedLine className="my-12 opacity-30" />;
+        case 'image':
+            return (
+                <div className="my-10">
+                    <div className="rounded-sm overflow-hidden bg-stone-100">
+                        <img src={block.src} className="w-full h-auto" alt="Embedded" />
+                    </div>
+                    {block.caption && <p className="text-center mt-3 font-sans text-[10px] text-stone-400 tracking-wide uppercase"><RichText content={block.caption} /></p>}
+                </div>
+            );
+        default:
+            return null;
+    }
 };
 
 export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, forceId }) => {
@@ -138,7 +237,6 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
             <div className="px-4">
                 <div className="h-4 w-full jagged-top bg-paper"></div>
                 <TicketBase className="rounded-none bg-paper min-h-[80vh] border-x border-stone-200">
-                    {/* Header Section */}
                     <div className="p-8 pb-8 relative">
                         <div className="flex justify-between items-center mb-10">
                             <div className="flex flex-col">
@@ -150,24 +248,16 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                                 <span className="font-mono text-[9px] font-bold uppercase tracking-widest text-ink">{isBlog ? blogPost?.readTime : `${photoGroup?.count} SHOTS`}</span>
                             </div>
                         </div>
-                        {/* 标题采用 serif (Jinghua) */}
                         <h1 className="font-serif font-bold text-2xl text-ink leading-snug mb-2 pr-4">{item?.title || 'Loading...'}</h1>
-                        
-                        {/* 标题下方小字 */}
                         <div className="flex items-center gap-3 mb-8 text-[9px] font-mono text-stone-400 uppercase tracking-widest">
                             <span>{item?.date || 'Unknown Date'}</span>
                             {!isBlog && photoGroup?.location && (
-                                <>
-                                    <span className="opacity-30">/</span>
-                                    <span>{photoGroup.location}</span>
-                                </>
+                                <><span className="opacity-30">/</span><span>{photoGroup.location}</span></>
                             )}
                         </div>
-                        
                         <DashedLine className="opacity-10" />
                     </div>
 
-                    {/* Image Section - 封面图四个角打孔 */}
                     {displayImage && (
                         <div className="relative w-full aspect-[16/9] bg-stone-100 overflow-visible">
                             <Notch className="-left-4 top-0 -translate-y-1/2" />
@@ -178,38 +268,27 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                         </div>
                     )}
 
-                    {/* Content Section - 正文采用 sans (XiXian) */}
                     <div className="p-8 pt-10">
                         {loading ? (
                             <div className="flex flex-col items-center py-20 text-stone-300 font-mono text-[10px] tracking-widest"><Loader2 className="animate-spin mb-3" size={16} />LOADING CONTENT...</div>
                         ) : (
                             <>
-                                {blogBlocks.map((block, idx) => (
-                                    block.type === 'paragraph' ? <p key={idx} className="mb-6 leading-loose text-ink/90 font-sans text-[15px]">{block.content.map(t => t.text).join('')}</p> : null
-                                ))}
+                                {blogBlocks.map((block, idx) => <NotionBlock key={idx} block={block} />)}
                                 {!isBlog && contentImages.map((img, idx) => <GalleryItem key={idx} img={img} />)}
                             </>
                         )}
                     </div>
 
-                    {/* Footer Section */}
                     <div className="bg-paper-dark p-8 border-t border-dashed border-stone-300/50 mt-12 relative">
                         <Notch className="-left-4 top-0 -translate-y-1/2" />
                         <Notch className="-right-4 top-0 -translate-y-1/2" />
-                        
                         <div className="flex justify-between items-center opacity-30">
-                            <div className="w-8 h-10 overflow-hidden shrink-0">
-                                <BarcodeVertical />
-                            </div>
-                            
+                            <div className="w-8 h-10 overflow-hidden shrink-0"><BarcodeVertical /></div>
                             <div className="flex flex-col gap-1 text-center px-4">
                                 <span className="font-serif text-[10px] font-bold tracking-[0.3em] whitespace-nowrap">先见志明</span>
                                 <span className="font-mono text-[7px] tracking-[0.4em] uppercase whitespace-nowrap">END OF TICKET</span>
                             </div>
-                            
-                            <div className="w-8 h-10 overflow-hidden shrink-0">
-                                <BarcodeVertical />
-                            </div>
+                            <div className="w-8 h-10 overflow-hidden shrink-0"><BarcodeVertical /></div>
                         </div>
                     </div>
                 </TicketBase>

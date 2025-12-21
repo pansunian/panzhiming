@@ -151,8 +151,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
                  <DashedLine className="absolute top-0 left-4 right-4 border-stone-500/20" />
 
                  <div className="my-6">
-                     {/* Updated: Font serif (Title), text-xl sm:text-2xl (Larger size), font-bold */}
-                     <p className="font-serif font-bold text-xl sm:text-2xl tracking-widest mb-3 opacity-90">
+                     {/* Updated: 字体改为 font-sans (XiXianTingMingTi), 字号改小一号 (text-lg sm:text-xl) */}
+                     <p className="font-sans font-normal text-lg sm:text-xl tracking-widest mb-3 opacity-90">
                         有时热衷科技 &nbsp;有时沉溺文艺
                      </p>
                      
