@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Profile } from '../types';
 import { TicketBase, Notch, DashedLine, BarcodeHorizontal } from './TicketUI';
@@ -35,15 +35,18 @@ const getSocialConfig = (platform: string) => {
 };
 
 export const ProfileSection: React.FC<Props> = ({ profile }) => {
+  const [imgError, setImgError] = useState(false);
+
   return (
     <div className="flex justify-center w-full mb-16">
       <TicketBase className="w-full rounded-2xl flex flex-col">
         {/* 顶部海报区 */}
         <div className="relative aspect-[3/4] w-full rounded-t-2xl overflow-hidden bg-stone-900">
             <img 
-                src={profile.avatarUrl || FALLBACK_AVATAR} 
+                src={imgError ? FALLBACK_AVATAR : (profile.avatarUrl || FALLBACK_AVATAR)} 
                 alt="Profile" 
-                className="w-full h-full object-cover filter brightness-[0.85] contrast-110" 
+                className="w-full h-full object-cover filter brightness-[0.85] contrast-110 transition-opacity duration-500" 
+                onError={() => setImgError(true)}
             />
             <div className="absolute top-8 left-0 w-full text-center text-white mix-blend-overlay opacity-80">
                 <p className="font-mono text-[10px] tracking-[0.6em] uppercase">Life Archives</p>

@@ -10,6 +10,9 @@ import { NavBar } from './components/NavBar';
 import { Profile, PhotoGroup, Thought, BlogPost } from './types';
 import { Info, AlertCircle } from 'lucide-react';
 
+// --- 缓存配置 ---
+const CACHE_KEY = 'portfolio_snapshot_v1';
+
 // --- 默认占位图：深色抽象背景 ---
 const FALLBACK_AVATAR = "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=1000&auto=format&fit=crop";
 
@@ -17,7 +20,7 @@ const FALLBACK_AVATAR = "https://images.unsplash.com/photo-1478760329108-5c3ed9d
 const defaultProfile: Profile = {
   name: "潘志明",
   role: "先见志明 | Photographer",
-  bio: "正在通过 Notion 连接我的档案库库...",
+  bio: "正在从存档库库读取数据...",
   location: "Shanghai, CN",
   avatarUrl: FALLBACK_AVATAR,
   socials: []
@@ -29,7 +32,7 @@ const MainLayout: React.FC<{ children?: React.ReactNode; hideNav?: boolean; isDe
     {isDemoMode && (
       <div className="bg-amber-50/90 backdrop-blur-sm border-b border-amber-200 px-4 py-2 flex items-center justify-center gap-2 sticky top-0 z-[60]">
         <Info className="text-amber-500 shrink-0" size={12} />
-        <p className="text-[10px] text-amber-700 font-mono tracking-[0.2em] uppercase font-bold">Notion 未连接，展示预览占位内容</p>
+        <p className="text-[10px] text-amber-700 font-mono tracking-[0.2em] uppercase font-bold">内容加载受限，展示本地存档版本</p>
       </div>
     )}
     {!hideNav && <NavBar logoUrl={logoUrl} />}
@@ -45,13 +48,32 @@ const App: React.FC = () => {
   const location = useLocation();
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [hasCache, setHasCache] = useState(false);
 
   const [profile, setProfile] = useState<Profile>(defaultProfile);
   const [photoGroups, setPhotoGroups] = useState<PhotoGroup[]>([]);
   const [thoughts, setThoughts] = useState<Thought[]>([]);
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [aboutPage, setAboutPage] = useState<BlogPost | null>(null);
+
+  // 1. 初始化时尝试从缓存读取数据 (Fast-path)
+  useEffect(() => {
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+      try {
+        const data = JSON.parse(cached);
+        if (data.profile) setProfile(data.profile);
+        if (data.gallery) setPhotoGroups(data.gallery);
+        if (data.thoughts) setThoughts(data.thoughts);
+        if (data.posts) setPosts(data.posts);
+        if (data.about) setAboutPage(data.about);
+        setHasCache(true);
+        setIsLoading(false); 
+      } catch (e) {
+        console.warn("Failed to parse cache", e);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const isHome = location.pathname === '/' || location.pathname === '';
@@ -79,21 +101,21 @@ const App: React.FC = () => {
            if (data.thoughts) setThoughts(data.thoughts);
            if (data.posts) setPosts(data.posts);
            if (data.about) setAboutPage(data.about);
+           
+           localStorage.setItem(CACHE_KEY, JSON.stringify(data));
            setIsDemoMode(false); 
         } else {
-            // 如果返回非 200，且是在开发/预览环境，标记为 Demo 模式
-            setIsDemoMode(true);
+            // 只有在没缓存且接口报错的情况下才开启 Demo 提示
+            if (!hasCache) setIsDemoMode(true);
         }
       } catch (e) { 
-          console.error("Fetch error:", e);
-          setIsDemoMode(true);
-          setError("无法连接到内容服务器");
+          if (!hasCache) setIsDemoMode(true);
       } finally { 
           setIsLoading(false); 
       }
     };
     initData();
-  }, []);
+  }, [hasCache]);
 
   const commonProps = { isDemoMode, logoUrl: profile.logoUrl };
 
@@ -116,7 +138,7 @@ const App: React.FC = () => {
       <Route path="/blog" element={<MainLayout {...commonProps}><BlogSection posts={posts} /></MainLayout>} />
       <Route path="/blog/:id" element={<DetailView items={posts} type="blog" logoUrl={profile.logoUrl} />} />
       <Route path="/aboutme" element={
-        isLoading ? (
+        isLoading && !hasCache ? (
           <MainLayout {...commonProps}><div className="py-20 text-center font-mono text-[10px] opacity-20 tracking-widest">RETRIEVING MANUAL...</div></MainLayout>
         ) : aboutPage ? (
           <DetailView items={[aboutPage]} forceId={aboutPage.id} type="blog" logoUrl={profile.logoUrl} />

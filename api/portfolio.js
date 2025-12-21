@@ -1,7 +1,8 @@
 const { Client } = require('@notionhq/client');
 
 module.exports = async function handler(req, res) {
-  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=86400');
+  // 设置边缘缓存：在边缘节点缓存 1 小时，过期后 24 小时内允许返回旧数据并在后台更新
+  res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
 
   const requiredEnv = [
     'NOTION_API_KEY',
@@ -150,7 +151,7 @@ module.exports = async function handler(req, res) {
       }))
   ]);
 
-  // 综合识别关于页：分类名、标题关键词
+  // 综合识别关于页
   const about = posts.find(p => 
     p.category.toLowerCase().includes('about') ||
     p.title.includes('关于') || 
