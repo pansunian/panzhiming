@@ -5,6 +5,6 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: 'build', // Maintain compatibility with Vercel's default expectations if needed
+    outDir: 'dist', // 恢复为 Vite 和 Vercel 默认的 dist 目录
   }
 })
