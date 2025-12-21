@@ -69,15 +69,20 @@ const RichText: React.FC<{ content: any[] }> = ({ content }) => {
 
 const BrandLabel = ({ deviceString }: { deviceString: string }) => {
     const s = deviceString.toLowerCase();
+    
+    // 修正：在 Vite 中，public/fonts/apple.svg 的访问路径应为 /fonts/apple.svg
     if (s.includes('apple') || s.includes('iphone')) {
-        return <img src="/public/fonts/apple.svg" className="h-[11px] w-auto opacity-90 brightness-0" alt="Apple" />;
+        return <img src="/fonts/apple.svg" className="h-[11px] w-auto opacity-90 brightness-0" alt="Apple" />;
     }
     if (s.includes('sony')) {
-        return <img src="/public/fonts/logo-sony.svg" className="h-[8px] w-auto opacity-90 brightness-0" alt="Sony" />;
+        return <img src="/fonts/logo-sony.svg" className="h-[8px] w-auto opacity-90 brightness-0" alt="Sony" />;
     }
+
+    // 其他品牌回退样式
     if (s.includes('canon')) return <span className="font-sans font-normal italic text-[10px] text-ink">Canon</span>;
     if (s.includes('nikon')) return <span className="font-sans font-normal italic tracking-tighter uppercase text-[11px] text-ink">NIKON</span>;
     if (s.includes('fuji')) return <span className="font-sans font-normal uppercase tracking-widest text-[9px] text-ink">FUJIFILM</span>;
+    
     return <span className="font-mono font-normal uppercase text-[9px] opacity-40">{deviceString.split(' ')[0] || 'SCAN'}</span>;
 };
 
@@ -99,21 +104,26 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
     const [aspectClass, setAspectClass] = useState("aspect-[3/2]");
     const [isLoaded, setIsLoaded] = useState(false);
     const parsed = parseCaptionData(img.caption);
+    
     const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
         const { naturalWidth, naturalHeight } = e.currentTarget;
         setAspectClass(naturalHeight > naturalWidth ? "aspect-[4/5]" : "aspect-[3/2]");
         setIsLoaded(true);
     };
+
     return (
         <div className="w-full bg-white mb-20 last:mb-0">
              <div className={`w-full relative overflow-hidden ${aspectClass} rounded-sm`}>
                 <img src={img.url} alt={parsed.locationMain} className={`w-full h-full object-cover transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} onLoad={handleImageLoad} />
              </div>
+             
+             {/* 影像元数据样式 */}
              <div className="flex justify-between items-start mt-4 px-1 pb-2 mx-[3px]">
                   <div className="flex flex-col">
                       <span className="font-sans font-normal text-[10px] text-ink uppercase tracking-tight leading-none">{parsed.device || 'Digital Camera'}</span>
                       <span className="font-sans text-[9px] text-stone-400 mt-1">{parsed.date || 'Unknown Date'}</span>
                   </div>
+                  
                   <div className="flex items-center gap-4">
                       <div className="flex items-center h-4">
                           <BrandLabel deviceString={parsed.device || 'Digital'} />
@@ -121,7 +131,9 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
                       <div className="w-[1px] h-6 bg-stone-200"></div>
                       <div className="flex flex-col text-right">
                           <span className="font-sans font-normal text-[10px] text-ink leading-none">{parsed.locationMain || 'Untitled'}</span>
-                          <span className="font-sans text-[9px] text-stone-400 mt-1 uppercase tracking-wide">{parsed.locationSub || 'Global Location'}</span>
+                          <span className="font-sans text-[9px] text-stone-400 mt-1 uppercase tracking-wide">
+                              {parsed.locationSub || 'Global Location'}
+                          </span>
                       </div>
                   </div>
              </div>
@@ -130,7 +142,10 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
 };
 
 // 块渲染引擎
-const NotionBlock: React.FC<{ block: any }> = ({ block }) => {
+const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGallery }) => {
+    // 关键修复：如果在影像辑页面，跳过渲染 Notion 正文中的普通图片块，防止重复
+    if (isGallery && block.type === 'image') return null;
+
     switch (block.type) {
         case 'paragraph':
             return <p className="mb-6 leading-loose text-ink/90 font-sans text-[15px] text-justify min-h-[1em]"><RichText content={block.content} /></p>;
@@ -150,12 +165,11 @@ const NotionBlock: React.FC<{ block: any }> = ({ block }) => {
                 </div>
             );
         case 'list_item':
-            const Tag = block.listType === 'ol' ? 'li' : 'li';
             const bullet = block.listType === 'ol' ? 'counter' : '•';
             return (
                 <div className="flex gap-3 mb-3 pl-2 font-sans text-[15px] leading-relaxed">
                     <span className="text-stone-300 shrink-0 font-mono text-sm">{bullet === 'counter' ? '' : bullet}</span>
-                    <Tag className="text-ink/90"><RichText content={block.content} /></Tag>
+                    <div className="text-ink/90"><RichText content={block.content} /></div>
                 </div>
             );
         case 'toggle':
@@ -273,7 +287,10 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                             <div className="flex flex-col items-center py-20 text-stone-300 font-mono text-[10px] tracking-widest"><Loader2 className="animate-spin mb-3" size={16} />LOADING CONTENT...</div>
                         ) : (
                             <>
-                                {blogBlocks.map((block, idx) => <NotionBlock key={idx} block={block} />)}
+                                {/* 渲染文章正文，影像辑模式下会自动过滤图片块 */}
+                                {blogBlocks.map((block, idx) => <NotionBlock key={idx} block={block} isGallery={!isBlog} />)}
+                                
+                                {/* 渲染影像辑专属图片列表 */}
                                 {!isBlog && contentImages.map((img, idx) => <GalleryItem key={idx} img={img} />)}
                             </>
                         )}
