@@ -8,7 +8,7 @@ import { ContactSection } from './components/ContactSection';
 import { DetailView } from './components/DetailView';
 import { NavBar } from './components/NavBar';
 import { Profile, PhotoGroup, Thought, BlogPost } from './types';
-import { Info } from 'lucide-react';
+import { Info, AlertCircle } from 'lucide-react';
 
 // --- 默认占位图：深色抽象背景 ---
 const FALLBACK_AVATAR = "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=1000&auto=format&fit=crop";
@@ -17,7 +17,7 @@ const FALLBACK_AVATAR = "https://images.unsplash.com/photo-1478760329108-5c3ed9d
 const defaultProfile: Profile = {
   name: "潘志明",
   role: "先见志明 | Photographer",
-  bio: "记录生活瞬间的数字存根。",
+  bio: "正在通过 Notion 连接我的档案库库...",
   location: "Shanghai, CN",
   avatarUrl: FALLBACK_AVATAR,
   socials: []
@@ -25,16 +25,16 @@ const defaultProfile: Profile = {
 
 // --- 布局组件 ---
 const MainLayout: React.FC<{ children?: React.ReactNode; hideNav?: boolean; isDemoMode?: boolean; logoUrl?: string; isHome?: boolean; }> = ({ children, hideNav, isDemoMode, logoUrl, isHome }) => (
-  <div className="min-h-screen flex flex-col text-ink font-sans selection:bg-ink selection:text-paper">
+  <div className="min-h-screen flex flex-col text-ink font-sans selection:bg-ink selection:text-paper overflow-x-hidden">
     {isDemoMode && (
-      <div className="bg-stone-100/90 backdrop-blur-sm border-b border-stone-200 px-4 py-2 flex items-center justify-center gap-2 sticky top-0 z-[60]">
-        <Info className="text-stone-400 shrink-0" size={12} />
-        <p className="text-[10px] text-stone-500 font-mono tracking-[0.3em] uppercase">Studio Preview Mode</p>
+      <div className="bg-amber-50/90 backdrop-blur-sm border-b border-amber-200 px-4 py-2 flex items-center justify-center gap-2 sticky top-0 z-[60]">
+        <Info className="text-amber-500 shrink-0" size={12} />
+        <p className="text-[10px] text-amber-700 font-mono tracking-[0.2em] uppercase font-bold">Notion 未连接，展示预览占位内容</p>
       </div>
     )}
     {!hideNav && <NavBar logoUrl={logoUrl} />}
-    <div className={`flex-grow w-full ${isHome ? '' : 'bg-texture'}`}>
-      <main className="w-full max-w-[420px] mx-auto px-4 pt-12 pb-20">
+    <div className={`flex-grow w-full flex flex-col items-center ${isHome ? '' : 'bg-texture'}`}>
+      <main className="w-full max-w-[420px] mx-auto px-4 pt-12 pb-20 shrink-0">
         {children}
       </main>
     </div>
@@ -43,8 +43,9 @@ const MainLayout: React.FC<{ children?: React.ReactNode; hideNav?: boolean; isDe
 
 const App: React.FC = () => {
   const location = useLocation();
-  const [isDemoMode, setIsDemoMode] = useState(true);
+  const [isDemoMode, setIsDemoMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [profile, setProfile] = useState<Profile>(defaultProfile);
   const [photoGroups, setPhotoGroups] = useState<PhotoGroup[]>([]);
@@ -79,8 +80,17 @@ const App: React.FC = () => {
            if (data.posts) setPosts(data.posts);
            if (data.about) setAboutPage(data.about);
            setIsDemoMode(false); 
+        } else {
+            // 如果返回非 200，且是在开发/预览环境，标记为 Demo 模式
+            setIsDemoMode(true);
         }
-      } catch (e) { } finally { setIsLoading(false); }
+      } catch (e) { 
+          console.error("Fetch error:", e);
+          setIsDemoMode(true);
+          setError("无法连接到内容服务器");
+      } finally { 
+          setIsLoading(false); 
+      }
     };
     initData();
   }, []);
@@ -93,9 +103,9 @@ const App: React.FC = () => {
         <MainLayout {...commonProps} hideNav isHome>
           <ProfileSection profile={profile} />
           <div className="flex flex-col gap-8">
-            <GallerySection title="精选影像" groups={photoGroups.filter(g => g.featured).slice(0, 2)} onViewAll />
-            <ThoughtSection thoughts={thoughts.filter(t => t.featured)} showViewAll />
-            <BlogSection title="精选文章" posts={posts.filter(p => p.featured).slice(0, 10)} showViewAll />
+            <GallerySection title="精选影像" groups={photoGroups.length > 0 ? photoGroups.filter(g => g.featured).slice(0, 2) : []} onViewAll={photoGroups.length > 0} />
+            <ThoughtSection thoughts={thoughts.length > 0 ? thoughts.filter(t => t.featured) : []} showViewAll={thoughts.length > 0} />
+            <BlogSection title="精选文章" posts={posts.length > 0 ? posts.filter(p => p.featured).slice(0, 10) : []} showViewAll={posts.length > 0} />
             <ContactSection logoUrl={profile.logoUrl} />
           </div>
         </MainLayout>
@@ -111,7 +121,11 @@ const App: React.FC = () => {
         ) : aboutPage ? (
           <DetailView items={[aboutPage]} forceId={aboutPage.id} type="blog" logoUrl={profile.logoUrl} />
         ) : (
-          <Navigate to="/" replace />
+          <div className="py-20 flex flex-col items-center gap-4 text-stone-400">
+              <AlertCircle size={24} className="opacity-20" />
+              <p className="font-mono text-[10px] tracking-widest uppercase">No Manual Found</p>
+              <Navigate to="/" replace />
+          </div>
         )
       } />
       <Route path="*" element={<Navigate to="/" replace />} />

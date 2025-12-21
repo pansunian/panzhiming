@@ -6,6 +6,9 @@
     <meta name="theme-color" content="#e3e1d5" />
     <title>先见志明｜潘志明个人作品集</title>
     
+    <!-- ES Module Shims for cross-browser importmap support (Safari < 16.4) -->
+    <script async src="https://esm.sh/es-module-shims@1.10.0/dist/es-module-shims.js"></script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -68,7 +71,9 @@
         color: #2b2926; 
         margin: 0; 
         padding: 0; 
+        -webkit-tap-highlight-color: transparent;
       }
+      
       .bg-texture { 
         background-color: var(--bg-color);
         background-image: var(--noise-url); 
@@ -87,12 +92,6 @@
         -webkit-mask-repeat: repeat-x; 
         -webkit-mask-position: left top; 
       }
-      .jagged-right { 
-        -webkit-mask: linear-gradient(135deg, transparent 6px, #000 0) 50% 0, linear-gradient(225deg, transparent 6px, #000 0) 50% 0; 
-        -webkit-mask-size: 100% 12px; 
-        -webkit-mask-repeat: repeat-y; 
-        -webkit-mask-position: right top; 
-      }
       .jagged-right-round {
         -webkit-mask-image: radial-gradient(circle at right, transparent 6px, #000 7px);
         -webkit-mask-size: 100% 18px;
@@ -106,6 +105,12 @@
         background-size: 16px 16px; 
         height: 8px; 
         width: 100%; 
+      }
+
+      /* 针对 iOS Safari 的 100vh 修复 */
+      .min-h-screen {
+        min-height: 100vh;
+        min-height: 100dvh;
       }
     </style>
   <script type="importmap">
