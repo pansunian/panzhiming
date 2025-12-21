@@ -128,7 +128,7 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
     };
 
     return (
-        <div className="w-full bg-white mb-20 last:mb-0">
+        <div className="w-full bg-white mb-12 last:mb-0">
              <div className={`w-full relative overflow-hidden ${aspectClass} rounded-sm`}>
                 <img src={img.url} alt={parsed.locationMain} className={`w-full h-full object-cover transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} onLoad={handleImageLoad} />
              </div>
@@ -163,7 +163,7 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
 
     switch (block.type) {
         case 'paragraph':
-            return <p className="mb-6 leading-loose text-ink/90 font-sans text-[15px] text-justify min-h-[1em]"><RichText content={block.content} /></p>;
+            return <p className="mb-[1.2em] leading-loose text-ink/90 font-sans text-[15px] text-justify min-h-[1em]"><RichText content={block.content} /></p>;
         case 'heading_1':
             return <h2 className="font-serif font-bold text-xl mt-12 mb-6 border-b border-stone-100 pb-2"><RichText content={block.content} /></h2>;
         case 'heading_2':
@@ -297,7 +297,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                         </div>
                     )}
 
-                    <div className="p-8 pt-2">
+                    <div className="px-8 pb-8 pt-[50px]">
                         {loading ? (
                             <div className="flex flex-col items-center py-20 text-stone-300 font-mono text-[10px] tracking-widest"><Loader2 className="animate-spin mb-3" size={16} />LOADING CONTENT...</div>
                         ) : (
