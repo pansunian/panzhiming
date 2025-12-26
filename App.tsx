@@ -9,6 +9,7 @@ import { DetailView } from './components/DetailView';
 import { NavBar } from './components/NavBar';
 import { Profile, PhotoGroup, Thought, BlogPost } from './types';
 import { Info, AlertCircle } from 'lucide-react';
+import { mockProfile, mockGallery, mockThoughts, mockPosts, mockAbout } from './data/mockData';
 
 // --- 缓存配置 ---
 const CACHE_KEY = 'portfolio_snapshot_v1';
@@ -18,10 +19,10 @@ const FALLBACK_AVATAR = "https://images.unsplash.com/photo-1478760329108-5c3ed9d
 
 // --- 基础状态 ---
 const defaultProfile: Profile = {
-  name: "潘志明",
-  role: "先见志明 | Photographer",
-  bio: "正在从存档库库读取数据...",
-  location: "Shanghai, CN",
+  name: "Loading...",
+  role: "...",
+  bio: "...",
+  location: "...",
   avatarUrl: FALLBACK_AVATAR,
   socials: []
 };
@@ -32,7 +33,7 @@ const MainLayout: React.FC<{ children?: React.ReactNode; hideNav?: boolean; isDe
     {isDemoMode && (
       <div className="bg-amber-50/90 backdrop-blur-sm border-b border-amber-200 px-4 py-2 flex items-center justify-center gap-2 sticky top-0 z-[60]">
         <Info className="text-amber-500 shrink-0" size={12} />
-        <p className="text-[10px] text-amber-700 font-mono tracking-[0.2em] uppercase font-bold">内容加载受限，展示本地存档版本</p>
+        <p className="text-[10px] text-amber-700 font-mono tracking-[0.2em] uppercase font-bold">演示模式：未连接数据库，展示预览数据</p>
       </div>
     )}
     {!hideNav && <NavBar logoUrl={logoUrl} />}
@@ -90,12 +91,29 @@ const App: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [location.pathname]);
 
+  const loadDemoData = () => {
+      console.warn("Loading Demo Data...");
+      setProfile(mockProfile);
+      setPhotoGroups(mockGallery);
+      setThoughts(mockThoughts);
+      setPosts(mockPosts);
+      setAboutPage(mockAbout);
+      setIsDemoMode(true);
+  };
+
   useEffect(() => {
     const initData = async () => {
       try {
         const res = await fetch('/api/portfolio');
         if (res.ok) {
            const data = await res.json();
+           
+           // 简单的空数据检查，如果 API 返回空对象，也视为需要 Demo
+           if (!data.profile || !data.profile.name) {
+               if (!hasCache) loadDemoData();
+               return;
+           }
+
            if (data.profile) setProfile(data.profile);
            if (data.gallery) setPhotoGroups(data.gallery);
            if (data.thoughts) setThoughts(data.thoughts);
@@ -105,11 +123,11 @@ const App: React.FC = () => {
            localStorage.setItem(CACHE_KEY, JSON.stringify(data));
            setIsDemoMode(false); 
         } else {
-            // 只有在没缓存且接口报错的情况下才开启 Demo 提示
-            if (!hasCache) setIsDemoMode(true);
+            // 只有在没缓存且接口报错的情况下才开启 Demo
+            if (!hasCache) loadDemoData();
         }
       } catch (e) { 
-          if (!hasCache) setIsDemoMode(true);
+          if (!hasCache) loadDemoData();
       } finally { 
           setIsLoading(false); 
       }

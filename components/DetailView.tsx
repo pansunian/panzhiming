@@ -5,6 +5,7 @@ import { TicketBase, DashedLine, Notch, BarcodeVertical } from './TicketUI';
 import { NavBar } from './NavBar';
 import { Clock, Camera, Loader2, Bookmark as BookmarkIcon, ChevronRight } from 'lucide-react';
 import { optimizeImage } from '../utils/imageOptimizer';
+import { mockNotionBlocks, mockPageImages } from '../data/mockData';
 
 interface DetailViewProps {
   items: (BlogPost | PhotoGroup)[];
@@ -245,15 +246,43 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
     window.scrollTo(0, 0);
     if (item?.id) {
         setLoading(true);
+        
+        // 检查是否是演示数据 ID
+        if (item.id.startsWith('demo-')) {
+            // 模拟加载延迟，让体验更真实
+            setTimeout(() => {
+                setBlogBlocks(mockNotionBlocks);
+                setContentImages(mockPageImages);
+                setLoading(false);
+                setIsDataFetched(true);
+            }, 800);
+            return;
+        }
+
         const fetchData = async () => {
             try {
                 const [imgRes, contentRes] = await Promise.all([
                     fetch(`/api/page-images?pageId=${item.id}`),
                     fetch(`/api/get-page-content?pageId=${item.id}`)
                 ]);
-                if (imgRes.ok) { const d = await imgRes.json(); setContentImages(d.images); }
-                if (contentRes.ok) { const d = await contentRes.json(); setBlogBlocks(d.content); }
-            } catch (e) {} finally { setLoading(false); setIsDataFetched(true); }
+                
+                // 如果 API 失败（比如 500），也不要留白，加载演示内容作为托底
+                if (!imgRes.ok && !contentRes.ok) {
+                    setBlogBlocks(mockNotionBlocks);
+                    setContentImages(mockPageImages);
+                } else {
+                    if (imgRes.ok) { const d = await imgRes.json(); setContentImages(d.images); }
+                    if (contentRes.ok) { const d = await contentRes.json(); setBlogBlocks(d.content); }
+                }
+
+            } catch (e) {
+                 // 网络错误也加载演示内容
+                 setBlogBlocks(mockNotionBlocks);
+                 setContentImages(mockPageImages);
+            } finally { 
+                setLoading(false); 
+                setIsDataFetched(true); 
+            }
         };
         fetchData();
     }
