@@ -5,6 +5,18 @@
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
+  "images": {
+    "sizes": [320, 640, 960, 1200, 2048],
+    "domains": [
+      "prod-files-secure.s3.us-west-2.amazonaws.com",
+      "s3.us-west-2.amazonaws.com",
+      "images.unsplash.com",
+      "picsum.photos",
+      "panzhiming.com",
+      "www.panzhiming.com"
+    ],
+    "formats": ["image/avif", "image/webp"]
+  },
   "headers": [
     {
       "source": "/api/(.*)",

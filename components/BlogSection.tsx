@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { BlogPost } from '../types';
 import { BarcodeSmall, DashedLine, Notch } from './TicketUI';
 import { ArrowRight } from 'lucide-react';
+import { optimizeImage } from '../utils/imageOptimizer';
 
 interface Props {
   posts: BlogPost[];
@@ -12,6 +13,12 @@ interface Props {
 
 const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) => {
     const [isLoaded, setIsLoaded] = useState(false);
+    
+    // 博客列表图较小，使用 640px 足够（适配 Retina 屏）
+    const coverSrc = post.imageUrl 
+        ? optimizeImage(post.imageUrl, 640)
+        : `https://picsum.photos/seed/${post.id}/500/300`;
+
     return (
         <Link 
             to={`/blog/${post.id}`}
@@ -20,7 +27,7 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
             <div className="w-full h-full flex items-stretch">
                 {/* 封面左侧 */}
                 <div className="w-36 sm:w-[38%] h-full relative overflow-hidden rounded-l-sm bg-stone-200 shrink-0">
-                    <img src={post.imageUrl || `https://picsum.photos/seed/${post.id}/500/300`} alt={post.title} onLoad={() => setIsLoaded(true)} className={`w-full h-full object-cover filter brightness-[0.95] contrast-[1.05] sepia-[0.1] transition-all duration-700 group-hover:scale-105 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} />
+                    <img src={coverSrc} alt={post.title} onLoad={() => setIsLoaded(true)} className={`w-full h-full object-cover filter brightness-[0.95] contrast-[1.05] sepia-[0.1] transition-all duration-700 group-hover:scale-105 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} />
                     <div className="absolute bottom-2 left-2 text-white"><span className="font-mono text-[8px] bg-black/40 border border-white/30 px-1.5 py-0.5 backdrop-blur-sm tracking-wider uppercase">{post.category}</span></div>
                 </div>
                 

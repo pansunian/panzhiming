@@ -4,6 +4,7 @@ import { BlogPost, PhotoGroup } from '../types';
 import { TicketBase, DashedLine, Notch, BarcodeVertical } from './TicketUI';
 import { NavBar } from './NavBar';
 import { Clock, Camera, Loader2, Bookmark as BookmarkIcon, ChevronRight } from 'lucide-react';
+import { optimizeImage } from '../utils/imageOptimizer';
 
 interface DetailViewProps {
   items: (BlogPost | PhotoGroup)[];
@@ -121,6 +122,9 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
     const [isLoaded, setIsLoaded] = useState(false);
     const parsed = parseCaptionData(img.caption);
     
+    // 相册大图优化到 1200px 宽，兼顾质量和速度
+    const optimizedSrc = optimizeImage(img.url, 1200);
+
     const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
         const { naturalWidth, naturalHeight } = e.currentTarget;
         setAspectClass(naturalHeight > naturalWidth ? "aspect-[4/5]" : "aspect-[3/2]");
@@ -130,7 +134,7 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
     return (
         <div className="w-full bg-white mb-10 last:mb-0">
              <div className={`w-full relative overflow-hidden ${aspectClass} rounded-sm`}>
-                <img src={img.url} alt={parsed.locationMain} className={`w-full h-full object-cover transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} onLoad={handleImageLoad} />
+                <img src={optimizedSrc} alt={parsed.locationMain} className={`w-full h-full object-cover transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} onLoad={handleImageLoad} />
              </div>
              
              {/* 影像元数据样式 */}
@@ -213,10 +217,12 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
         case 'divider':
             return <DashedLine className="my-12 opacity-30 first:mt-0" />;
         case 'image':
+            // 博客内嵌图片优化
+            const optimizedContentImg = optimizeImage(block.src, 960);
             return (
                 <div className="my-10 first:mt-0">
                     <div className="rounded-sm overflow-hidden bg-stone-100">
-                        <img src={block.src} className="w-full h-auto" alt="Embedded" />
+                        <img src={optimizedContentImg} className="w-full h-auto" alt="Embedded" />
                     </div>
                     {block.caption && <p className="text-center mt-3 font-sans text-[10px] text-stone-400 tracking-wide uppercase"><RichText content={block.caption} /></p>}
                 </div>
@@ -258,7 +264,10 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
   const isBlog = type === 'blog';
   const blogPost = item as BlogPost;
   const photoGroup = item as PhotoGroup;
-  const displayImage = isBlog ? blogPost?.imageUrl : photoGroup?.coverUrl;
+  
+  // 详情页顶部封面图优化
+  const displayImageRaw = isBlog ? blogPost?.imageUrl : photoGroup?.coverUrl;
+  const displayImage = optimizeImage(displayImageRaw, 1200);
 
   return (
     <div className="min-h-screen w-full flex flex-col bg-texture">

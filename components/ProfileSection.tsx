@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Profile } from '../types';
 import { TicketBase, Notch, DashedLine, BarcodeHorizontal } from './TicketUI';
+import { optimizeImage } from '../utils/imageOptimizer';
 import { 
     Instagram, Twitter, Github, Linkedin, Mail, Youtube, 
     Globe, Zap, MessageCircle, Link as LinkIcon, Tv, Radio, BookOpen 
@@ -37,13 +38,18 @@ const getSocialConfig = (platform: string) => {
 export const ProfileSection: React.FC<Props> = ({ profile }) => {
   const [imgError, setImgError] = useState(false);
 
+  // 优化头像 URL
+  const avatarSrc = imgError 
+    ? optimizeImage(FALLBACK_AVATAR, 640) 
+    : optimizeImage(profile.avatarUrl || FALLBACK_AVATAR, 640);
+
   return (
     <div className="flex justify-center w-full mb-16">
       <TicketBase className="w-full rounded-2xl flex flex-col">
         {/* 顶部海报区 */}
         <div className="relative aspect-[3/4] w-full rounded-t-2xl overflow-hidden bg-stone-900">
             <img 
-                src={imgError ? FALLBACK_AVATAR : (profile.avatarUrl || FALLBACK_AVATAR)} 
+                src={avatarSrc} 
                 alt="Profile" 
                 className="w-full h-full object-cover filter brightness-[0.85] contrast-110 transition-opacity duration-500" 
                 onError={() => setImgError(true)}

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { PhotoGroup } from '../types';
 import { TicketBase, Notch, DashedLine } from './TicketUI';
 import { ArrowUpRight, ArrowRight, MapPin } from 'lucide-react';
+import { optimizeImage } from '../utils/imageOptimizer';
 
 interface Props {
   groups: PhotoGroup[];
@@ -12,6 +13,10 @@ interface Props {
 
 const GalleryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ group, index }) => {
     const [isLoaded, setIsLoaded] = useState(false);
+    
+    // 列表封面图不需要全尺寸，640px 足够清晰
+    const optimizedCover = optimizeImage(group.coverUrl, 640);
+
     return (
         <Link 
             to={`/gallery/${group.id}`}
@@ -21,7 +26,7 @@ const GalleryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ group, in
                 {/* 封面区 */}
                 <div className="relative w-full aspect-[4/3] overflow-hidden rounded-t-sm bg-stone-200">
                     <img 
-                        src={group.coverUrl} 
+                        src={optimizedCover} 
                         alt={group.title} 
                         onLoad={() => setIsLoaded(true)} 
                         className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} 
