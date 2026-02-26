@@ -28,8 +28,13 @@ jobs:
       - name: Create .env file
         run: |
           cat > .env << EOF
-          NOTION_KEY=${{ secrets.NOTION_KEY }}
-          NOTION_DATABASE_ID=${{ secrets.NOTION_DATABASE_ID }}
+          NOTION_API_KEY=${{ secrets.NOTION_API_KEY }}
+          NOTION_BLOG_DB_ID=${{ secrets.NOTION_BLOG_DB_ID }}
+          NOTION_CONTACT_DB_ID=${{ secrets.NOTION_CONTACT_DB_ID }}
+          NOTION_GALLERY_DB_ID=${{ secrets.NOTION_GALLERY_DB_ID }}
+          NOTION_MANUAL_PAGE_ID=${{ secrets.NOTION_MANUAL_PAGE_ID }}
+          NOTION_PROFILE_DB_ID=${{ secrets.NOTION_PROFILE_DB_ID }}
+          NOTION_THOUGHTS_DB_ID=${{ secrets.NOTION_THOUGHTS_DB_ID }}
           EOF
 
       - name: Deploy via SCP
@@ -38,8 +43,7 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          # 使用逗号分隔的列表，只包含核心文件和目录
-          source: "index.html, src/, public/, package.json, pnpm-lock.yaml, .env, vite.config.js"
+          source: "index.html, src/, public/, package.json, pnpm-lock.yaml, .env, vite.config.js, tsconfig.json, types.ts, App.tsx, index.tsx, metadata.json, vercel.json, api/, components/, data/, utils/"
           target: "/var/www/your-project"
           strip_components: 0
 
