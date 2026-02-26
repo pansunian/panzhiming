@@ -30,13 +30,7 @@ jobs:
           cat > .env << EOF
           NOTION_KEY=${{ secrets.NOTION_KEY }}
           NOTION_DATABASE_ID=${{ secrets.NOTION_DATABASE_ID }}
-          # 如果有其他环境变量，按相同格式添加
           EOF
-
-      # 注意：Vite 开发模式不需要构建，所以跳过 build 步骤
-      # 如果需要构建生产版本，可以取消下面注释，并修改启动命令
-      # - name: Build project
-      #   run: pnpm build
 
       - name: Deploy via SCP
         uses: appleboy/scp-action@master
@@ -44,25 +38,8 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          # 上传所有必要的源代码文件（根据你的截图）
-          source: |
-            index.html
-            src/
-            public/
-            package.json
-            pnpm-lock.yaml
-            .env
-            vite.config.js
-            tsconfig.json
-            types.ts
-            App.tsx
-            index.tsx
-            metadata.json
-            vercel.json
-            api/
-            components/
-            data/
-            utils/
+          # 使用逗号分隔的列表，只包含核心文件和目录
+          source: "index.html, src/, public/, package.json, pnpm-lock.yaml, .env, vite.config.js"
           target: "/var/www/your-project"
           strip_components: 0
 
@@ -74,10 +51,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /var/www/your-project
-            # 安装生产依赖（pnpm 会自动处理）
             pnpm install --prod
-            # 使用 PM2 启动开发服务器（监听所有接口）
-            # 先停止旧进程（如果有），再启动新进程
             pm2 delete your-app-name 2>/dev/null || true
             pm2 start "npx vite --host 0.0.0.0" --name your-app-name
             pm2 save
