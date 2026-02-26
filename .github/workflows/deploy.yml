@@ -2,7 +2,7 @@ name: Deploy to Alibaba Cloud ECS
 
 on:
   push:
-    branches: [ main ]   # 触发分支，可根据你的主分支名修改
+    branches: [ main ]
 
 jobs:
   deploy:
@@ -15,46 +15,57 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'   # 与你的本地 Node 版本一致
+          node-version: '18'
 
-      - name: Install pnpm (如果使用 npm/yarn 请修改)
+      - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
 
       - name: Install dependencies
-        run: pnpm install   # 如果使用 npm，则改为 npm ci
+        run: pnpm install
 
-      # ---------- 关键步骤：从 Secrets 生成 .env 文件 ----------
       - name: Create .env file
         run: |
           cat > .env << EOF
-          # 这里列出所有你在 Vercel 中使用的环境变量
           NOTION_KEY=${{ secrets.NOTION_KEY }}
           NOTION_DATABASE_ID=${{ secrets.NOTION_DATABASE_ID }}
-          DATABASE_URL=${{ secrets.DATABASE_URL }}
-          # 继续添加其他变量，每个一行
+          # 如果有其他环境变量，按相同格式添加
           EOF
 
-      - name: Build project
-        run: pnpm build   # 你的构建命令，例如 npm run build
-        env:
-          # 确保构建时也能访问环境变量（有些框架构建时需要）
-          NOTION_KEY: ${{ secrets.NOTION_KEY }}
-          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      # 注意：Vite 开发模式不需要构建，所以跳过 build 步骤
+      # 如果需要构建生产版本，可以取消下面注释，并修改启动命令
+      # - name: Build project
+      #   run: pnpm build
 
-      # 上传文件到服务器
       - name: Deploy via SCP
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: ".next/, public/, package.json, pnpm-lock.yaml, .env, next.config.js"   # 根据你的项目结构调整
+          # 上传所有必要的源代码文件（根据你的截图）
+          source: |
+            index.html
+            src/
+            public/
+            package.json
+            pnpm-lock.yaml
+            .env
+            vite.config.js
+            tsconfig.json
+            types.ts
+            App.tsx
+            index.tsx
+            metadata.json
+            vercel.json
+            api/
+            components/
+            data/
+            utils/
           target: "/var/www/your-project"
+          strip_components: 0
 
-      # 远程执行命令：安装生产依赖，重启应用
       - name: Execute remote SSH commands
         uses: appleboy/ssh-action@master
         with:
@@ -63,6 +74,10 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /var/www/your-project
-            pnpm install --prod   # 只安装生产依赖
-            # 用 PM2 重启应用（如果不存在则启动）
-            pm2 restart your-app-name --update-env || pm2 start "pnpm start" --name your-app-name --update-env
+            # 安装生产依赖（pnpm 会自动处理）
+            pnpm install --prod
+            # 使用 PM2 启动开发服务器（监听所有接口）
+            # 先停止旧进程（如果有），再启动新进程
+            pm2 delete your-app-name 2>/dev/null || true
+            pm2 start "npx vite --host 0.0.0.0" --name your-app-name
+            pm2 save
