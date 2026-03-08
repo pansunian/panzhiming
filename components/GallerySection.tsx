@@ -55,11 +55,11 @@ const GalleryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ group, in
                     
                     <div className="flex justify-between items-end border-t border-stone-100 pt-4 mt-auto">
                         <div className="flex flex-col">
-                             <span className="text-[8px] font-mono text-stone-300 uppercase tracking-widest mb-1">Quantity</span>
-                             <span className="font-serif text-sm font-bold">{group.count} Frames</span>
+                             <span className="text-[8px] font-mono text-stone-300 uppercase tracking-widest mb-1">影片数量</span>
+                             <span className="font-serif text-sm font-bold">{group.count} SHOTS</span>
                         </div>
                         <div className="flex flex-col text-right">
-                             <span className="text-[8px] font-mono text-stone-300 uppercase tracking-widest mb-1">Issue Date</span>
+                             <span className="text-[8px] font-mono text-stone-300 uppercase tracking-widest mb-1">最后更新</span>
                              <span className="font-mono text-[10px] font-bold text-stone-500">{group.date}</span>
                         </div>
                     </div>
