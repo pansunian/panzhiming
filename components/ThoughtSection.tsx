@@ -14,7 +14,7 @@ export const ThoughtSection: React.FC<Props> = ({ thoughts, showViewAll }) => {
     <section className="flex flex-col items-center w-full scroll-mt-12">
       <div className="flex items-end justify-between px-2 py-6 w-full border-b border-dashed border-stone-200 relative">
          <div className="flex items-end gap-3">
-            <h2 className="font-serif text-2xl font-bold text-ink">碎碎念</h2>
+            <h2 className="font-serif text-2xl font-bold text-ink">思维碎片</h2>
             <span className="font-mono text-xs text-stone-500 mb-1">/ THOUGHTS</span>
          </div>
          {showViewAll && (
