@@ -168,11 +168,13 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
 
                  {/* Barcode Section */}
                  <div className="mt-8 pt-4 border-t border-stone-500/10 flex justify-between items-center opacity-40 gap-2">
-                     <span className="font-mono text-[9px] text-stone-600 whitespace-nowrap">PANZHIMING.COM</span>
-                     <div className="flex-grow flex justify-center overflow-hidden">
-                        <BarcodeHorizontal className="h-6 w-auto max-w-[120px] mix-blend-multiply" />
-                     </div>
-                     <span className="font-mono text-[8px] text-stone-600 whitespace-nowrap"><a class="text-color" href="https://beian.miit.gov.cn" target="_blank">陕ICP备2026004104号</a></span>
+<div className="w-8 h-10 overflow-hidden shrink-0"><BarcodeVertical /></div>
+                            <div className="flex flex-col gap-1 text-center px-4">
+                                <span className="font-serif text-[10px] font-bold tracking-[0.3em] whitespace-nowrap">先见志明</span>
+                                <span className="font-mono text-[7px] tracking-[0.4em] uppercase whitespace-nowrap">PANZHIMING.COM</span>
+                            </div>
+                            <div className="w-8 h-10 overflow-hidden shrink-0"><BarcodeVertical /></div>
+                     
                  </div>
             </div>
 
