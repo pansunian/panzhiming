@@ -172,7 +172,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
                      <div className="flex-grow flex justify-center overflow-hidden">
                         <BarcodeHorizontal className="h-6 w-auto max-w-[120px] mix-blend-multiply" />
                      </div>
-                     <span className="font-mono text-[9px] text-stone-600 whitespace-nowrap">Power by Notion</span>
+                     <span className="font-mono text-[9px] text-stone-600 whitespace-nowrap"><a class="text-color" href="https://beian.miit.gov.cn" target="_blank">陕ICP备2026004104号</a></span>
                  </div>
             </div>
 
