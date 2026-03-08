@@ -59,7 +59,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
             </div>
             <div className="absolute bottom-12 left-8 right-8 text-white">
                  <h2 className="text-xs font-mono mb-2 tracking-widest opacity-80">PanZhiMing</h2>
-                 <h1 className="text-5xl font-serif font-bold tracking-tight leading-none mb-2">2026<br/>先见志明</h1>
+                 <h1 className="text-5xl font-serif tracking-tight leading-none mb-2">2026<br/>先见志明</h1>
             </div>
              <Link 
                 to="/aboutme"
