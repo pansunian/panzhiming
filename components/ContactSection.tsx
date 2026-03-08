@@ -49,7 +49,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
     <section id="contact" className="mb-8 w-full">
        
        <div className="flex items-end gap-4 mb-4 px-2">
-         <h2 className="font-serif text-2xl font-bold text-ink">留言</h2>
+         <h2 className="font-serif text-2xl font-bold text-ink">给我留言</h2>
          <span className="font-mono text-xs text-stone-500 mb-1">/ CONTACT</span>
       </div>
 
@@ -67,7 +67,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
                 </div>
 
                 <p className="font-serif text-sm text-stone-500 mb-8 italic w-3/4">
-                    为接下来的旅程留下一张便签...
+                    如果想联系我请留下一张便签...
                 </p>
 
                 {status === 'success' ? (
@@ -172,7 +172,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
                      <div className="flex-grow flex justify-center overflow-hidden">
                         <BarcodeHorizontal className="h-6 w-auto max-w-[120px] mix-blend-multiply" />
                      </div>
-                     <span className="font-mono text-[9px] text-stone-600 whitespace-nowrap"><a class="text-color" href="https://beian.miit.gov.cn" target="_blank">陕ICP备2026004104号</a></span>
+                     <span className="font-mono text-[8px] text-stone-600 whitespace-nowrap"><a class="text-color" href="https://beian.miit.gov.cn" target="_blank">陕ICP备2026004104号</a></span>
                  </div>
             </div>
 
