@@ -58,8 +58,8 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                 <p className="font-mono text-[10px] tracking-[0.6em] uppercase">Life Archives</p>
             </div>
             <div className="absolute bottom-12 left-8 right-8 text-white">
-                 <h2 className="text-xs font-mono mb-2 tracking-widest opacity-80">NOW RECORDING</h2>
-                 <h1 className="text-5xl font-serif font-bold tracking-tight leading-none mb-2">生活<br/>正在上映</h1>
+                 <h2 className="text-xs font-mono mb-2 tracking-widest opacity-80">PanZhiMing</h2>
+                 <h1 className="text-5xl font-serif font-bold tracking-tight leading-none mb-2">2026<br/>先见志明</h1>
             </div>
              <Link 
                 to="/aboutme"
@@ -98,7 +98,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                      </Link>
                      <Link to="/gallery" className="group flex flex-col items-center">
                          <span className="text-[9px] font-mono text-white/40 mb-1 tracking-wider">GALLERY</span>
-                         <span className="text-xs font-bold text-white group-hover:underline">影像</span>
+                         <span className="text-xs font-bold text-white group-hover:underline">摄影</span>
                      </Link>
                      <Link to="/thoughts" className="group flex flex-col items-center">
                          <span className="text-[9px] font-mono text-white/40 mb-1 tracking-wider">NOTES</span>
@@ -106,7 +106,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                      </Link>
                      <Link to="/blog" className="group flex flex-col items-center">
                          <span className="text-[9px] font-mono text-white/40 mb-1 tracking-wider">BLOG</span>
-                         <span className="text-xs font-bold text-white group-hover:underline">文章</span>
+                         <span className="text-xs font-bold text-white group-hover:underline">博客</span>
                      </Link>
                  </div>
              </div>
