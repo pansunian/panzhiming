@@ -168,7 +168,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
 
                  {/* Barcode Section */}
                             <div className="mt-8 pt-4 border-t border-stone-500/10 flex justify-between items-center opacity-40 gap-2">
-                     <span className="font-mono text-[9px] text-stone-600 whitespace-nowrap">PANZHIMING.COM</span>
+                     <span className="font-mono text-[8px] text-stone-600 whitespace-nowrap"><a class="text-color" href="https://panzhiming.com">WWW.PANZHIMING.COM</a></span>
                      <div className="flex-grow flex justify-center overflow-hidden">
                         <BarcodeHorizontal className="h-6 w-auto max-w-[120px] mix-blend-multiply" />
                      </div>
