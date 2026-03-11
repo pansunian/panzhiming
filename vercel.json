@@ -32,7 +32,6 @@
         { "key": "Access-Control-Allow-Origin", "value": "*" }
       ]
     }
-  ]
   ],
   "crons": [
     {
@@ -40,5 +39,4 @@
       "schedule": "0 * * * *"
     }
   ]
-}
 }
