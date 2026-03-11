@@ -32,7 +32,7 @@ module.exports = async function handler(req, res) {
             
         return { url, caption };
       });
-
+res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
     res.status(200).json({ images });
   } catch (error) {
     console.error('Notion Block Fetch Error:', error);
