@@ -126,7 +126,7 @@ module.exports = async function handler(req, res) {
             if (transformed) content.push(transformed);
         }
     }
-
+res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
     res.status(200).json({ content });
   } catch (error) {
     console.error('Notion Content Fetch Error:', error);
