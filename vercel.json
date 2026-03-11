@@ -32,11 +32,5 @@
         { "key": "Access-Control-Allow-Origin", "value": "*" }
       ]
     }
-  ],
-  "crons": [
-    {
-      "path": "/api/refresh-cache",
-      "schedule": "0 * * * *"
-    }
   ]
 }
