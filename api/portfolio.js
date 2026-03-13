@@ -2,7 +2,7 @@ const { Client } = require('@notionhq/client');
 const { redisGet, redisSet } = require('./lib/redis');
 
 module.exports = async function handler(req, res) {
-  res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
+res.setHeader('Cache-Control', 's-maxage=3600, must-revalidate');
 
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });
 
