@@ -155,7 +155,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                          const { label, icon: Icon } = getSocialConfig(social.platform);
                          return (
                              <a key={social.platform + social.url} href={social.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-xs font-bold font-mono uppercase text-ink/70 hover:text-brand-accent transition-all group">
-                               <div className="w-7 h-7 rounded-full border border-ink/30 flex items-center justify-center hover:bg-ink/10 transition-colors">
+                             <div className="w-7 h-7 rounded-full border border-ink/30 flex items-center justify-center transition-colors group-hover:bg-ink group-hover:border-ink">
                                 <Icon size={
   social.platform === 'XIAOHONGSHU' ? 16
   : social.platform === 'WECHAT' ? 20
