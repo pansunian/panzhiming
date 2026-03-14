@@ -172,7 +172,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
               <div className="w-7 h-7 rounded-full border border-ink/30 flex items-center justify-center transition-colors group-hover:bg-ink group-hover:border-ink">
                 <Icon size={iconSize} className="transition-colors group-hover:text-paper" />
               </div>
-              <span className="hidden sm:block">{label}</span>
+              <span className="border-b border-transparent group-hover:border-brand-accent" hidden sm:block>{label}</span>
             </div>
           ) : (
             <a href={social.url} target="_blank" rel="noopener noreferrer"
@@ -188,7 +188,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
           {isWechat && (
             <div className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden group-hover:block z-50">
               <div className="bg-white rounded-xl shadow-lg p-2 flex flex-col items-center">
-                <img src="/wechat-qr.jpg" alt="公众号二维码" className="w-28 object-contain" />
+                <img src="/wechat-qr.jpg" alt="公众号二维码" className="w-180 object-contain" />
                 <p className="text-[10px] text-ink/50 mt-1 font-mono">扫码关注公众号</p>
               </div>
               <div className="w-3 h-3 bg-white rotate-45 mx-auto -mt-1.5" />
