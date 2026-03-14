@@ -170,7 +170,9 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
           {isWechat ? (
             <div className="flex items-center gap-2 cursor-pointer text-xs font-bold font-mono uppercase text-ink/70 group">
               <div className="w-7 h-7 rounded-full border border-ink/30 flex items-center justify-center transition-colors group-hover:bg-ink group-hover:border-ink">
-                <Icon size={iconSize} className="transition-colors group-hover:text-paper" />
+             <span className="transition-colors group-hover:text-white">
+                  <Icon size={iconSize} className="transition-colors group-hover:text-paper" />
+                 </span>
               </div>
               <span className="border-b border-transparent group-hover:border-brand-accent" hidden sm:block>{label}</span>
             </div>
