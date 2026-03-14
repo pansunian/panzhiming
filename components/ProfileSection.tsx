@@ -5,7 +5,7 @@ import { TicketBase, Notch, DashedLine, BarcodeHorizontal } from './TicketUI';
 import { optimizeImage } from '../utils/imageOptimizer';
 import { 
     Instagram, Twitter, Github, Linkedin, Mail, Youtube, 
-    Globe,  Link as LinkIcon, Tv
+    Globe,BookOpen,  Link as LinkIcon, Tv
 } from 'lucide-react';
 
 // 👇 在这里添加（紧接在上面 import 的下方）
