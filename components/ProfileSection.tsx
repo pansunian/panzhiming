@@ -50,11 +50,11 @@ const SOCIAL_MAP: Record<string, { label: string; icon: React.ElementType }> = {
     YOUTUBE: { label: 'YouTube', icon: Youtube },
     EMAIL: { label: 'Email', icon: Mail },
     WEIBO: { label: '微博', icon: Globe },
-    XIAOHONGSHU: { label: '小红书', icon: BookOpen },
-    JIKE: { label: '即刻', icon: Zap },
+    XIAOHONGSHU: { label: '小红书', icon: XiaohongshuIcon },
+JIKE: { label: '即刻', icon: JikeIcon },
+XIAOYUZHOU: { label: '小宇宙', icon: XiaoyuzhouIcon },
     WECHAT: { label: '公众号', icon: MessageCircle },
     BILIBILI: { label: 'Bilibili', icon: Tv },
-    XIAOYUZHOU: { label: '小宇宙', icon: Radio },
     DOUBAN: { label: '豆瓣', icon: BookOpen },
     LINK: { label: 'Link', icon: LinkIcon }
 };
