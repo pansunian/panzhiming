@@ -188,7 +188,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
           {isWechat && (
             <div className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden group-hover:block z-50">
               <div className="bg-white rounded-xl shadow-lg p-2 flex flex-col items-center">
-                <img src="/wechat-qr.jpg" alt="公众号二维码" className="w-28 h-28" />
+                <img src="/fonts/wechat-qr.jpg" alt="公众号二维码" className="w-28 h-28" />
                 <p className="text-[10px] text-ink/50 mt-1 font-mono">扫码关注公众号</p>
               </div>
               <div className="w-3 h-3 bg-white rotate-45 mx-auto -mt-1.5" />
