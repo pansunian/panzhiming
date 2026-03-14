@@ -5,7 +5,7 @@ import { TicketBase, Notch, DashedLine, BarcodeHorizontal } from './TicketUI';
 import { optimizeImage } from '../utils/imageOptimizer';
 import { 
     Instagram, Twitter, Github, Linkedin, Mail, Youtube, 
-    Globe, Zap, MessageCircle, Link as LinkIcon, Tv, Radio, BookOpen 
+    Globe,  MessageCircle, Link as LinkIcon, Tv
 } from 'lucide-react';
 import { 
   Instagram, Twitter, Github, Linkedin, Mail, Youtube, 
