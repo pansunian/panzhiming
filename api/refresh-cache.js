@@ -44,15 +44,35 @@ module.exports = async function handler(req, res) {
     if (profileRes.results.length > 0) {
       const page = profileRes.results[0];
       const p = page.properties;
-      profile = {
-        name: getPropValue(p['Name'] || p['Title']) || 'Untitled',
-        role: getPropValue(p['Role']),
-        bio: getPropValue(p['Bio']),
-        location: getPropValue(p['Location']),
-        avatarUrl: getImageUrl(page, 'Avatar', false),
-        logoUrl: getImageUrl(page, 'Logo', false),
-        socials: []
-      };
+const platformMapping = {
+  '小红书': 'XIAOHONGSHU', 'xiaohongshu': 'XIAOHONGSHU',
+  '即刻': 'JIKE', 'jike': 'JIKE',
+  '哔哩哔哩': 'BILIBILI', 'bilibili': 'BILIBILI',
+  '小宇宙': 'XIAOYUZHOU', 'cosmos': 'XIAOYUZHOU',
+  '公众号': 'WECHAT', '微信': 'WECHAT',
+  'instagram': 'INSTAGRAM', 'twitter': 'TWITTER',
+  'x': 'TWITTER', 'weibo': 'WEIBO', '微博': 'WEIBO',
+  'github': 'GITHUB', 'email': 'EMAIL', '邮箱': 'EMAIL',
+  'linkedin': 'LINKEDIN', 'youtube': 'YOUTUBE'
+};
+const actualKeys = Object.keys(p);
+const socials = [];
+for (const [columnName, platformCode] of Object.entries(platformMapping)) {
+  const matchedKey = actualKeys.find(k => k.trim() === columnName);
+  if (matchedKey) {
+    const url = getPropValue(p[matchedKey]);
+    if (url) socials.push({ platform: platformCode, url, handle: matchedKey });
+  }
+}
+profile = {
+  name: getPropValue(p['Name'] || p['Title']) || 'Untitled',
+  role: getPropValue(p['Role']),
+  bio: getPropValue(p['Bio']),
+  location: getPropValue(p['Location']),
+  avatarUrl: getImageUrl(page, 'Avatar', false),
+  logoUrl: getImageUrl(page, 'Logo', false),
+  socials
+};
     }
 
     const [gallery, thoughts, posts] = await Promise.all([
