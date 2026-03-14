@@ -186,8 +186,8 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
 
           {/* 公众号二维码弹出层 */}
           {isWechat && (
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden group-hover:block z-50">
-              <div className="bg-white rounded-xl shadow-lg p-2 flex flex-col items-center">
+           <div className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden group-hover:block z-50 w-36">
+          <div className="bg-white rounded-xl shadow-lg p-3 flex flex-col items-center">
                 <img src="/wechat-qr.jpg" alt="公众号二维码" className="w-180 object-contain" />
                 <p className="text-[10px] text-ink/50 mt-1 font-mono">扫码关注公众号</p>
               </div>
