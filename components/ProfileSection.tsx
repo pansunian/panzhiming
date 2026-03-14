@@ -7,6 +7,25 @@ import {
     Instagram, Twitter, Github, Linkedin, Mail, Youtube, 
     Globe, Zap, MessageCircle, Link as LinkIcon, Tv, Radio, BookOpen 
 } from 'lucide-react';
+import { 
+  Instagram, Twitter, Github, Linkedin, Mail, Youtube, 
+  Globe, Zap, MessageCircle, Link as LinkIcon, Tv, Radio, BookOpen 
+} from 'lucide-react';
+
+// 👇 在这里添加（紧接在上面 import 的下方）
+const XiaohongshuIcon = ({ size = 16 }: { size?: number }) => (
+  ...
+);
+
+const JikeIcon = ({ size = 16 }: { size?: number }) => (
+  ...
+);
+
+const XiaoyuzhouIcon = ({ size = 16 }: { size?: number }) => (
+  ...
+);
+
+// 👆 添加到这里结束
 
 interface Props {
   profile: Profile;
