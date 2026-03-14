@@ -155,23 +155,49 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
              <Notch className="-right-4 top-0 -translate-y-1/2" />
              <DashedLine className="absolute top-0 left-4 right-4" />
              
-             <div className="mt-4 flex flex-col items-center gap-10">
-                 <div className="flex flex-wrap justify-center gap-x-6 gap-y-5 px-2">
-                     {profile.socials.map(social => {
-                         const { label, icon: Icon } = getSocialConfig(social.platform);
-                         return (
-                             <a key={social.platform + social.url} href={social.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-xs font-bold font-mono uppercase text-ink/70 hover:text-brand-accent transition-all group">
-                             <div className="w-7 h-7 rounded-full border border-ink/30 flex items-center justify-center transition-colors group-hover:bg-ink group-hover:border-ink">
-                                <Icon size={
-  social.platform === 'XIAOHONGSHU' ? 16
-  : social.platform === 'WECHAT' ? 20
-  : 18
-} className="group-hover:scale-110 transition-transform" />
-                                 <span className="border-b border-transparent group-hover:border-brand-accent" hidden sm:block>{label}</span> </div>
-                             </a>
-                         );
-                     })}
-                 </div>
+        <div className="mt-4 flex flex-col items-center gap-10">
+  <div className="flex flex-wrap justify-center gap-x-6 gap-y-5 px-2">
+    {profile.socials.map(social => {
+      const { label, icon: Icon } = getSocialConfig(social.platform);
+      const isWechat = social.platform === 'WECHAT';
+      const iconSize =
+        social.platform === 'XIAOHONGSHU' ? 16
+        : social.platform === 'WECHAT' ? 20
+        : 18;
+
+      return (
+        <div key={social.platform + social.url} className="relative group">
+          {isWechat ? (
+            <div className="flex items-center gap-2 cursor-pointer text-xs font-bold font-mono uppercase text-ink/70">
+              <div className="w-7 h-7 rounded-full border border-ink/30 flex items-center justify-center transition-colors group-hover:bg-ink group-hover:border-ink">
+                <Icon size={iconSize} className="transition-colors group-hover:text-paper" />
+              </div>
+              <span className="hidden sm:block">{label}</span>
+            </div>
+          ) : (
+            <a href={social.url} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-2 text-xs font-bold font-mono uppercase text-ink/70 hover:text-brand-accent transition-all">
+              <div className="w-7 h-7 rounded-full border border-ink/30 flex items-center justify-center transition-colors group-hover:bg-ink group-hover:border-ink">
+                <Icon size={iconSize} className="transition-colors group-hover:text-paper" />
+              </div>
+              <span className="hidden sm:block">{label}</span>
+            </a>
+          )}
+
+          {/* 公众号二维码弹出层 */}
+          {isWechat && (
+            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden group-hover:block z-50">
+              <div className="bg-white rounded-xl shadow-lg p-2 flex flex-col items-center">
+                <img src="/wechat-qr.png" alt="公众号二维码" className="w-28 h-28" />
+                <p className="text-[10px] text-ink/50 mt-1 font-mono">扫码关注公众号</p>
+              </div>
+              <div className="w-3 h-3 bg-white rotate-45 mx-auto -mt-1.5" />
+            </div>
+          )}
+        </div>
+      );
+    })}
+  </div>
                  
                  {/* 条形码修正：确保容器居中 */}
                  <div className="w-full flex flex-col items-center opacity-40">
