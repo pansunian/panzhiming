@@ -169,7 +169,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
         <div key={social.platform + social.url} className="relative group">
           {isWechat ? (
             <div className="flex items-center gap-2 cursor-pointer text-xs font-bold font-mono uppercase text-ink/70 group">
-              <div className="w-7 h-7 rounded-full border border-ink/30 flex items-center justify-center transition-colors group-hover:bg-ink group-hover:border-ink">
+            <div className="w-7 h-7 rounded-full border border-ink/30 flex items-center justify-center transition-colors group-hover:bg-[#8B7355] group-hover:border-[#8B7355]">
              <span className="transition-colors group-hover:text-white">
                   <Icon size={iconSize} className="transition-colors group-hover:text-paper" />
                  </span>
@@ -179,8 +179,10 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
           ) : (
             <a href={social.url} target="_blank" rel="noopener noreferrer"
               className="flex items-center gap-2 text-xs font-bold font-mono uppercase text-ink/70 hover:text-brand-accent transition-all">
-              <div className="w-7 h-7 rounded-full border border-ink/30 flex items-center justify-center transition-colors group-hover:bg-ink group-hover:border-ink">
-                <Icon size={iconSize} className="transition-colors group-hover:text-paper" />
+          <div className="w-7 h-7 rounded-full border border-ink/30 flex items-center justify-center transition-colors group-hover:bg-[#8B7355] group-hover:border-[#8B7355]">
+               <span className="transition-colors group-hover:text-white">
+              <Icon size={iconSize} className="transition-colors group-hover:text-paper" />
+               </span>
               </div>
              <span className="border-b border-transparent group-hover:border-brand-accent" hidden sm:block>{label}</span>
             </a>
