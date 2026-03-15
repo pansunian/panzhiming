@@ -118,7 +118,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                          <p className="text-[10px] opacity-70 tracking-widest mb-1 uppercase"> 主理人</p>
                          <p className="text-2xl font-serif font-bold">{profile.name}</p>
                      </div>
-                     <div className="text-right">
+                     <div className="text-right self-end">
                          <p className="text-[10px] opacity-70 tracking-widest mb-1 uppercase">坐标</p>
                          <p className="font-mono text-sm">{profile.location}</p>
                      </div>
