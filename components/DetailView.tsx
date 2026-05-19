@@ -176,6 +176,8 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
             return <h3 className="font-serif font-medium text-lg mt-8 mb-4 first:mt-0"><RichText content={block.content} /></h3>;
         case 'heading_3':
             return <h4 className="font-serif font-medium text-base mt-6 mb-3 first:mt-0"><RichText content={block.content} /></h4>;
+        case 'heading_4':
+            return <h5 className="font-serif font-medium text-sm mt-5 mb-2 first:mt-0"><RichText content={block.content} /></h5>;
         case 'quote':
             return <blockquote className="border-l-4 border-stone-200 pl-6 my-8 italic text-stone-500 font-sans text-[15px] leading-loose first:mt-0"><RichText content={block.content} /></blockquote>;
         case 'callout':
