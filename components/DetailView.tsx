@@ -223,11 +223,11 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
             // 博客内嵌图片优化
             const optimizedContentImg = optimizeImage(block.src, 960);
             return (
-                <div className="my-10 -mx-6 sm:mx-0 first:mt-0">
+                <div className="my-10 first:mt-0">
                     <div className="rounded-sm overflow-hidden bg-stone-100">
                         <img src={optimizedContentImg} className="w-full h-auto" alt="Embedded" />
                     </div>
-                    {block.caption && <p className="text-center mt-3 px-6 sm:px-0 font-sans text-[10px] text-stone-400 tracking-wide uppercase"><RichText content={block.caption} /></p>}
+                    {block.caption && <p className="text-center mt-3 font-sans text-[10px] text-stone-400 tracking-wide uppercase"><RichText content={block.caption} /></p>}
                 </div>
             );
         default:
@@ -310,12 +310,12 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
   const displayImage = optimizeImage(displayImageRaw, 1200);
 
   return (
-    <div className="min-h-screen w-full flex flex-col bg-texture">
+    <div className="min-h-screen w-full flex flex-col bg-texture overflow-x-hidden">
       <NavBar logoUrl={logoUrl} />
       <div className="w-full max-w-[420px] mx-auto pb-24 pt-8 sm:pt-12">
-            <div className="px-0 sm:px-4">
+            <div className="px-4">
                 <div className="h-4 w-full jagged-top bg-paper"></div>
-                <TicketBase className="rounded-none bg-paper min-h-[80vh] border-x-0 sm:border-x border-stone-200">
+                <TicketBase className="rounded-none bg-paper min-h-[80vh] border-x border-stone-200">
                     <div className="px-6 sm:px-8 pt-8 pb-6 relative">
                         <div className="flex justify-between items-center mb-10">
                             <div className="flex flex-col">
