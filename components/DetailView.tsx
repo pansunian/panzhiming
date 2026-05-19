@@ -171,11 +171,11 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
         case 'paragraph':
             return <p className="mb-[1.2em] leading-loose text-ink/90 font-sans text-[15px] text-justify min-h-[1em] first:mt-0"><RichText content={block.content} /></p>;
         case 'heading_1':
-            return <h2 className="font-serif font-bold text-xl mt-10 mb-6 border-b border-stone-100 pb-2 first:mt-0"><RichText content={block.content} /></h2>;
+            return <h2 className="font-serif font-medium text-xl mt-10 mb-6 border-b border-stone-100 pb-2 first:mt-0"><RichText content={block.content} /></h2>;
         case 'heading_2':
-            return <h3 className="font-serif font-bold text-lg mt-8 mb-4 first:mt-0"><RichText content={block.content} /></h3>;
+            return <h3 className="font-serif font-medium text-lg mt-8 mb-4 first:mt-0"><RichText content={block.content} /></h3>;
         case 'heading_3':
-            return <h4 className="font-serif font-bold text-base mt-6 mb-3 first:mt-0"><RichText content={block.content} /></h4>;
+            return <h4 className="font-serif font-medium text-base mt-6 mb-3 first:mt-0"><RichText content={block.content} /></h4>;
         case 'quote':
             return <blockquote className="border-l-4 border-stone-200 pl-6 my-8 italic text-stone-500 font-sans text-[15px] leading-loose first:mt-0"><RichText content={block.content} /></blockquote>;
         case 'callout':
@@ -238,6 +238,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
   const location = useLocation();
   const currentId = forceId || id;
   const item = items.find(i => i.id === currentId);
+  const pageId = item?.id || currentId;
   const [contentImages, setContentImages] = useState<GalleryImage[]>([]);
   const [blogBlocks, setBlogBlocks] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -245,11 +246,15 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (item?.id) {
+    setBlogBlocks([]);
+    setContentImages([]);
+    setIsDataFetched(false);
+
+    if (pageId) {
         setLoading(true);
         
         // 检查是否是演示数据 ID
-        if (item.id.startsWith('demo-')) {
+        if (pageId.startsWith('demo-')) {
             // 模拟加载延迟，让体验更真实
             setTimeout(() => {
                 setBlogBlocks(mockNotionBlocks);
@@ -266,8 +271,8 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                 const forceRefresh = searchParams.get('fresh') === '1' || searchParams.get('refresh') === '1';
                 const refreshQuery = forceRefresh ? '&fresh=1' : '';
                 const [imgRes, contentRes] = await Promise.all([
-                    fetch(`/api/page-images?pageId=${item.id}${refreshQuery}`),
-                    fetch(`/api/get-page-content?pageId=${item.id}${refreshQuery}`)
+                    fetch(`/api/page-images?pageId=${pageId}${refreshQuery}`),
+                    fetch(`/api/get-page-content?pageId=${pageId}${refreshQuery}`)
                 ]);
                 
                 // 如果 API 失败（比如 500），也不要留白，加载演示内容作为托底
@@ -290,9 +295,9 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
         };
         fetchData();
     }
-  }, [item?.id, location.search]);
+  }, [pageId, location.search]);
 
-  if (!item && isDataFetched) return <Navigate to="/" replace />;
+  if (!pageId && isDataFetched) return <Navigate to="/" replace />;
 
   const isBlog = type === 'blog';
   const blogPost = item as BlogPost;
@@ -320,9 +325,9 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                                 <span className="font-mono text-[9px] font-bold uppercase tracking-widest text-ink">{isBlog ? blogPost?.readTime : `${photoGroup?.count} SHOTS`}</span>
                             </div>
                         </div>
-                        <h1 className="font-serif font-bold text-2xl text-ink leading-snug mb-2 pr-4">{item?.title || 'Loading...'}</h1>
+                        <h1 className="font-serif font-medium text-2xl md:text-xl text-ink leading-snug mb-2 pr-4">{item?.title || (loading ? 'Loading...' : 'Untitled')}</h1>
                         <div className="flex items-center gap-3 mb-8 text-[9px] font-mono text-stone-400 uppercase tracking-widest">
-                            <span>{item?.date || 'Unknown Date'}</span>
+                            <span>{item?.date || (loading ? 'Retrieving' : 'Unknown Date')}</span>
                             {!isBlog && photoGroup?.location && (
                                 <><span className="opacity-30">/</span><span>{photoGroup.location}</span></>
                             )}
