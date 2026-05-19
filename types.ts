@@ -12,6 +12,7 @@ export interface Profile {
   avatarUrl: string;
   logoUrl?: string; // New field for custom logo
   location: string;
+  tags?: string[];
   socials: SocialLink[];
 }
 

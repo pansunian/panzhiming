@@ -6,6 +6,7 @@ export const mockProfile: Profile = {
   bio: "这是一个演示账号。当您配置好 Notion API 后，这里将显示您的真实简介。目前展示的是本地的静态演示数据，用于预览网站的视觉效果。",
   location: "Demo City, DC",
   avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=640&auto=format&fit=crop",
+  tags: ["校园营销", "AI工具", "Notion建站"],
   socials: [
     { platform: "GITHUB", url: "https://github.com", handle: "Github" },
     { platform: "TWITTER", url: "https://twitter.com", handle: "Twitter" },

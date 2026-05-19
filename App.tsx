@@ -14,6 +14,23 @@ import { mockProfile, mockGallery, mockThoughts, mockPosts, mockAbout } from './
 // --- 缓存配置 ---
 const CACHE_KEY = 'portfolio_snapshot_v1';
 
+const readCache = () => {
+  try {
+    return localStorage.getItem(CACHE_KEY);
+  } catch (e) {
+    console.warn("Cache unavailable in this browser context", e);
+    return null;
+  }
+};
+
+const writeCache = (data: unknown) => {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+  } catch (e) {
+    console.warn("Failed to write cache", e);
+  }
+};
+
 // --- 默认占位图：深色抽象背景 ---
 const FALLBACK_AVATAR = "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=1000&auto=format&fit=crop";
 
@@ -59,7 +76,7 @@ const App: React.FC = () => {
 
   // 1. 初始化时尝试从缓存读取数据 (Fast-path)
   useEffect(() => {
-    const cached = localStorage.getItem(CACHE_KEY);
+    const cached = readCache();
     if (cached) {
       try {
         const data = JSON.parse(cached);
@@ -103,6 +120,12 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const initData = async () => {
+      if (window.location.protocol === 'file:' && !hasCache) {
+        loadDemoData();
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const res = await fetch('/api/portfolio');
         if (res.ok) {
@@ -120,7 +143,7 @@ const App: React.FC = () => {
            if (data.posts) setPosts(data.posts);
            if (data.about) setAboutPage(data.about);
            
-           localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+           writeCache(data);
            setIsDemoMode(false); 
         } else {
             // 只有在没缓存且接口报错的情况下才开启 Demo

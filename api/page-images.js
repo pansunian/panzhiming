@@ -13,6 +13,12 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Missing pageId' });
   }
 
+  const forceRefresh = req.query?.fresh === '1' || req.query?.refresh === '1';
+  res.setHeader(
+    'Cache-Control',
+    forceRefresh ? 'no-store' : 's-maxage=300, stale-while-revalidate=300'
+  );
+
   try {
     // Fetch the children blocks of the page
     const blocks = await notion.blocks.children.list({
@@ -32,8 +38,7 @@ module.exports = async function handler(req, res) {
             
         return { url, caption };
       });
-res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
-    res.status(200).json({ images });
+    res.status(200).json({ images, updatedAt: new Date().toISOString() });
   } catch (error) {
     console.error('Notion Block Fetch Error:', error);
     res.status(500).json({ error: 'Failed to fetch page content' });

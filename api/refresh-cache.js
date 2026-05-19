@@ -71,6 +71,7 @@ profile = {
   location: getPropValue(p['Location']),
   avatarUrl: getImageUrl(page, 'Avatar', false),
   logoUrl: getImageUrl(page, 'Logo', false),
+  tags: getPropValue(p['Tags']) || [],
   socials
 };
     }
@@ -112,7 +113,7 @@ profile = {
       p.title.toLowerCase().includes('about')
     );
 
-    await redisSet('portfolio-data', { profile, gallery, thoughts, posts, about });
+    await redisSet('portfolio-data', { profile, gallery, thoughts, posts, about, updatedAt: new Date().toISOString() });
 
     res.status(200).json({ success: true, message: '缓存刷新成功' });
   } catch (error) {

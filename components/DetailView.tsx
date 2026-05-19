@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams, Navigate, useLocation } from 'react-router-dom';
 import { BlogPost, PhotoGroup } from '../types';
 import { TicketBase, DashedLine, Notch, BarcodeVertical } from './TicketUI';
 import { NavBar } from './NavBar';
@@ -235,6 +235,7 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
 
 export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, forceId }) => {
   const { id } = useParams();
+  const location = useLocation();
   const currentId = forceId || id;
   const item = items.find(i => i.id === currentId);
   const [contentImages, setContentImages] = useState<GalleryImage[]>([]);
@@ -261,9 +262,12 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
 
         const fetchData = async () => {
             try {
+                const searchParams = new URLSearchParams(location.search);
+                const forceRefresh = searchParams.get('fresh') === '1' || searchParams.get('refresh') === '1';
+                const refreshQuery = forceRefresh ? '&fresh=1' : '';
                 const [imgRes, contentRes] = await Promise.all([
-                    fetch(`/api/page-images?pageId=${item.id}`),
-                    fetch(`/api/get-page-content?pageId=${item.id}`)
+                    fetch(`/api/page-images?pageId=${item.id}${refreshQuery}`),
+                    fetch(`/api/get-page-content?pageId=${item.id}${refreshQuery}`)
                 ]);
                 
                 // 如果 API 失败（比如 500），也不要留白，加载演示内容作为托底
@@ -286,7 +290,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
         };
         fetchData();
     }
-  }, [item?.id]);
+  }, [item?.id, location.search]);
 
   if (!item && isDataFetched) return <Navigate to="/" replace />;
 

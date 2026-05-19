@@ -19,7 +19,7 @@ async function redisGet(key) {
   try { return JSON.parse(data.result); } catch { return data.result; }
 }
 
-async function redisSet(key, value, ttl = 2700) {
+async function redisSet(key, value, ttl = Number(process.env.PORTFOLIO_CACHE_TTL_SECONDS || 300)) {
   await redisCommand('SET', key, JSON.stringify(value), 'EX', ttl);
 }
 

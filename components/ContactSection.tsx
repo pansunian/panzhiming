@@ -66,9 +66,12 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
                      </div>
                 </div>
 
-                <p className="font-serif text-sm text-stone-500 mb-8 italic w-3/4">
-                    如果想联系我请留下一张便签...
-                </p>
+                <div className="font-serif text-sm text-stone-500 mb-8 italic w-3/4 leading-7">
+                    <p>如果想联系我请留下一张便签...</p>
+                    <p className="not-italic text-[11px] leading-6 mt-3 text-stone-400">
+                        欢迎聊校园营销、AI 工具、内容表达、Notion 建站，以及普通人怎么把自己做成一个更清楚的标签。
+                    </p>
+                </div>
 
                 {status === 'success' ? (
                     <div className="flex flex-col items-center justify-center py-12 space-y-4 animate-in fade-in slide-in-from-bottom-4">
@@ -168,11 +171,11 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
 
                  {/* Barcode Section */}
                             <div className="mt-8 pt-4 border-t border-stone-500/10 flex justify-between items-center opacity-40 gap-2">
-                     <span className="font-mono text-[8px] text-stone-600 whitespace-nowrap"><a class="text-color" href="https://panzhiming.com">WWW.PANZHIMING.COM</a></span>
+                     <span className="font-mono text-[8px] text-stone-600 whitespace-nowrap"><a className="text-color" href="https://panzhiming.com">WWW.PANZHIMING.COM</a></span>
                      <div className="flex-grow flex justify-center overflow-hidden">
                         <BarcodeHorizontal className="h-6 w-auto max-w-[120px] mix-blend-multiply" />
                      </div>
-                     <span className="font-mono text-[8px] text-stone-600 whitespace-nowrap"><a class="text-color" href="https://beian.miit.gov.cn" target="_blank">陕ICP备2026004104号</a></span>
+                     <span className="font-mono text-[8px] text-stone-600 whitespace-nowrap"><a className="text-color" href="https://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">陕ICP备2026004104号</a></span>
                  </div>
             </div>
 

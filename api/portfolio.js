@@ -6,14 +6,18 @@ res.setHeader('Cache-Control', 'no-store');
 
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });
 
-  // 先读 Redis 缓存
-  try {
-    const cached = await redisGet('portfolio-data');
-    if (cached) {
-      return res.status(200).json(cached);
+  const forceRefresh = req.query?.fresh === '1' || req.query?.refresh === '1';
+
+  if (!forceRefresh) {
+    // 先读 Redis 缓存
+    try {
+      const cached = await redisGet('portfolio-data');
+      if (cached) {
+        return res.status(200).json(cached);
+      }
+    } catch (e) {
+      console.warn('Redis read failed, falling back to Notion:', e.message);
     }
-  } catch (e) {
-    console.warn('Redis read failed, falling back to Notion:', e.message);
   }
 
   // 缓存没有，回源 Notion
@@ -75,6 +79,7 @@ res.setHeader('Cache-Control', 'no-store');
           location: getPropValue(p['Location']),
           avatarUrl: getImageUrl(page, 'Avatar', false),
           logoUrl: getImageUrl(page, 'Logo', false),
+          tags: getPropValue(p['Tags']) || [],
           socials: []
         };
         const platformMapping = {
@@ -135,7 +140,7 @@ res.setHeader('Cache-Control', 'no-store');
     p.title.toLowerCase().includes('about')
   );
 
-  const result = { profile, gallery, thoughts, posts, about };
+  const result = { profile, gallery, thoughts, posts, about, updatedAt: new Date().toISOString() };
 
   // 写入 Redis 缓存
   try { await redisSet('portfolio-data', result); } catch (e) { console.warn('Redis write failed:', e.message); }

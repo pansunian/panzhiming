@@ -4,19 +4,25 @@ const { redisGet, redisSet } = require('./lib/redis');
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
 
 module.exports = async function handler(req, res) {
-  res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
-
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });
 
   const { pageId } = req.query;
   if (!pageId) return res.status(400).json({ error: 'Missing pageId' });
+  const forceRefresh = req.query?.fresh === '1' || req.query?.refresh === '1';
 
-  // 先读 Redis 缓存
-  try {
-    const cached = await redisGet(`page-content-${pageId}`);
-    if (cached) return res.status(200).json(cached);
-  } catch (e) {
-    console.warn('Redis read failed:', e.message);
+  res.setHeader(
+    'Cache-Control',
+    forceRefresh ? 'no-store' : 's-maxage=300, stale-while-revalidate=300'
+  );
+
+  if (!forceRefresh) {
+    // 先读 Redis 缓存
+    try {
+      const cached = await redisGet(`page-content-${pageId}`);
+      if (cached) return res.status(200).json(cached);
+    } catch (e) {
+      console.warn('Redis read failed:', e.message);
+    }
   }
 
   try {
@@ -61,7 +67,7 @@ module.exports = async function handler(req, res) {
       }
     }
 
-    const result = { content };
+    const result = { content, updatedAt: new Date().toISOString() };
 
     // 写入 Redis 缓存
     try { await redisSet(`page-content-${pageId}`, result); } catch (e) { console.warn('Redis write failed:', e.message); }
