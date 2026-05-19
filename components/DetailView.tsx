@@ -223,11 +223,11 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
             // 博客内嵌图片优化
             const optimizedContentImg = optimizeImage(block.src, 960);
             return (
-                <div className="my-10 first:mt-0">
+                <div className="my-10 -mx-6 sm:mx-0 first:mt-0">
                     <div className="rounded-sm overflow-hidden bg-stone-100">
                         <img src={optimizedContentImg} className="w-full h-auto" alt="Embedded" />
                     </div>
-                    {block.caption && <p className="text-center mt-3 font-sans text-[10px] text-stone-400 tracking-wide uppercase"><RichText content={block.caption} /></p>}
+                    {block.caption && <p className="text-center mt-3 px-6 sm:px-0 font-sans text-[10px] text-stone-400 tracking-wide uppercase"><RichText content={block.caption} /></p>}
                 </div>
             );
         default:
@@ -312,11 +312,11 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
   return (
     <div className="min-h-screen w-full flex flex-col bg-texture">
       <NavBar logoUrl={logoUrl} />
-      <div className="w-full max-w-[420px] mx-auto pb-24 pt-12">
-            <div className="px-4">
+      <div className="w-full max-w-[420px] mx-auto pb-24 pt-8 sm:pt-12">
+            <div className="px-0 sm:px-4">
                 <div className="h-4 w-full jagged-top bg-paper"></div>
-                <TicketBase className="rounded-none bg-paper min-h-[80vh] border-x border-stone-200">
-                    <div className="px-8 pt-8 pb-6 relative">
+                <TicketBase className="rounded-none bg-paper min-h-[80vh] border-x-0 sm:border-x border-stone-200">
+                    <div className="px-6 sm:px-8 pt-8 pb-6 relative">
                         <div className="flex justify-between items-center mb-10">
                             <div className="flex flex-col">
                                 <span className="font-mono text-[9px] text-stone-400 uppercase tracking-[0.2em]">{isBlog ? (blogPost?.category || 'Blog') : 'GALLERY'}</span>
@@ -347,7 +347,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                         </div>
                     )}
 
-                    <div className="px-8 pb-8 pt-12">
+                    <div className="px-6 sm:px-8 pb-8 pt-10 sm:pt-12">
                         {loading ? (
                             <div className="flex flex-col items-center py-20 text-stone-300 font-mono text-[10px] tracking-widest"><Loader2 className="animate-spin mb-3" size={16} />LOADING CONTENT...</div>
                         ) : (
@@ -358,7 +358,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                         )}
                     </div>
 
-                    <div className="bg-paper-dark p-8 border-t border-dashed border-stone-300/50 mt-12 relative">
+                    <div className="bg-paper-dark p-6 sm:p-8 border-t border-dashed border-stone-300/50 mt-12 relative">
                         <Notch className="-left-4 top-0 -translate-y-1/2" />
                         <Notch className="-right-4 top-0 -translate-y-1/2" />
                         <div className="flex justify-between items-center opacity-30">
