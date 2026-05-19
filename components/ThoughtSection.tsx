@@ -14,7 +14,7 @@ export const ThoughtSection: React.FC<Props> = ({ thoughts, showViewAll }) => {
     <section className="flex flex-col items-center w-full scroll-mt-12">
       <div className="flex items-end justify-between px-2 py-6 w-full border-b border-dashed border-stone-200 relative">
          <div className="flex items-end gap-3">
-            <h2 className="font-serif text-2xl font-bold text-ink">思维碎片</h2>
+            <h2 className="font-serif text-[1.35rem] font-medium leading-tight text-ink">思维碎片</h2>
             <span className="font-mono text-xs text-stone-500 mb-1">/ THOUGHTS</span>
          </div>
          {showViewAll && (
@@ -26,7 +26,7 @@ export const ThoughtSection: React.FC<Props> = ({ thoughts, showViewAll }) => {
       <div className="w-full">
           <div className="bg-paper px-6 py-8">
               <div className="text-center border-b border-dashed border-stone-300 pb-6 mb-6">
-                  <h3 className="font-serif font-bold text-lg mb-1 tracking-widest">思维碎片商店</h3>
+                  <h3 className="font-serif font-medium text-lg mb-1 tracking-[0.08em]">思维碎片商店</h3>
                   <div className="flex justify-between text-[9px] font-mono text-stone-400 mt-2 uppercase">
                       <span>Store No. 2049</span>
                       <span>{new Date().toDateString()}</span>

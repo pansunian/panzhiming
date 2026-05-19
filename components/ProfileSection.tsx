@@ -96,8 +96,8 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                 <p className="font-mono text-[10px] tracking-[0.6em] uppercase">Life Archives</p>
             </div>
             <div className="absolute bottom-12 left-8 right-8 text-white">
-                 <h2 className="text-xs font-mono mb-2 tracking-widest opacity-80">PanZhiMing</h2>
-                 <h1 className="text-5xl md:text-4xl font-serif tracking-tight leading-none mb-2">2026<br/>先见志明</h1>
+                 <h2 className="text-[10px] font-mono mb-3 tracking-[0.22em] uppercase opacity-75">PanZhiMing / 2026</h2>
+                 <h1 className="text-[2.7rem] md:text-[2.35rem] font-serif font-medium tracking-normal leading-[1.08] mb-2">先见志明</h1>
             </div>
              <Link 
                 to="/aboutme"
@@ -117,7 +117,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                  <div className="flex justify-between items-end mb-6">
                      <div>
                          <p className="text-[10px] opacity-70 tracking-widest mb-1 uppercase">Name</p>
-                         <p className="text-2xl font-serif font-bold">{profile.name}</p>
+                         <p className="text-[1.45rem] font-serif font-medium leading-tight">{profile.name}</p>
                      </div>
                     <div className="text-right self-center">
                          <p className="text-[10px] opacity-70 tracking-widest mb-1 uppercase">City</p>

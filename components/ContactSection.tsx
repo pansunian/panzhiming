@@ -49,7 +49,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
     <section id="contact" className="mb-8 w-full">
        
        <div className="flex items-end gap-4 mb-4 px-2">
-         <h2 className="font-serif text-2xl font-bold text-ink">给我留言</h2>
+         <h2 className="font-serif text-[1.35rem] font-medium leading-tight text-ink">给我留言</h2>
          <span className="font-mono text-xs text-stone-500 mb-1">/ CONTACT</span>
       </div>
 
@@ -78,7 +78,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
                         <div className="w-12 h-12 rounded-full bg-brand-accent text-white flex items-center justify-center">
                             <Check size={24} />
                         </div>
-                        <h3 className="font-serif text-xl font-bold">投递成功</h3>
+                        <h3 className="font-serif text-xl font-medium">投递成功</h3>
                         <p className="font-mono text-xs text-stone-400">THANK YOU FOR YOUR MESSAGE</p>
                     </div>
                 ) : (

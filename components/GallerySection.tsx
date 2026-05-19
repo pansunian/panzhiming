@@ -44,7 +44,7 @@ const GalleryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ group, in
                     
                     <div className="flex justify-between items-start mb-6 pt-2">
                         <div>
-                            <h3 className="font-serif font-bold text-xl leading-tight mb-2 group-hover:text-brand-accent transition-colors">{group.title}</h3>
+                            <h3 className="font-serif font-medium text-lg leading-tight mb-2 group-hover:text-brand-accent transition-colors">{group.title}</h3>
                             <div className="flex items-center gap-1.5 opacity-50">
                                 <MapPin size={10} className="text-stone-500" />
                                 <p className="font-mono text-[9px] text-stone-600 uppercase tracking-widest">{group.location}</p>
@@ -56,7 +56,7 @@ const GalleryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ group, in
                     <div className="flex justify-between items-end border-t border-stone-100 pt-4 mt-auto">
                         <div className="flex flex-col">
                              <span className="text-[8px] font-mono text-stone-300 uppercase tracking-widest mb-1">影片数量</span>
-                             <span className="font-serif text-sm font-bold">{group.count} SHOTS</span>
+                             <span className="font-serif text-sm font-medium">{group.count} SHOTS</span>
                         </div>
                         <div className="flex flex-col text-right">
                              <span className="text-[8px] font-mono text-stone-300 uppercase tracking-widest mb-1">更新日期</span>
@@ -74,7 +74,7 @@ export const GallerySection: React.FC<Props> = ({ groups, onViewAll, title = "�
     <section className="scroll-mt-24 w-full">
       <div className="flex items-end justify-between mb-8 px-2">
          <div className="flex items-end gap-3">
-            <h2 className="font-serif text-2xl font-bold text-ink">{title}</h2>
+            <h2 className="font-serif text-[1.35rem] font-medium leading-tight text-ink">{title}</h2>
             <span className="font-mono text-[10px] text-stone-400 mb-1 tracking-widest">/ GALLERY</span>
          </div>
          {onViewAll && (

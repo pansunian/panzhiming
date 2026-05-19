@@ -45,7 +45,7 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
                             <span className="font-mono text-[9px] text-stone-500 font-bold">{post.date}</span>
                     </div>
                     <div className="flex-grow flex flex-col justify-center mb-1 pr-6">
-                        <h3 className="font-serif font-bold text-ink text-sm sm:text-base leading-tight mb-1 group-hover:text-brand-accent transition-colors line-clamp-2">{post.title}</h3>
+                        <h3 className="font-serif font-medium text-ink text-sm sm:text-base leading-tight mb-1 group-hover:text-brand-accent transition-colors line-clamp-2">{post.title}</h3>
                         <p className="font-serif text-[10px] sm:text-xs text-stone-500 leading-snug line-clamp-1 opacity-80">{post.excerpt}</p>
                     </div>
                     <div className="mt-auto pt-2 border-t border-stone-100 flex items-end justify-between pr-2">
@@ -63,7 +63,7 @@ export const BlogSection: React.FC<Props> = ({ posts, showViewAll, title = "æ–‡ç
     <section className="scroll-mt-12 w-full">
       <div className="flex items-end justify-between mb-8 px-2">
          <div className="flex items-end gap-3">
-             <h2 className="font-serif text-2xl font-bold text-ink">{title}</h2>
+             <h2 className="font-serif text-[1.35rem] font-medium leading-tight text-ink">{title}</h2>
              <span className="font-mono text-xs text-stone-500 mb-1">/ BLOG</span>
          </div>
          {showViewAll && (
