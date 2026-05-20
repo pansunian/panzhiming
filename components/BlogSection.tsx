@@ -11,14 +11,6 @@ interface Props {
   title?: string;
 }
 
-const getCategoryTone = (category = '') => {
-    const value = category.toLowerCase();
-    if (/(ai|人工智能|工具|tech|科技)/i.test(value)) return 'bg-brand-accent/90 border-brand-accent/40 text-white';
-    if (/(营销|商业|品牌|内容|表达|ip|marketing)/i.test(value)) return 'bg-brand-rust/90 border-brand-rust/40 text-white';
-    if (/(notion|系统|知识|管理)/i.test(value)) return 'bg-ink/75 border-white/20 text-white';
-    return 'bg-brand-brown/85 border-brand-brown/30 text-white';
-};
-
 const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) => {
     const [isLoaded, setIsLoaded] = useState(false);
     
@@ -36,9 +28,7 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
                 {/* 封面左侧 */}
                 <div className="w-36 sm:w-[38%] h-full relative overflow-hidden rounded-l-sm bg-stone-200 shrink-0">
                     <img src={coverSrc} alt={post.title} onLoad={() => setIsLoaded(true)} className={`w-full h-full object-cover filter brightness-[0.95] contrast-[1.05] sepia-[0.1] transition-all duration-700 group-hover:scale-105 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} />
-                    <div className="absolute bottom-2 left-2">
-                        <span className={`font-mono text-[8px] border px-1.5 py-0.5 backdrop-blur-sm tracking-wider uppercase ${getCategoryTone(post.category)}`}>{post.category}</span>
-                    </div>
+                    <div className="absolute bottom-2 left-2 text-white"><span className="font-mono text-[8px] bg-ink/55 border border-white/30 px-1.5 py-0.5 backdrop-blur-sm tracking-wider uppercase">{post.category}</span></div>
                 </div>
                 
                 {/* 经典腰线打孔 - 尺寸改为 w-4 h-4 */}
@@ -51,11 +41,11 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
                 {/* 内容右侧 - 使用新的 jagged-right-round 样式 */}
                 <div className="flex-grow h-full bg-paper p-3 sm:p-4 flex flex-col relative jagged-right-round rounded-r-none border-r border-stone-200/50">
                     <div className="flex justify-between items-center mb-1">
-                            <span className="font-mono text-[9px] text-brand-rust/70 uppercase tracking-widest">Admit One</span>
+                            <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">Admit One</span>
                             <span className="font-mono text-[9px] text-stone-500 font-bold">{post.date}</span>
                     </div>
                     <div className="flex-grow flex flex-col justify-center mb-1 pr-6">
-                        <h3 className="font-serif font-medium text-ink text-sm sm:text-base leading-tight mb-1 group-hover:text-brand-rust transition-colors line-clamp-2">{post.title}</h3>
+                        <h3 className="font-serif font-medium text-ink text-sm sm:text-base leading-tight mb-1 group-hover:text-brand-accent transition-colors line-clamp-2">{post.title}</h3>
                         <p className="font-serif text-[10px] sm:text-xs text-stone-500 leading-snug line-clamp-1 opacity-80">{post.excerpt}</p>
                     </div>
                     <div className="mt-auto pt-2 border-t border-stone-100 flex items-end justify-between pr-2">

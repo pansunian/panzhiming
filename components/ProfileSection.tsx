@@ -133,7 +133,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                        {profileTags.map(tag => (
                          <span
                            key={tag}
-                           className="border border-white/25 rounded-sm px-2 py-1.5 text-[10px] font-bold tracking-wide text-white/90 text-center bg-white/[0.08] whitespace-nowrap"
+                           className="border border-white/25 rounded-sm px-2 py-1.5 text-[10px] font-bold tracking-wide text-white/90 text-center bg-white/5 whitespace-nowrap"
                          >
                            {tag}
                          </span>
