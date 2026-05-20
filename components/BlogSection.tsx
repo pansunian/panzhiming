@@ -44,7 +44,7 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
                             <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">Admit One</span>
                             <span className="font-mono text-[9px] text-stone-500 font-bold">{post.date}</span>
                     </div>
-                    <div className="flex-grow flex flex-col justify-center mb-1 pr-6">
+                    <div className="flex-grow flex flex-col justify-center mb-1 pr-3 sm:pr-4">
                         <h3 className="font-serif font-medium text-ink text-sm sm:text-base leading-tight mb-1 group-hover:text-brand-accent transition-colors line-clamp-2">{post.title}</h3>
                         <p className="font-serif text-[10px] sm:text-xs text-stone-500 leading-snug line-clamp-1 opacity-80">{post.excerpt}</p>
                     </div>
