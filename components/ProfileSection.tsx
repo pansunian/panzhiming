@@ -133,7 +133,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                        {profileTags.map(tag => (
                          <span
                            key={tag}
-                           className="border border-white/25 rounded-sm px-2 py-1.5 text-[10px] font-bold tracking-wide text-white/90 text-center bg-white/5 whitespace-nowrap"
+                           className="border border-white/25 rounded-sm px-2 py-1.5 text-[10px] font-bold tracking-wide text-white/90 text-center bg-white/[0.08] whitespace-nowrap"
                          >
                            {tag}
                          </span>
@@ -184,7 +184,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
         <div key={social.platform + social.url} className="relative group">
           {isWechat ? (
             <div className="flex items-center gap-2 cursor-pointer text-xs font-bold font-mono uppercase text-ink/70 group">
-            <div className="w-7 h-7 rounded-full border border-ink/30 flex items-center justify-center transition-colors group-hover:bg-[#8B7355] group-hover:border-[#8B7355]">
+            <div className="w-7 h-7 rounded-full border border-ink/30 flex items-center justify-center transition-colors group-hover:bg-brand-accent group-hover:border-brand-accent">
              <span className="transition-colors group-hover:text-white">
                   <Icon size={iconSize} className="transition-colors group-hover:text-paper" />
                  </span>
@@ -194,7 +194,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
           ) : (
             <a href={social.url} target="_blank" rel="noopener noreferrer"
               className="flex items-center gap-2 text-xs font-bold font-mono uppercase text-ink/70 hover:text-brand-accent transition-all">
-          <div className="w-7 h-7 rounded-full border border-ink/30 flex items-center justify-center transition-colors group-hover:bg-[#8B7355] group-hover:border-[#8B7355]">
+          <div className="w-7 h-7 rounded-full border border-ink/30 flex items-center justify-center transition-colors group-hover:bg-brand-accent group-hover:border-brand-accent">
                <span className="transition-colors group-hover:text-white">
               <Icon size={iconSize} className="transition-colors group-hover:text-paper" />
                </span>
