@@ -74,7 +74,6 @@ const getSocialConfig = (platform: string) => {
 
 export const ProfileSection: React.FC<Props> = ({ profile }) => {
   const [imgError, setImgError] = useState(false);
-  const profileTags = (profile.tags || []).slice(0, 3);
 
   // 优化头像 URL
   const avatarSrc = imgError 
@@ -128,18 +127,6 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                      <p className="font-serif text-sm leading-relaxed opacity-90 text-justify whitespace-pre-line">
                          {profile.bio}
                      </p>
-                     {profileTags.length > 0 && (
-                     <div className="grid grid-cols-3 gap-2 mt-5">
-                       {profileTags.map(tag => (
-                         <span
-                           key={tag}
-                           className="border border-white/25 rounded-sm px-2 py-1.5 text-[10px] font-bold tracking-wide text-white/90 text-center bg-white/5 whitespace-nowrap"
-                         >
-                           {tag}
-                         </span>
-                       ))}
-                     </div>
-                     )}
                  </div>
                  
                  {/* 底部导航 */}
