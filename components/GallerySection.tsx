@@ -13,6 +13,7 @@ interface Props {
 
 const GalleryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ group, index }) => {
     const [isLoaded, setIsLoaded] = useState(false);
+    const perforations = Array.from({ length: 7 });
     
     // 列表封面图不需要全尺寸，640px 足够清晰
     const optimizedCover = optimizeImage(group.coverUrl, 640);
@@ -24,15 +25,28 @@ const GalleryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ group, in
         >
             <div className="flex flex-col h-full relative">
                 {/* 封面区 */}
-                <div className="relative w-full aspect-[4/3] overflow-hidden rounded-t-sm bg-stone-200">
-                    <img 
-                        src={optimizedCover} 
-                        alt={group.title} 
-                        onLoad={() => setIsLoaded(true)} 
-                        className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} 
-                    />
-                    <div className="absolute top-4 left-4 bg-paper/95 text-ink text-[9px] font-mono px-2 py-1.5 shadow-sm uppercase tracking-widest">
-                        No. {group.ticketNumber}
+                <div className="relative w-full aspect-[4/3] overflow-hidden rounded-t-sm bg-ink p-2 shadow-sm">
+                    <div className="absolute left-1 top-3 bottom-3 z-10 flex flex-col justify-between pointer-events-none">
+                        {perforations.map((_, i) => (
+                            <span key={`l-${i}`} className="h-2 w-1.5 rounded-[1px] bg-paper/80" />
+                        ))}
+                    </div>
+                    <div className="absolute right-1 top-3 bottom-3 z-10 flex flex-col justify-between pointer-events-none">
+                        {perforations.map((_, i) => (
+                            <span key={`r-${i}`} className="h-2 w-1.5 rounded-[1px] bg-paper/80" />
+                        ))}
+                    </div>
+                    <div className="relative h-full w-full overflow-hidden bg-stone-200">
+                        <img 
+                            src={optimizedCover} 
+                            alt={group.title} 
+                            onLoad={() => setIsLoaded(true)} 
+                            className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} 
+                        />
+                        <div className="absolute inset-0 bg-ink/10 mix-blend-multiply pointer-events-none" />
+                    </div>
+                    <div className="absolute top-4 left-5 bg-paper/95 text-ink text-[9px] font-mono px-2 py-1.5 shadow-sm uppercase tracking-widest">
+                        Frame {String(index + 1).padStart(2, '0')}
                     </div>
                 </div>
                 
@@ -44,6 +58,7 @@ const GalleryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ group, in
                     
                     <div className="flex justify-between items-start mb-6 pt-2">
                         <div>
+                            <div className="font-mono text-[8px] uppercase tracking-[0.2em] text-stone-300 mb-2">No. {group.ticketNumber}</div>
                             <h3 className="font-serif font-medium text-lg leading-tight mb-2 group-hover:text-brand-accent transition-colors">{group.title}</h3>
                             <div className="flex items-center gap-1.5 opacity-50">
                                 <MapPin size={10} className="text-stone-500" />

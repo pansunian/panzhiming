@@ -9,7 +9,7 @@ export const Notch = ({ className = "" }: { className?: string }) => (
 
 // 虚线装饰
 export const DashedLine = ({ vertical = false, className = "" }: { vertical?: boolean, className?: string }) => (
-  <div className={`${vertical ? 'h-full w-[0px] border-l-2' : 'w-full h-[0px] border-t-2'} border-dashed border-stone-300 ${className}`} />
+  <div className={`${vertical ? 'h-full w-[0px] border-l' : 'w-full h-[0px] border-t'} border-dashed border-stone-300/70 ${className}`} />
 );
 
 export const TicketBase: React.FC<{ children: React.ReactNode; className?: string; color?: string; }> = ({ children, className = "", color = "bg-paper" }) => {

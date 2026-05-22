@@ -130,21 +130,25 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                  </div>
                  
                  {/* 底部导航 */}
-                 <div className="grid grid-cols-4 gap-1 text-center border-t border-white/20 pt-8">
-                     <Link to="/" className="group flex flex-col items-center">
-                         <span className="text-[9px] font-mono text-white/40 mb-1 tracking-wider">HOME</span>
+                 <div className="grid grid-cols-4 gap-2 text-center border-t border-white/20 pt-6">
+                     <Link to="/" className="group flex flex-col items-center border border-white/20 bg-white/[0.04] px-1 py-2 transition-colors hover:bg-white/10">
+                         <span className="text-[8px] font-mono text-white/35 mb-1 tracking-wider">01</span>
+                         <span className="text-[9px] font-mono text-white/45 mb-1 tracking-wider">HOME</span>
                          <span className="text-xs font-bold text-white group-hover:underline">首页</span>
                      </Link>
-                     <Link to="/gallery" className="group flex flex-col items-center">
-                         <span className="text-[9px] font-mono text-white/40 mb-1 tracking-wider">GALLERY</span>
+                     <Link to="/gallery" className="group flex flex-col items-center border border-white/20 bg-white/[0.04] px-1 py-2 transition-colors hover:bg-white/10">
+                         <span className="text-[8px] font-mono text-white/35 mb-1 tracking-wider">02</span>
+                         <span className="text-[9px] font-mono text-white/45 mb-1 tracking-wider">GALLERY</span>
                          <span className="text-xs font-bold text-white group-hover:underline">摄影</span>
                      </Link>
-                     <Link to="/thoughts" className="group flex flex-col items-center">
-                         <span className="text-[9px] font-mono text-white/40 mb-1 tracking-wider">NOTES</span>
+                     <Link to="/thoughts" className="group flex flex-col items-center border border-white/20 bg-white/[0.04] px-1 py-2 transition-colors hover:bg-white/10">
+                         <span className="text-[8px] font-mono text-white/35 mb-1 tracking-wider">03</span>
+                         <span className="text-[9px] font-mono text-white/45 mb-1 tracking-wider">NOTES</span>
                          <span className="text-xs font-bold text-white group-hover:underline">便签</span>
                      </Link>
-                     <Link to="/blog" className="group flex flex-col items-center">
-                         <span className="text-[9px] font-mono text-white/40 mb-1 tracking-wider">BLOG</span>
+                     <Link to="/blog" className="group flex flex-col items-center border border-white/20 bg-white/[0.04] px-1 py-2 transition-colors hover:bg-white/10">
+                         <span className="text-[8px] font-mono text-white/35 mb-1 tracking-wider">04</span>
+                         <span className="text-[9px] font-mono text-white/45 mb-1 tracking-wider">BLOG</span>
                          <span className="text-xs font-bold text-white group-hover:underline">博客</span>
                      </Link>
                  </div>
