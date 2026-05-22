@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BlogPost } from '../types';
-import { DashedLine, Notch } from './TicketUI';
+import { BarcodeSmall, DashedLine, Notch } from './TicketUI';
 import { ArrowRight } from 'lucide-react';
 import { optimizeImage } from '../utils/imageOptimizer';
 
@@ -10,17 +10,6 @@ interface Props {
   showViewAll?: boolean;
   title?: string;
 }
-
-const TicketBarcode = () => (
-    <div className="flex h-24 w-10 justify-between opacity-65">
-        {Array.from({ length: 14 }).map((_, i) => (
-            <span
-                key={i}
-                className={`h-full bg-ink ${i % 5 === 0 ? 'w-[3px]' : i % 3 === 0 ? 'w-[2px]' : 'w-px'}`}
-            />
-        ))}
-    </div>
-);
 
 const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) => {
     const [isLoaded, setIsLoaded] = useState(false);
@@ -33,43 +22,33 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
     return (
         <Link 
             to={`/blog/${post.id}`}
-            className="relative w-full h-40 sm:h-44 group cursor-pointer transition-all duration-300 hover:-translate-y-1 block"
+            className="relative w-full h-32 group cursor-pointer transition-all duration-300 hover:-translate-y-1 block"
         >
-            <div className="w-full h-full flex items-stretch relative bg-paper border border-stone-200/70 border-l-4 border-l-brand-accent overflow-visible shadow-sm">
-                <Notch className="!w-5 !h-5 -left-3 top-1/2 -translate-y-1/2" />
-                <Notch className="!w-5 !h-5 -right-3 top-1/2 -translate-y-1/2" />
-
-                <div className="w-[45%] h-full p-4 sm:p-5 flex flex-col justify-between min-w-0">
-                    <div>
-                        <div className="flex items-center justify-between gap-2 mb-3">
-                            <span className="font-mono text-[9px] text-stone-400 uppercase tracking-[0.18em]">Admit One</span>
-                            <span className="font-mono text-[8px] text-stone-400 font-bold whitespace-nowrap">NO.00{index + 1}</span>
-                        </div>
-                        <h3 className="font-serif font-medium text-ink text-[17px] sm:text-[18px] leading-tight mb-2 group-hover:text-brand-accent transition-colors line-clamp-2">{post.title}</h3>
-                        <p className="font-serif text-xs text-stone-500 leading-snug line-clamp-2 opacity-80">{post.excerpt}</p>
-                    </div>
-                    <div className="flex items-end justify-between gap-3 pt-3">
-                        <span className="font-mono text-[9px] text-brand-accent uppercase tracking-wider">{post.category}</span>
-                        <span className="font-mono text-[9px] text-stone-500 font-bold whitespace-nowrap">{post.date}</span>
-                    </div>
+            <div className="w-full h-full flex items-stretch">
+                <div className="w-36 sm:w-[38%] h-full relative overflow-hidden rounded-l-sm bg-stone-200 shrink-0">
+                    <img src={coverSrc} alt={post.title} onLoad={() => setIsLoaded(true)} className={`w-full h-full object-cover filter brightness-[0.95] contrast-[1.05] sepia-[0.1] transition-all duration-700 group-hover:scale-105 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} />
+                    <div className="absolute bottom-2 left-2 text-white"><span className="font-mono text-[8px] bg-ink/55 border border-white/30 px-1.5 py-0.5 backdrop-blur-sm tracking-wider uppercase">{post.category}</span></div>
                 </div>
-
-                <div className="w-[31%] h-full flex items-center justify-center px-2 sm:px-3 bg-paper-dark/30">
-                    <div className="w-full aspect-square overflow-hidden bg-stone-200">
-                        <img src={coverSrc} alt={post.title} onLoad={() => setIsLoaded(true)} className={`w-full h-full object-cover filter brightness-[0.96] contrast-[1.03] sepia-[0.08] transition-all duration-700 group-hover:scale-105 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} />
-                    </div>
-                </div>
-
-                <div className="relative w-px h-full z-20">
+                
+                <div className="relative w-0 flex flex-col items-center z-20">
                     <DashedLine vertical className="h-full border-stone-300 opacity-60" />
-                    <Notch className="!w-5 !h-5 -translate-x-1/2 -top-3 left-1/2" />
-                    <Notch className="!w-5 !h-5 -translate-x-1/2 -bottom-3 left-1/2" />
+                    <Notch className="!w-4 !h-4 -translate-x-1/2 -top-2 left-1/2" />
+                    <Notch className="!w-4 !h-4 -translate-x-1/2 -bottom-2 left-1/2" />
                 </div>
-
-                <div className="flex-1 min-w-[70px] h-full flex flex-col items-center justify-between py-4">
-                    <div className="bg-ink text-paper font-mono text-[6px] leading-none px-1.5 py-1 uppercase tracking-tight">PZM<br />COM</div>
-                    <TicketBarcode />
-                    <span className="font-mono text-[7px] text-stone-400 uppercase tracking-[0.18em] rotate-90 whitespace-nowrap">panzhiming.com</span>
+                
+                <div className="flex-grow h-full bg-paper p-3 sm:p-4 flex flex-col relative jagged-right-round rounded-r-none border-r border-stone-200/50">
+                    <div className="flex justify-between items-center mb-1">
+                            <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">Admit One</span>
+                            <span className="font-mono text-[9px] text-stone-500 font-bold">{post.date}</span>
+                    </div>
+                    <div className="flex-grow flex flex-col justify-center mb-1 pr-0 sm:pr-1">
+                        <h3 className="font-serif font-medium text-ink text-sm sm:text-base leading-tight mb-1 group-hover:text-brand-accent transition-colors line-clamp-2">{post.title}</h3>
+                        <p className="font-serif text-[10px] sm:text-xs text-stone-500 leading-snug line-clamp-1 opacity-80">{post.excerpt}</p>
+                    </div>
+                    <div className="mt-auto pt-2 border-t border-stone-100 flex items-end justify-between pr-2">
+                        <BarcodeSmall className="h-3 w-1/2 opacity-40" />
+                        <span className="font-mono text-[8px] text-stone-300">NO.00{index + 1}</span>
+                    </div>
                 </div>
             </div>
         </Link>
@@ -90,7 +69,7 @@ export const BlogSection: React.FC<Props> = ({ posts, showViewAll, title = "æ–‡ç
              </Link>
          )}
       </div>
-      <div className="flex flex-col gap-8 w-full">
+      <div className="flex flex-col gap-6 w-full">
         {posts.map((post, index) => <BlogCard key={post.id} post={post} index={index} />)}
       </div>
     </section>
