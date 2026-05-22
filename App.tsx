@@ -165,7 +165,7 @@ const App: React.FC = () => {
       <Route path="/" element={
         <MainLayout {...commonProps} hideNav isHome>
           <ProfileSection profile={profile} />
-          <div className="flex flex-col gap-10">
+          <div className="flex flex-col gap-8">
             <GallerySection title="纪实摄影" groups={photoGroups.length > 0 ? photoGroups.filter(g => g.featured).slice(0, 2) : []} onViewAll={photoGroups.length > 0} />
             <ThoughtSection thoughts={thoughts.length > 0 ? thoughts.filter(t => t.featured) : []} showViewAll={thoughts.length > 0} />
             <BlogSection title="推荐阅读" posts={posts.length > 0 ? posts.filter(p => p.featured).slice(0, 10) : []} showViewAll={posts.length > 0} />

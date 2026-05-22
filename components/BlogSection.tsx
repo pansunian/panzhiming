@@ -22,7 +22,7 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
     return (
         <Link 
             to={`/blog/${post.id}`}
-            className="relative block h-32 w-full cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_28px_rgba(36,33,29,0.08)] group"
+            className="relative w-full h-32 group cursor-pointer transition-all duration-300 hover:-translate-y-1 block"
         >
             <div className="w-full h-full flex items-stretch">
                 <div className="w-36 sm:w-[38%] h-full relative overflow-hidden rounded-l-sm bg-stone-200 shrink-0">
@@ -36,12 +36,9 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
                     <Notch className="!w-4 !h-4 -translate-x-1/2 -bottom-2 left-1/2" />
                 </div>
                 
-                <div className="flex-grow h-full bg-paper p-3 sm:p-4 flex flex-col relative jagged-right-round rounded-r-none border-r border-stone-200/50 ring-1 ring-stone-200/40">
-                    <div className="flex justify-between items-center gap-2 mb-1">
-                        <div className="flex min-w-0 items-center gap-1.5">
-                            <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest shrink-0">Admit One</span>
-                            <span className="hidden sm:inline font-mono text-[8px] text-brand-accent/70 uppercase tracking-[0.18em] truncate">/ {post.category}</span>
-                        </div>
+                <div className="flex-grow h-full bg-paper p-3 sm:p-4 flex flex-col relative jagged-right-round rounded-r-none border-r border-stone-200/50">
+                    <div className="flex justify-between items-center mb-1">
+                            <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">Admit One</span>
                             <span className="font-mono text-[9px] text-stone-500 font-bold">{post.date}</span>
                     </div>
                     <div className="flex-grow flex flex-col justify-center mb-1 pr-0 sm:pr-1">
@@ -50,7 +47,7 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
                     </div>
                     <div className="mt-auto pt-2 border-t border-stone-100 flex items-end justify-between pr-2">
                         <BarcodeSmall className="h-3 w-1/2 opacity-40" />
-                        <span className="font-mono text-[8px] text-stone-300 tracking-widest">ENTRY 00{index + 1}</span>
+                        <span className="font-mono text-[8px] text-stone-300">NO.00{index + 1}</span>
                     </div>
                 </div>
             </div>

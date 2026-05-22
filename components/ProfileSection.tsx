@@ -97,11 +97,6 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
             <div className="absolute bottom-12 left-8 right-8 text-white">
                  <h2 className="text-[10px] font-mono mb-3 tracking-[0.22em] uppercase opacity-75">PanZhiMing / 2026</h2>
                  <h1 className="text-[2.7rem] md:text-[2.35rem] font-serif font-normal tracking-normal leading-[1.08] mb-2">先见志明</h1>
-                 {profile.role && profile.role !== '...' && (
-                    <p className="max-w-[18rem] border-l border-white/35 pl-3 font-serif text-sm leading-relaxed text-white/85">
-                        {profile.role}
-                    </p>
-                 )}
             </div>
              <Link 
                 to="/aboutme"
@@ -129,7 +124,6 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                      </div>
                  </div>
                  <div className="mb-8 border-l-2 border-white/30 pl-4 py-1">
-                     <p className="mb-2 font-mono text-[8px] tracking-[0.24em] uppercase text-white/45">Personal Archive</p>
                      <p className="font-serif text-sm leading-relaxed opacity-90 text-justify whitespace-pre-line">
                          {profile.bio}
                      </p>

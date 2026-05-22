@@ -44,9 +44,6 @@ const GalleryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ group, in
                     
                     <div className="flex justify-between items-start mb-6 pt-2">
                         <div>
-                            <div className="mb-2 font-mono text-[8px] uppercase tracking-[0.22em] text-stone-300">
-                                Photo Archive / No. {group.ticketNumber}
-                            </div>
                             <h3 className="font-serif font-medium text-lg leading-tight mb-2 group-hover:text-brand-accent transition-colors">{group.title}</h3>
                             <div className="flex items-center gap-1.5 opacity-50">
                                 <MapPin size={10} className="text-stone-500" />
