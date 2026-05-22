@@ -133,19 +133,19 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                  <div className="grid grid-cols-4 gap-0 text-center border-y border-dashed border-white/25 py-3">
                      <Link to="/" className="group relative flex flex-col items-center transition-transform duration-300 hover:-translate-y-0.5 after:absolute after:right-0 after:top-1 after:h-8 after:border-r after:border-dashed after:border-white/20">
                          <span className="text-[9px] font-mono text-white/40 mb-1 tracking-wider">HOME</span>
-                         <span className="font-serif text-[13px] font-medium leading-none text-white group-hover:underline">首页</span>
+                         <span className="font-nav-link text-[13px] leading-none text-white group-hover:underline">首页</span>
                      </Link>
                      <Link to="/gallery" className="group relative flex flex-col items-center transition-transform duration-300 hover:-translate-y-0.5 after:absolute after:right-0 after:top-1 after:h-8 after:border-r after:border-dashed after:border-white/20">
                          <span className="text-[9px] font-mono text-white/40 mb-1 tracking-wider">GALLERY</span>
-                         <span className="font-serif text-[13px] font-medium leading-none text-white group-hover:underline">摄影</span>
+                         <span className="font-nav-link text-[13px] leading-none text-white group-hover:underline">摄影</span>
                      </Link>
                      <Link to="/thoughts" className="group relative flex flex-col items-center transition-transform duration-300 hover:-translate-y-0.5 after:absolute after:right-0 after:top-1 after:h-8 after:border-r after:border-dashed after:border-white/20">
                          <span className="text-[9px] font-mono text-white/40 mb-1 tracking-wider">NOTES</span>
-                         <span className="font-serif text-[13px] font-medium leading-none text-white group-hover:underline">便签</span>
+                         <span className="font-nav-link text-[13px] leading-none text-white group-hover:underline">便签</span>
                      </Link>
                      <Link to="/blog" className="group flex flex-col items-center transition-transform duration-300 hover:-translate-y-0.5">
                          <span className="text-[9px] font-mono text-white/40 mb-1 tracking-wider">BLOG</span>
-                         <span className="font-serif text-[13px] font-medium leading-none text-white group-hover:underline">博客</span>
+                         <span className="font-nav-link text-[13px] leading-none text-white group-hover:underline">博客</span>
                      </Link>
                  </div>
              </div>
