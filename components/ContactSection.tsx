@@ -66,12 +66,9 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
                      </div>
                 </div>
 
-                <div className="font-serif text-sm text-stone-500 mb-8 italic w-3/4 leading-7">
-                    <p>如果想联系我请留下一张便签...</p>
-                    <p className="not-italic text-[11px] leading-6 mt-3 text-stone-400">
-                        欢迎聊校园营销、AI 工具、内容表达、Notion 建站，以及普通人怎么把自己做成一个更清楚的标签。
-                    </p>
-                </div>
+                <p className="font-serif text-sm text-stone-500 mb-8 italic w-3/4">
+                    如果想联系我请留下一张便签...
+                </p>
 
                 {status === 'success' ? (
                     <div className="flex flex-col items-center justify-center py-12 space-y-4 animate-in fade-in slide-in-from-bottom-4">

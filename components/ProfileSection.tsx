@@ -81,69 +81,69 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
     : optimizeImage(profile.avatarUrl || FALLBACK_AVATAR, 640);
 
   return (
-    <div className="flex justify-center w-full mb-16">
+    <div className="flex justify-center w-full mb-12">
       <TicketBase className="w-full rounded-2xl flex flex-col">
         {/* 顶部海报区 */}
-        <div className="relative aspect-[3/4] w-full rounded-t-2xl overflow-hidden bg-stone-900">
+        <div className="relative aspect-[5/6] w-full rounded-t-2xl overflow-hidden bg-stone-900">
             <img 
                 src={avatarSrc} 
                 alt="Profile" 
                 className="w-full h-full object-cover filter brightness-[0.85] contrast-110 transition-opacity duration-500" 
                 onError={() => setImgError(true)}
             />
-            <div className="absolute top-8 left-0 w-full text-center text-white mix-blend-overlay opacity-80">
-                <p className="font-mono text-[10px] tracking-[0.6em] uppercase">Life Archives</p>
+            <div className="absolute top-6 left-0 w-full text-center text-white mix-blend-overlay opacity-80">
+                <p className="font-mono text-[9px] tracking-[0.55em] uppercase">Life Archives</p>
             </div>
-            <div className="absolute bottom-12 left-8 right-8 text-white">
-                 <h2 className="text-[10px] font-mono mb-3 tracking-[0.22em] uppercase opacity-75">PanZhiMing / 2026</h2>
-                 <h1 className="text-[2.7rem] md:text-[2.35rem] font-serif font-normal tracking-normal leading-[1.08] mb-2">先见志明</h1>
+            <div className="absolute bottom-10 left-7 right-7 text-white">
+                 <h2 className="text-[9px] font-mono mb-2 tracking-[0.22em] uppercase opacity-75">PanZhiMing / 2026</h2>
+                 <h1 className="text-[2.45rem] md:text-[2.25rem] font-serif font-normal tracking-normal leading-[1.05] mb-1">先见志明</h1>
             </div>
              <Link 
                 to="/aboutme"
-                className="absolute bottom-4 right-4 text-white/70 text-[10px] font-mono border border-white/30 px-3 py-1 rounded-full hover:bg-white/10 hover:text-white transition-all cursor-pointer backdrop-blur-sm"
+                className="absolute bottom-4 right-4 text-white/70 text-[9px] font-mono border border-white/30 px-2.5 py-1 rounded-full hover:bg-white/10 hover:text-white transition-all cursor-pointer backdrop-blur-sm"
             >
                 我的说明书 &rarr;
             </Link>
         </div>
 
         {/* 核心信息区 */}
-        <div className="relative bg-brand-accent text-white p-8">
+        <div className="relative bg-brand-accent text-white px-7 py-6">
              <Notch className="-left-4 top-0 -translate-y-1/2" />
              <Notch className="-right-4 top-0 -translate-y-1/2" />
              <DashedLine className="absolute top-0 left-4 right-4 border-white/30" />
              
-             <div className="mt-4">
-                 <div className="flex justify-between items-end mb-6">
+             <div className="mt-2">
+                 <div className="flex justify-between items-end mb-4">
                      <div>
-                         <p className="text-[10px] opacity-70 tracking-widest mb-1 uppercase">Name</p>
-                         <p className="text-[1.45rem] font-serif font-medium leading-tight">{profile.name}</p>
+                         <p className="text-[9px] opacity-70 tracking-widest mb-1 uppercase">Name</p>
+                         <p className="text-[1.35rem] font-serif font-medium leading-tight">{profile.name}</p>
                      </div>
                     <div className="text-right self-center">
-                         <p className="text-[10px] opacity-70 tracking-widest mb-1 uppercase">City</p>
-                         <p className="font-mono text-sm">{profile.location}</p>
+                         <p className="text-[9px] opacity-70 tracking-widest mb-1 uppercase">City</p>
+                         <p className="font-mono text-xs">{profile.location}</p>
                      </div>
                  </div>
-                 <div className="mb-8 border-l-2 border-white/30 pl-4 py-1">
-                     <p className="font-serif text-sm leading-relaxed opacity-90 text-justify whitespace-pre-line">
+                 <div className="mb-6 border-l border-white/30 pl-4 py-0.5">
+                     <p className="font-serif text-[13px] leading-6 opacity-90 text-justify whitespace-pre-line">
                          {profile.bio}
                      </p>
                  </div>
                  
                  {/* 底部导航 */}
-                 <div className="grid grid-cols-4 gap-1 text-center border-t border-white/20 pt-8">
-                     <Link to="/" className="group flex flex-col items-center transition-transform duration-300 hover:-translate-y-1">
+                 <div className="grid grid-cols-4 gap-0 text-center border-y border-dashed border-white/25 py-3">
+                     <Link to="/" className="group relative flex flex-col items-center transition-transform duration-300 hover:-translate-y-0.5 after:absolute after:right-0 after:top-1 after:h-8 after:border-r after:border-dashed after:border-white/20">
                          <span className="text-[9px] font-mono text-white/40 mb-1 tracking-wider">HOME</span>
                          <span className="text-xs font-bold text-white group-hover:underline">首页</span>
                      </Link>
-                     <Link to="/gallery" className="group flex flex-col items-center transition-transform duration-300 hover:-translate-y-1">
+                     <Link to="/gallery" className="group relative flex flex-col items-center transition-transform duration-300 hover:-translate-y-0.5 after:absolute after:right-0 after:top-1 after:h-8 after:border-r after:border-dashed after:border-white/20">
                          <span className="text-[9px] font-mono text-white/40 mb-1 tracking-wider">GALLERY</span>
                          <span className="text-xs font-bold text-white group-hover:underline">摄影</span>
                      </Link>
-                     <Link to="/thoughts" className="group flex flex-col items-center transition-transform duration-300 hover:-translate-y-1">
+                     <Link to="/thoughts" className="group relative flex flex-col items-center transition-transform duration-300 hover:-translate-y-0.5 after:absolute after:right-0 after:top-1 after:h-8 after:border-r after:border-dashed after:border-white/20">
                          <span className="text-[9px] font-mono text-white/40 mb-1 tracking-wider">NOTES</span>
                          <span className="text-xs font-bold text-white group-hover:underline">便签</span>
                      </Link>
-                     <Link to="/blog" className="group flex flex-col items-center transition-transform duration-300 hover:-translate-y-1">
+                     <Link to="/blog" className="group flex flex-col items-center transition-transform duration-300 hover:-translate-y-0.5">
                          <span className="text-[9px] font-mono text-white/40 mb-1 tracking-wider">BLOG</span>
                          <span className="text-xs font-bold text-white group-hover:underline">博客</span>
                      </Link>
@@ -152,13 +152,13 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
         </div>
 
         {/* 社交链接与条形码（白色区域） */}
-        <div className="bg-paper p-8 relative rounded-b-2xl">
+        <div className="bg-paper px-7 py-5 relative rounded-b-2xl">
              <Notch className="-left-4 top-0 -translate-y-1/2" />
              <Notch className="-right-4 top-0 -translate-y-1/2" />
              <DashedLine className="absolute top-0 left-4 right-4" />
              
-        <div className="mt-4 flex flex-col items-center gap-10">
-  <div className="flex flex-wrap justify-center gap-x-6 gap-y-5 px-2">
+        <div className="mt-2 flex flex-col items-center gap-6">
+  <div className="flex flex-wrap justify-center items-center gap-x-5 gap-y-3 px-1">
     {profile.socials.map(social => {
       const { label, icon: Icon } = getSocialConfig(social.platform);
       const isWechat = social.platform === 'WECHAT';
@@ -171,7 +171,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
         <div key={social.platform + social.url} className="relative group">
           {isWechat ? (
             <div className="flex items-center gap-2 cursor-pointer text-xs font-bold font-mono uppercase text-ink/70 group">
-            <div className="w-7 h-7 rounded-full border border-ink/30 flex items-center justify-center transition-colors group-hover:bg-brand-accent group-hover:border-brand-accent">
+            <div className="w-6 h-6 rounded-full border border-ink/30 flex items-center justify-center transition-colors group-hover:bg-brand-accent group-hover:border-brand-accent">
              <span className="transition-colors group-hover:text-white">
                   <Icon size={iconSize} className="transition-colors group-hover:text-paper" />
                  </span>
@@ -181,7 +181,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
           ) : (
             <a href={social.url} target="_blank" rel="noopener noreferrer"
               className="flex items-center gap-2 text-xs font-bold font-mono uppercase text-ink/70 hover:text-brand-accent transition-all">
-          <div className="w-7 h-7 rounded-full border border-ink/30 flex items-center justify-center transition-colors group-hover:bg-brand-accent group-hover:border-brand-accent">
+          <div className="w-6 h-6 rounded-full border border-ink/30 flex items-center justify-center transition-colors group-hover:bg-brand-accent group-hover:border-brand-accent">
                <span className="transition-colors group-hover:text-white">
               <Icon size={iconSize} className="transition-colors group-hover:text-paper" />
                </span>
@@ -208,8 +208,8 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                  
                  {/* 条形码修正：确保容器居中 */}
                  <div className="w-full flex flex-col items-center opacity-40">
-                    <BarcodeHorizontal className="h-8 w-48 mix-blend-multiply" />
-                    <p className="text-[9px] font-mono mt-3 tracking-[0.4em] uppercase text-center">PanZhiMing.com</p>
+                    <BarcodeHorizontal className="h-6 w-44 mix-blend-multiply" />
+                    <p className="text-[8px] font-mono mt-2 tracking-[0.35em] uppercase text-center">PanZhiMing.com</p>
                  </div>
              </div>
         </div>
