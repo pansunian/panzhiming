@@ -169,7 +169,7 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
 
     switch (block.type) {
         case 'paragraph':
-            return <p className="mb-[1.2em] leading-loose text-ink/90 font-sans text-[15px] text-justify min-h-[1em] first:mt-0"><RichText content={block.content} /></p>;
+            return <p className="mb-[1.2em] leading-loose text-ink/90 font-sans text-[16px] md:text-[15px] text-justify min-h-[1em] first:mt-0"><RichText content={block.content} /></p>;
         case 'heading_1':
             return <h2 className="font-serif font-medium text-xl mt-10 mb-6 border-b border-stone-100 pb-2 first:mt-0"><RichText content={block.content} /></h2>;
         case 'heading_2':
@@ -179,18 +179,18 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
         case 'heading_4':
             return <h5 className="font-serif font-medium text-sm mt-5 mb-2 first:mt-0"><RichText content={block.content} /></h5>;
         case 'quote':
-            return <blockquote className="border-l-4 border-stone-200 pl-6 my-8 italic text-stone-500 font-sans text-[15px] leading-loose first:mt-0"><RichText content={block.content} /></blockquote>;
+            return <blockquote className="border-l-4 border-stone-200 pl-6 my-8 italic text-stone-500 font-sans text-[16px] md:text-[15px] leading-loose first:mt-0"><RichText content={block.content} /></blockquote>;
         case 'callout':
             return (
                 <div className="bg-stone-50/80 border border-stone-100 p-5 rounded-lg my-8 flex gap-4 items-start shadow-sm first:mt-0">
                     {block.icon && <span className="text-xl shrink-0">{block.icon.emoji || '💡'}</span>}
-                    <div className="font-sans text-sm leading-relaxed text-stone-600"><RichText content={block.content} /></div>
+                    <div className="font-sans text-[15px] md:text-sm leading-relaxed text-stone-600"><RichText content={block.content} /></div>
                 </div>
             );
         case 'list_item':
             const bullet = block.listType === 'ol' ? 'counter' : '•';
             return (
-                <div className="flex gap-3 mb-3 pl-2 font-sans text-[15px] leading-relaxed first:mt-0">
+                <div className="flex gap-3 mb-3 pl-2 font-sans text-[16px] md:text-[15px] leading-relaxed first:mt-0">
                     <span className="text-stone-300 shrink-0 font-mono text-sm">{bullet === 'counter' ? '' : bullet}</span>
                     <div className="text-ink/90"><RichText content={block.content} /></div>
                 </div>
