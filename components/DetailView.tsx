@@ -52,6 +52,24 @@ const getInlineLinkLabel = (value: string) => {
     }
 };
 
+const isGithubUrl = (value: string) => {
+    try {
+        return new URL(value).hostname.includes('github.com');
+    } catch {
+        return false;
+    }
+};
+
+const getGithubMentionLabel = (text: string, url: string) => {
+    if (text && !text.includes('github.com')) return text.replace(/^@/, '');
+    try {
+        const segments = new URL(url).pathname.split('/').filter(Boolean);
+        return segments[1] || segments[0] || 'GitHub';
+    } catch {
+        return text || 'GitHub';
+    }
+};
+
 // 富文本渲染组件
 const RichText: React.FC<{ content: any[] }> = ({ content }) => {
     if (!content) return null;
@@ -69,8 +87,14 @@ const RichText: React.FC<{ content: any[] }> = ({ content }) => {
 
                 const isMention = type === 'mention';
                 const mentionHref = mention?.url || href;
+                const isGithubMention = isMention && mentionHref && isGithubUrl(mentionHref);
 
-                const element = isMention && mentionHref ? (
+                const element = isGithubMention ? (
+                    <a key={i} href={mentionHref} target="_blank" rel="noopener noreferrer" className={`${className} inline-flex items-baseline gap-1 align-baseline text-ink underline decoration-ink/45 decoration-1 underline-offset-4 transition-colors hover:text-brand-accent hover:decoration-brand-accent/45`}>
+                        <Github size={18} className="relative top-[3px] shrink-0 fill-current stroke-current" />
+                        <span>{getGithubMentionLabel(text, mentionHref)}</span>
+                    </a>
+                ) : isMention && mentionHref ? (
                     <a key={i} href={mentionHref} target="_blank" rel="noopener noreferrer" className={`${className} mx-0.5 inline-flex max-w-full items-center gap-1 rounded-sm border border-brand-accent/20 bg-brand-accent/5 px-1.5 py-0.5 align-baseline font-mono text-[0.82em] leading-none text-brand-accent no-underline transition-colors hover:bg-brand-accent/10`}>
                         <span className="truncate">{getInlineLinkLabel(text || mentionHref)}</span>
                         <ExternalLink size={10} className="shrink-0 opacity-60" />
