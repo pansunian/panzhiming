@@ -45,7 +45,7 @@ module.exports = async function handler(req, res) {
     const transformBlock = (block) => {
       if (block.type === 'paragraph') return { type: 'paragraph', content: parseRichText(block.paragraph.rich_text) };
       else if (block.type.startsWith('heading_')) { const type = block.type; return { type, content: parseRichText(block[type]?.rich_text) }; }
-      else if (block.type === 'callout') return { type: 'callout', icon: block.callout.icon, content: parseRichText(block.callout.rich_text) };
+      else if (block.type === 'callout') return { type: 'callout', icon: block.callout.icon, color: block.callout.color, content: parseRichText(block.callout.rich_text) };
       else if (block.type === 'quote') return { type: 'quote', content: parseRichText(block.quote.rich_text) };
       else if (block.type === 'bulleted_list_item' || block.type === 'numbered_list_item') return { type: 'list_item', listType: block.type === 'numbered_list_item' ? 'ol' : 'ul', content: parseRichText(block[block.type].rich_text) };
       else if (block.type === 'toggle') return { type: 'toggle', content: parseRichText(block.toggle.rich_text), hasChildren: block.has_children };

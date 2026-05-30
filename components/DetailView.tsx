@@ -197,6 +197,22 @@ const LinkPreviewCard: React.FC<{ url: string; caption?: any[]; variant?: 'bookm
     );
 };
 
+const getNotionCalloutBg = (color?: string) => {
+    const backgrounds: Record<string, string> = {
+        gray_background: 'bg-[#f1f1ef]',
+        brown_background: 'bg-[#f4eeee]',
+        orange_background: 'bg-[#faebdd]',
+        yellow_background: 'bg-[#fbf3db]',
+        green_background: 'bg-[#edf3ec]',
+        blue_background: 'bg-[#e7f3f8]',
+        purple_background: 'bg-[#f6f3f8]',
+        pink_background: 'bg-[#f9f2f5]',
+        red_background: 'bg-[#faecec]',
+    };
+
+    return backgrounds[color || ''] || 'bg-[#f7f6f3]';
+};
+
 const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
     const [aspectClass, setAspectClass] = useState("aspect-[3/2]");
     const [isLoaded, setIsLoaded] = useState(false);
@@ -258,12 +274,12 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
         case 'heading_4':
             return <h5 className="font-serif font-medium text-sm mt-5 mb-2 first:mt-0"><RichText content={block.content} /></h5>;
         case 'quote':
-            return <blockquote className="border-l-4 border-stone-200 pl-6 my-8 italic text-stone-500 font-sans text-[16px] md:text-[15px] leading-loose first:mt-0"><RichText content={block.content} /></blockquote>;
+            return <blockquote className="border-l-[3px] border-stone-300 pl-3 py-[1px] my-4 font-sans text-[16px] md:text-[15px] leading-loose text-ink/90 first:mt-0"><RichText content={block.content} /></blockquote>;
         case 'callout':
             return (
-                <div className="w-full bg-stone-50/70 border border-stone-100 px-3.5 py-3 rounded-md my-6 flex gap-3 items-start first:mt-0">
-                    {block.icon && <span className="text-base leading-6 shrink-0">{block.icon.emoji || '💡'}</span>}
-                    <div className="font-sans text-[14px] leading-6 text-stone-600"><RichText content={block.content} /></div>
+                <div className={`w-full ${getNotionCalloutBg(block.color)} px-4 py-3 rounded-[3px] my-4 flex gap-3 items-start first:mt-0`}>
+                    {block.icon && <span className="w-6 shrink-0 text-[18px] leading-7">{block.icon.emoji || '💡'}</span>}
+                    <div className="font-sans text-[16px] md:text-[15px] leading-7 text-ink/90"><RichText content={block.content} /></div>
                 </div>
             );
         case 'list_item':
