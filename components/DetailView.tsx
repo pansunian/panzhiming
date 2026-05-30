@@ -95,12 +95,12 @@ const RichText: React.FC<{ content: any[] }> = ({ content }) => {
                         <span>{getGithubMentionLabel(text, mentionHref)}</span>
                     </a>
                 ) : isMention && mentionHref ? (
-                    <a key={i} href={mentionHref} target="_blank" rel="noopener noreferrer" className={`${className} mx-0.5 inline-flex max-w-full items-center gap-1 rounded-sm border border-brand-accent/20 bg-brand-accent/5 px-1.5 py-0.5 align-baseline font-mono text-[0.82em] leading-none text-brand-accent no-underline transition-colors hover:bg-brand-accent/10`}>
+                    <a key={i} href={mentionHref} target="_blank" rel="noopener noreferrer" className={`${className} mx-0.5 inline-flex max-w-full items-center gap-1 rounded-sm border border-brand-accent/15 bg-brand-accent/[0.04] px-1 py-[1px] align-baseline font-mono text-[0.78em] leading-none text-brand-accent no-underline transition-colors hover:bg-brand-accent/10`}>
                         <span className="truncate">{getInlineLinkLabel(text || mentionHref)}</span>
-                        <ExternalLink size={10} className="shrink-0 opacity-60" />
+                        <ExternalLink size={9} className="shrink-0 opacity-55" />
                     </a>
                 ) : href ? (
-                    <a key={i} href={href} target="_blank" rel="noopener noreferrer" className={`${className} text-brand-accent hover:text-brand-accent/80 transition-colors underline decoration-brand-accent/30 decoration-1 underline-offset-4`}>
+                    <a key={i} href={href} target="_blank" rel="noopener noreferrer" className={`${className} text-[#8a6d50] hover:text-ink transition-colors underline decoration-[#8a6d50]/35 decoration-1 underline-offset-4`}>
                         {text}
                     </a>
                 ) : (
@@ -179,19 +179,19 @@ const LinkPreviewCard: React.FC<{ url: string; caption?: any[]; variant?: 'bookm
     const typeLabel = variant === 'embed' ? 'Embedded Link' : variant === 'link_preview' ? 'Link Preview' : variant === 'file' ? 'File Attachment' : 'External Link';
 
     return (
-        <a href={url} target="_blank" rel="noopener noreferrer" className="block border border-stone-200 rounded-lg p-4 my-8 hover:bg-stone-50 transition-all group overflow-hidden first:mt-0">
-            <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-stone-100 rounded flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                    <Icon size={18} className="text-stone-500" />
+        <a href={url} target="_blank" rel="noopener noreferrer" className="block border border-stone-200/80 rounded-md px-3 py-2.5 my-5 hover:bg-stone-50/70 transition-colors group overflow-hidden first:mt-0">
+            <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-stone-100/80 rounded flex items-center justify-center shrink-0">
+                    <Icon size={15} className="text-stone-500" />
                 </div>
                 <div className="min-w-0 flex-1">
-                    <p className="font-sans font-medium text-sm truncate text-ink">{label}</p>
-                    <p className="font-mono text-[10px] text-stone-400 truncate mt-1 uppercase tracking-wider">{typeLabel}</p>
+                    <p className="font-sans font-medium text-[13px] leading-tight truncate text-ink">{label}</p>
+                    <p className="font-mono text-[8px] text-stone-400 truncate mt-0.5 uppercase tracking-wider">{typeLabel}</p>
                     {caption && caption.length > 0 && (
-                        <p className="font-sans text-xs text-stone-500 mt-2 line-clamp-2"><RichText content={caption} /></p>
+                        <p className="font-sans text-[11px] leading-snug text-stone-500 mt-1 line-clamp-1"><RichText content={caption} /></p>
                     )}
                 </div>
-                <ExternalLink size={14} className="text-stone-300 shrink-0 group-hover:text-brand-accent transition-colors" />
+                <ExternalLink size={12} className="text-stone-300 shrink-0 group-hover:text-brand-accent transition-colors" />
             </div>
         </a>
     );
@@ -261,9 +261,9 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
             return <blockquote className="border-l-4 border-stone-200 pl-6 my-8 italic text-stone-500 font-sans text-[16px] md:text-[15px] leading-loose first:mt-0"><RichText content={block.content} /></blockquote>;
         case 'callout':
             return (
-                <div className="bg-stone-50/80 border border-stone-100 p-5 rounded-lg my-8 flex gap-4 items-start shadow-sm first:mt-0">
-                    {block.icon && <span className="text-xl shrink-0">{block.icon.emoji || '💡'}</span>}
-                    <div className="font-sans text-[15px] md:text-sm leading-relaxed text-stone-600"><RichText content={block.content} /></div>
+                <div className="w-full bg-stone-50/70 border border-stone-100 px-3.5 py-3 rounded-md my-6 flex gap-3 items-start first:mt-0">
+                    {block.icon && <span className="text-base leading-6 shrink-0">{block.icon.emoji || '💡'}</span>}
+                    <div className="font-sans text-[14px] leading-6 text-stone-600"><RichText content={block.content} /></div>
                 </div>
             );
         case 'list_item':
