@@ -41,13 +41,24 @@ const COLOR_MAP: Record<string, string> = {
     'red_background': 'bg-[#fbe4e4] px-1 rounded-sm',
 };
 
+const getInlineLinkLabel = (value: string) => {
+    try {
+        const parsed = new URL(value);
+        const path = parsed.pathname.replace(/^\/|\/$/g, '');
+        if (parsed.hostname.includes('github.com') && path) return path;
+        return parsed.hostname.replace(/^www\./, '');
+    } catch {
+        return value;
+    }
+};
+
 // 富文本渲染组件
 const RichText: React.FC<{ content: any[] }> = ({ content }) => {
     if (!content) return null;
     return (
         <>
             {content.map((part, i) => {
-                const { annotations, text, href } = part;
+                const { annotations, text, href, type, mention } = part;
                 let className = "";
                 if (annotations.bold) className += " font-bold";
                 if (annotations.italic) className += " italic";
@@ -56,7 +67,15 @@ const RichText: React.FC<{ content: any[] }> = ({ content }) => {
                 if (annotations.code) className += " font-mono bg-stone-100 text-[#e03e3e] px-1.5 py-0.5 rounded text-[0.9em]";
                 if (annotations.color && COLOR_MAP[annotations.color]) className += ` ${COLOR_MAP[annotations.color]}`;
 
-                const element = href ? (
+                const isMention = type === 'mention';
+                const mentionHref = mention?.url || href;
+
+                const element = isMention && mentionHref ? (
+                    <a key={i} href={mentionHref} target="_blank" rel="noopener noreferrer" className={`${className} mx-0.5 inline-flex max-w-full items-center gap-1 rounded-sm border border-brand-accent/20 bg-brand-accent/5 px-1.5 py-0.5 align-baseline font-mono text-[0.82em] leading-none text-brand-accent no-underline transition-colors hover:bg-brand-accent/10`}>
+                        <span className="truncate">{getInlineLinkLabel(text || mentionHref)}</span>
+                        <ExternalLink size={10} className="shrink-0 opacity-60" />
+                    </a>
+                ) : href ? (
                     <a key={i} href={href} target="_blank" rel="noopener noreferrer" className={`${className} text-brand-accent hover:text-brand-accent/80 transition-colors underline decoration-brand-accent/30 decoration-1 underline-offset-4`}>
                         {text}
                     </a>

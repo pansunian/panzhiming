@@ -30,7 +30,16 @@ module.exports = async function handler(req, res) {
 
     const parseRichText = (richTextArray) => {
       if (!richTextArray) return [];
-      return richTextArray.map(t => ({ text: t.plain_text, annotations: t.annotations, href: t.href }));
+      return richTextArray.map(t => ({
+        type: t.type,
+        text: t.plain_text,
+        annotations: t.annotations,
+        href: t.href,
+        mention: t.type === 'mention' ? {
+          type: t.mention?.type,
+          url: t.mention?.link_preview?.url || t.href || ''
+        } : null
+      }));
     };
 
     const transformBlock = (block) => {
