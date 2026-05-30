@@ -90,17 +90,17 @@ const RichText: React.FC<{ content: any[] }> = ({ content }) => {
                 const isGithubMention = isMention && mentionHref && isGithubUrl(mentionHref);
 
                 const element = isGithubMention ? (
-                    <a key={i} href={mentionHref} target="_blank" rel="noopener noreferrer" className={`${className} inline-flex items-baseline gap-1 align-baseline text-ink underline decoration-ink/45 decoration-1 underline-offset-4 transition-colors hover:text-brand-accent hover:decoration-brand-accent/45`}>
+                    <a key={i} href={mentionHref} target="_blank" rel="noopener noreferrer" className={`${className} inline-flex items-baseline gap-1 align-baseline text-ink underline decoration-ink/40 decoration-1 underline-offset-4 transition-colors hover:text-ink/70 hover:decoration-ink/55`}>
                         <Github size={18} className="relative top-[3px] shrink-0 fill-current stroke-current" />
                         <span>{getGithubMentionLabel(text, mentionHref)}</span>
                     </a>
                 ) : isMention && mentionHref ? (
-                    <a key={i} href={mentionHref} target="_blank" rel="noopener noreferrer" className={`${className} mx-0.5 inline-flex max-w-full items-center gap-1 rounded-sm border border-brand-accent/15 bg-brand-accent/[0.04] px-1 py-[1px] align-baseline font-mono text-[0.78em] leading-none text-brand-accent no-underline transition-colors hover:bg-brand-accent/10`}>
+                    <a key={i} href={mentionHref} target="_blank" rel="noopener noreferrer" className={`${className} mx-0.5 inline-flex max-w-full items-center gap-1 rounded-sm border border-stone-300/60 bg-stone-100/60 px-1 py-[1px] align-baseline font-mono text-[0.78em] leading-none text-ink/80 no-underline transition-colors hover:bg-stone-100`}>
                         <span className="truncate">{getInlineLinkLabel(text || mentionHref)}</span>
                         <ExternalLink size={9} className="shrink-0 opacity-55" />
                     </a>
                 ) : href ? (
-                    <a key={i} href={href} target="_blank" rel="noopener noreferrer" className={`${className} text-[#8a6d50] hover:text-ink transition-colors underline decoration-[#8a6d50]/35 decoration-1 underline-offset-4`}>
+                    <a key={i} href={href} target="_blank" rel="noopener noreferrer" className={`${className} text-ink/90 hover:text-ink transition-colors underline decoration-ink/35 decoration-1 underline-offset-4`}>
                         {text}
                     </a>
                 ) : (
@@ -191,7 +191,7 @@ const LinkPreviewCard: React.FC<{ url: string; caption?: any[]; variant?: 'bookm
                         <p className="font-sans text-[11px] leading-snug text-stone-500 mt-1 line-clamp-1"><RichText content={caption} /></p>
                     )}
                 </div>
-                <ExternalLink size={12} className="text-stone-300 shrink-0 group-hover:text-brand-accent transition-colors" />
+                <ExternalLink size={12} className="text-stone-300 shrink-0 group-hover:text-stone-500 transition-colors" />
             </div>
         </a>
     );
