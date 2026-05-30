@@ -321,7 +321,7 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
                 </div>
             );
         case 'divider':
-            return <DashedLine className="my-12 opacity-30 first:mt-0" />;
+            return <DashedLine className="my-6 opacity-25 first:mt-0" />;
         case 'image':
             // 博客内嵌图片优化
             const optimizedContentImg = optimizeImage(block.src, 960);
