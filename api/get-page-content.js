@@ -42,6 +42,10 @@ module.exports = async function handler(req, res) {
       else if (block.type === 'toggle') return { type: 'toggle', content: parseRichText(block.toggle.rich_text), hasChildren: block.has_children };
       else if (block.type === 'image') { const src = block.image.type === 'external' ? block.image.external.url : block.image.file.url; return { type: 'image', src, caption: parseRichText(block.image.caption) }; }
       else if (block.type === 'bookmark') return { type: 'bookmark', url: block.bookmark.url, caption: parseRichText(block.bookmark.caption) };
+      else if (block.type === 'embed') return { type: 'embed', url: block.embed.url, caption: parseRichText(block.embed.caption) };
+      else if (block.type === 'link_preview') return { type: 'link_preview', url: block.link_preview.url };
+      else if (block.type === 'code') return { type: 'code', language: block.code.language, content: parseRichText(block.code.rich_text), caption: parseRichText(block.code.caption) };
+      else if (block.type === 'file') { const file = block.file; const src = file.type === 'external' ? file.external.url : file.file.url; return { type: 'file', name: file.name, url: src, caption: parseRichText(file.caption) }; }
       else if (block.type === 'divider') return { type: 'divider' };
       return null;
     };

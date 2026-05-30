@@ -3,7 +3,7 @@ import { useParams, Navigate, useLocation } from 'react-router-dom';
 import { BlogPost, PhotoGroup } from '../types';
 import { TicketBase, DashedLine, Notch, BarcodeVertical } from './TicketUI';
 import { NavBar } from './NavBar';
-import { Clock, Camera, Loader2, Bookmark as BookmarkIcon, ChevronRight } from 'lucide-react';
+import { Clock, Camera, Loader2, Bookmark as BookmarkIcon, ChevronRight, Github, ExternalLink, FileText } from 'lucide-react';
 import { optimizeImage } from '../utils/imageOptimizer';
 import { mockNotionBlocks, mockPageImages } from '../data/mockData';
 
@@ -118,6 +118,42 @@ const parseCaptionData = (caption: string) => {
     return { device, date, locationMain: others[0] || '', locationSub: others.slice(1).join(' · ') };
 };
 
+const getUrlLabel = (url: string) => {
+    try {
+        const parsed = new URL(url);
+        const path = parsed.pathname.replace(/^\/|\/$/g, '');
+        if (parsed.hostname.includes('github.com') && path) return path;
+        return parsed.hostname.replace(/^www\./, '');
+    } catch {
+        return url;
+    }
+};
+
+const LinkPreviewCard: React.FC<{ url: string; caption?: any[]; variant?: 'bookmark' | 'embed' | 'link_preview' | 'file'; title?: string }> = ({ url, caption, variant = 'bookmark', title }) => {
+    const isGithub = url?.includes('github.com');
+    const Icon = variant === 'file' ? FileText : isGithub ? Github : BookmarkIcon;
+    const label = title || getUrlLabel(url);
+    const typeLabel = variant === 'embed' ? 'Embedded Link' : variant === 'link_preview' ? 'Link Preview' : variant === 'file' ? 'File Attachment' : 'External Link';
+
+    return (
+        <a href={url} target="_blank" rel="noopener noreferrer" className="block border border-stone-200 rounded-lg p-4 my-8 hover:bg-stone-50 transition-all group overflow-hidden first:mt-0">
+            <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-stone-100 rounded flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                    <Icon size={18} className="text-stone-500" />
+                </div>
+                <div className="min-w-0 flex-1">
+                    <p className="font-sans font-medium text-sm truncate text-ink">{label}</p>
+                    <p className="font-mono text-[10px] text-stone-400 truncate mt-1 uppercase tracking-wider">{typeLabel}</p>
+                    {caption && caption.length > 0 && (
+                        <p className="font-sans text-xs text-stone-500 mt-2 line-clamp-2"><RichText content={caption} /></p>
+                    )}
+                </div>
+                <ExternalLink size={14} className="text-stone-300 shrink-0 group-hover:text-brand-accent transition-colors" />
+            </div>
+        </a>
+    );
+};
+
 const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
     const [aspectClass, setAspectClass] = useState("aspect-[3/2]");
     const [isLoaded, setIsLoaded] = useState(false);
@@ -206,16 +242,24 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
                 </details>
             );
         case 'bookmark':
+            return <LinkPreviewCard url={block.url} caption={block.caption} variant="bookmark" />;
+        case 'embed':
+            return <LinkPreviewCard url={block.url} caption={block.caption} variant="embed" />;
+        case 'link_preview':
+            return <LinkPreviewCard url={block.url} variant="link_preview" />;
+        case 'file':
+            return <LinkPreviewCard url={block.url} caption={block.caption} variant="file" title={block.name} />;
+        case 'code':
             return (
-                <a href={block.url} target="_blank" rel="noopener noreferrer" className="block border border-stone-200 rounded-lg p-4 my-8 hover:bg-stone-50 transition-all group overflow-hidden first:mt-0">
-                    <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-stone-100 rounded flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform"><BookmarkIcon size={18} className="text-stone-400" /></div>
-                        <div className="min-w-0">
-                            <p className="font-sans font-bold text-sm truncate text-ink">{block.url}</p>
-                            <p className="font-sans text-[10px] text-stone-400 truncate mt-1">Visit External Link</p>
-                        </div>
+                <div className="my-8 overflow-hidden rounded-lg border border-stone-200 bg-[#f7f4ed] first:mt-0">
+                    <div className="flex items-center justify-between border-b border-stone-200/70 px-4 py-2">
+                        <span className="font-mono text-[9px] uppercase tracking-widest text-stone-400">{block.language || 'code'}</span>
                     </div>
-                </a>
+                    <pre className="overflow-x-auto p-4 font-mono text-xs leading-relaxed text-ink/80"><code>{block.content?.map((part: any) => part.text).join('')}</code></pre>
+                    {block.caption && block.caption.length > 0 && (
+                        <p className="border-t border-stone-200/70 px-4 py-2 font-sans text-[10px] text-stone-400"><RichText content={block.caption} /></p>
+                    )}
+                </div>
             );
         case 'divider':
             return <DashedLine className="my-12 opacity-30 first:mt-0" />;
