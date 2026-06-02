@@ -171,10 +171,11 @@
       }
 
       .perforated-bottom {
-        -webkit-mask-image: radial-gradient(circle at 14px calc(100% + 5px), transparent 10px, #000 10.5px);
-        -webkit-mask-size: 28px 100%;
-        -webkit-mask-repeat: repeat-x;
-        -webkit-mask-position: left bottom;
+        background-color: var(--paper-color);
+        background-image: radial-gradient(circle at 14px 0, var(--bg-color) 0 10px, transparent 10.5px);
+        background-size: 28px 16px;
+        background-repeat: repeat-x;
+        background-position: left top;
       }
 
       /* 针对 iOS Safari 的 100vh 修复 */
