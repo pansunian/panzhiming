@@ -4,11 +4,14 @@ import { PhotoGroup } from '../types';
 import { TicketBase, Notch, DashedLine } from './TicketUI';
 import { ArrowUpRight, ArrowRight, MapPin } from 'lucide-react';
 import { optimizeImage } from '../utils/imageOptimizer';
+import { InlineTicketNav } from './NavBar';
 
 interface Props {
   groups: PhotoGroup[];
   onViewAll?: boolean;
   title?: string;
+  logoUrl?: string;
+  showPageNav?: boolean;
 }
 
 const GalleryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ group, index }) => {
@@ -69,9 +72,14 @@ const GalleryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ group, in
     );
 };
 
-export const GallerySection: React.FC<Props> = ({ groups, onViewAll, title = "影像辑" }) => {
+export const GallerySection: React.FC<Props> = ({ groups, onViewAll, title = "影像辑", logoUrl, showPageNav }) => {
   return (
     <section className="scroll-mt-24 w-full">
+      {showPageNav && (
+        <div className="mb-7 px-2">
+          <InlineTicketNav logoUrl={logoUrl} className="border-b border-dashed border-stone-300/70 pb-4" />
+        </div>
+      )}
       <div className="flex items-end justify-between mb-8 px-2">
          <div className="flex items-end gap-3">
             <h2 className="font-serif text-[1.35rem] font-medium leading-tight text-ink">{title}</h2>

@@ -4,9 +4,10 @@ import { Menu, X, BookOpen } from 'lucide-react';
 
 interface NavBarProps {
   logoUrl?: string;
+  className?: string;
 }
 
-export const NavBar: React.FC<NavBarProps> = ({ logoUrl }) => {
+export const InlineTicketNav: React.FC<NavBarProps> = ({ logoUrl, className = "" }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
 
@@ -17,22 +18,22 @@ export const NavBar: React.FC<NavBarProps> = ({ logoUrl }) => {
   ] as const;
 
   return (
-    <div className="relative z-50 w-full bg-transparent transition-all duration-300">
-      <div className="max-w-[420px] mx-auto h-16 flex items-center justify-between relative px-3 sm:px-2">
+    <div className={`relative z-40 w-full ${className}`}>
+      <div className="flex items-center justify-between gap-4">
         <Link 
           to="/"
           onClick={() => setIsMenuOpen(false)}
-          className="flex items-center justify-start bg-transparent transition-opacity group z-20 relative hover:opacity-70"
+          className="flex min-w-0 items-center justify-start bg-transparent transition-opacity group z-20 relative hover:opacity-70"
         >
            {logoUrl ? (
-             <img src={logoUrl} alt="Logo" className="h-9 w-auto object-contain opacity-90 transition-opacity" />
+             <img src={logoUrl} alt="Logo" className="h-8 w-auto object-contain opacity-85 transition-opacity" />
            ) : (
-             <span className="font-serif font-bold text-base tracking-wide text-ink group-hover:text-brand-accent transition-colors">ARCHIVE</span>
+             <span className="font-serif text-sm tracking-wide text-ink group-hover:text-brand-accent transition-colors">先见志明</span>
            )}
         </Link>
         <div className="flex items-center gap-3 z-20">
             <Link to="/aboutme" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-1.5 text-stone-500 hover:text-ink transition-colors group">
-                <span className="font-serif text-[13px] leading-none">我的说明书</span>
+                <span className="font-serif text-[12px] leading-none">我的说明书</span>
                 <BookOpen size={13} className="opacity-45 group-hover:opacity-80 transition-opacity" />
             </Link>
             <span className="h-4 border-l border-stone-300/60" aria-hidden="true" />
@@ -41,7 +42,7 @@ export const NavBar: React.FC<NavBarProps> = ({ logoUrl }) => {
             </button>
         </div>
         {isMenuOpen && (
-            <div className="absolute top-[calc(100%-4px)] right-2 w-48 bg-paper border border-stone-200/70 shadow-[0_12px_28px_rgba(36,33,29,0.12)] z-10 animate-in slide-in-from-top-2 duration-300">
+            <div className="absolute top-[calc(100%+10px)] right-0 w-48 bg-paper border border-stone-200/70 shadow-[0_12px_28px_rgba(36,33,29,0.12)] z-50 animate-in slide-in-from-top-2 duration-300">
                 <div className="flex flex-col">
                     {links.map((link) => (
                         <Link key={link.id} to={link.path} onClick={() => setIsMenuOpen(false)} className={`flex items-center justify-between p-4 border-b border-dashed border-stone-200 last:border-0 hover:bg-stone-50 transition-colors group ${location.pathname.startsWith(link.path) ? 'bg-stone-50' : ''}`}>
@@ -59,3 +60,9 @@ export const NavBar: React.FC<NavBarProps> = ({ logoUrl }) => {
     </div>
   );
 };
+
+export const NavBar: React.FC<NavBarProps> = (props) => (
+  <div className="w-full max-w-[420px] mx-auto px-3 sm:px-4 py-5">
+    <InlineTicketNav {...props} />
+  </div>
+);

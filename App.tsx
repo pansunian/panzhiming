@@ -6,7 +6,6 @@ import { ThoughtSection } from './components/ThoughtSection';
 import { BlogSection } from './components/BlogSection';
 import { ContactSection } from './components/ContactSection';
 import { DetailView } from './components/DetailView';
-import { NavBar } from './components/NavBar';
 import { Profile, PhotoGroup, Thought, BlogPost } from './types';
 import { Info, AlertCircle } from 'lucide-react';
 import { mockProfile, mockGallery, mockThoughts, mockPosts, mockAbout } from './data/mockData';
@@ -45,7 +44,7 @@ const defaultProfile: Profile = {
 };
 
 // --- 布局组件 ---
-const MainLayout: React.FC<{ children?: React.ReactNode; hideNav?: boolean; isDemoMode?: boolean; logoUrl?: string; isHome?: boolean; }> = ({ children, hideNav, isDemoMode, logoUrl, isHome }) => (
+const MainLayout: React.FC<{ children?: React.ReactNode; isDemoMode?: boolean; isHome?: boolean; }> = ({ children, isDemoMode, isHome }) => (
   <div className="min-h-screen flex flex-col text-ink font-sans selection:bg-ink selection:text-paper overflow-x-hidden">
     {isDemoMode && (
       <div className="bg-amber-50/90 backdrop-blur-sm border-b border-amber-200 px-4 py-2 flex items-center justify-center gap-2 sticky top-0 z-[60]">
@@ -53,7 +52,6 @@ const MainLayout: React.FC<{ children?: React.ReactNode; hideNav?: boolean; isDe
         <p className="text-[10px] text-amber-700 font-mono tracking-[0.2em] uppercase font-bold">演示模式：未连接数据库，展示预览数据</p>
       </div>
     )}
-    {!hideNav && <NavBar logoUrl={logoUrl} />}
     <div className={`flex-grow w-full flex flex-col items-center ${isHome ? '' : 'bg-texture'}`}>
       <main className="w-full max-w-[420px] mx-auto px-2 sm:px-4 pt-6 sm:pt-12 pb-20 shrink-0">
         {children}
@@ -158,12 +156,10 @@ const App: React.FC = () => {
     initData();
   }, [hasCache]);
 
-  const commonProps = { isDemoMode, logoUrl: profile.logoUrl };
-
   return (
     <Routes>
       <Route path="/" element={
-        <MainLayout {...commonProps} hideNav isHome>
+        <MainLayout isDemoMode={isDemoMode} isHome>
           <ProfileSection profile={profile} />
           <div className="flex flex-col gap-8">
             <GallerySection title="纪实摄影" groups={photoGroups.length > 0 ? photoGroups.filter(g => g.featured).slice(0, 2) : []} onViewAll={photoGroups.length > 0} />
@@ -173,14 +169,14 @@ const App: React.FC = () => {
           </div>
         </MainLayout>
       } />
-      <Route path="/gallery" element={<MainLayout {...commonProps}><GallerySection groups={photoGroups} /></MainLayout>} />
+      <Route path="/gallery" element={<MainLayout isDemoMode={isDemoMode}><GallerySection groups={photoGroups} logoUrl={profile.logoUrl} showPageNav /></MainLayout>} />
       <Route path="/gallery/:id" element={<DetailView items={photoGroups} type="gallery" logoUrl={profile.logoUrl} />} />
-      <Route path="/thoughts" element={<MainLayout {...commonProps}><ThoughtSection thoughts={thoughts} /></MainLayout>} />
-      <Route path="/blog" element={<MainLayout {...commonProps}><BlogSection posts={posts} /></MainLayout>} />
+      <Route path="/thoughts" element={<MainLayout isDemoMode={isDemoMode}><ThoughtSection thoughts={thoughts} logoUrl={profile.logoUrl} showPageNav /></MainLayout>} />
+      <Route path="/blog" element={<MainLayout isDemoMode={isDemoMode}><BlogSection posts={posts} logoUrl={profile.logoUrl} showPageNav /></MainLayout>} />
       <Route path="/blog/:id" element={<DetailView items={posts} type="blog" logoUrl={profile.logoUrl} />} />
       <Route path="/aboutme" element={
         isLoading && !hasCache ? (
-          <MainLayout {...commonProps}><div className="py-20 text-center font-mono text-[10px] opacity-20 tracking-widest">RETRIEVING MANUAL...</div></MainLayout>
+          <MainLayout isDemoMode={isDemoMode}><div className="py-20 text-center font-mono text-[10px] opacity-20 tracking-widest">RETRIEVING MANUAL...</div></MainLayout>
         ) : aboutPage ? (
           <DetailView items={[aboutPage]} forceId={aboutPage.id} type="blog" logoUrl={profile.logoUrl} />
         ) : (

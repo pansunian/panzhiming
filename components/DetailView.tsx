@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Navigate, useLocation } from 'react-router-dom';
 import { BlogPost, PhotoGroup } from '../types';
 import { TicketBase, DashedLine, Notch, BarcodeVertical } from './TicketUI';
-import { NavBar } from './NavBar';
+import { InlineTicketNav } from './NavBar';
 import { Clock, Camera, Loader2, Bookmark as BookmarkIcon, ChevronRight, Github, ExternalLink, FileText } from 'lucide-react';
 import { optimizeImage } from '../utils/imageOptimizer';
 import { mockNotionBlocks, mockPageImages } from '../data/mockData';
@@ -414,12 +414,12 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
 
   return (
     <div className="min-h-screen w-full flex flex-col bg-texture overflow-x-hidden">
-      <NavBar logoUrl={logoUrl} />
-      <div className="w-full max-w-[420px] mx-auto pb-24 pt-8 sm:pt-12">
+      <div className="w-full max-w-[420px] mx-auto pb-24 pt-6 sm:pt-10">
             <div className="px-2 sm:px-4">
                 <div className="h-4 w-full jagged-top bg-paper"></div>
                 <TicketBase className="rounded-none bg-paper min-h-[80vh] border-x border-stone-200">
-                    <div className="px-6 sm:px-8 pt-8 pb-6 relative">
+                    <div className="px-6 sm:px-8 pt-6 pb-6 relative">
+                        <InlineTicketNav logoUrl={logoUrl} className="mb-8 border-b border-dashed border-stone-300/70 pb-4" />
                         <div className="flex justify-between items-center mb-10">
                             <div className="flex flex-col">
                                 <span className="font-mono text-[9px] text-stone-400 uppercase tracking-[0.2em]">{isBlog ? (blogPost?.category || 'Blog') : 'GALLERY'}</span>

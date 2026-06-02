@@ -4,11 +4,14 @@ import { BlogPost } from '../types';
 import { BarcodeSmall, DashedLine, Notch } from './TicketUI';
 import { ArrowRight } from 'lucide-react';
 import { optimizeImage } from '../utils/imageOptimizer';
+import { InlineTicketNav } from './NavBar';
 
 interface Props {
   posts: BlogPost[];
   showViewAll?: boolean;
   title?: string;
+  logoUrl?: string;
+  showPageNav?: boolean;
 }
 
 const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) => {
@@ -55,9 +58,14 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
     );
 };
 
-export const BlogSection: React.FC<Props> = ({ posts, showViewAll, title = "文章" }) => {
+export const BlogSection: React.FC<Props> = ({ posts, showViewAll, title = "文章", logoUrl, showPageNav }) => {
   return (
     <section className="scroll-mt-12 w-full">
+      {showPageNav && (
+        <div className="mb-7 px-2">
+          <InlineTicketNav logoUrl={logoUrl} className="border-b border-dashed border-stone-300/70 pb-4" />
+        </div>
+      )}
       <div className="flex items-end justify-between mb-8 px-2">
          <div className="flex items-end gap-3">
              <h2 className="font-serif text-[1.35rem] font-medium leading-tight text-ink">{title}</h2>

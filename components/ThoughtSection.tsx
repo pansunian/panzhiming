@@ -3,15 +3,23 @@ import { Link } from 'react-router-dom';
 import { Thought } from '../types';
 import { BarcodeHorizontal } from './TicketUI';
 import { ArrowRight } from 'lucide-react';
+import { InlineTicketNav } from './NavBar';
 
 interface Props {
   thoughts: Thought[];
   showViewAll?: boolean;
+  logoUrl?: string;
+  showPageNav?: boolean;
 }
 
-export const ThoughtSection: React.FC<Props> = ({ thoughts, showViewAll }) => {
+export const ThoughtSection: React.FC<Props> = ({ thoughts, showViewAll, logoUrl, showPageNav }) => {
   return (
     <section className="flex flex-col items-center w-full scroll-mt-12">
+      {showPageNav && (
+        <div className="w-full px-2 pt-1 pb-5">
+          <InlineTicketNav logoUrl={logoUrl} className="border-b border-dashed border-stone-300/70 pb-4" />
+        </div>
+      )}
       <div className="flex items-end justify-between px-2 py-6 w-full border-b border-dashed border-stone-200 relative">
          <div className="flex items-end gap-3">
             <h2 className="font-serif text-[1.35rem] font-medium leading-tight text-ink">思维碎片</h2>
