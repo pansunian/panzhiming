@@ -16,7 +16,7 @@ export const ThoughtSection: React.FC<Props> = ({ thoughts, showViewAll, logoUrl
   return (
     <section className="flex flex-col items-center w-full scroll-mt-12">
       {showPageNav && (
-        <div className="w-full pb-10">
+        <div className="-mx-2 w-[calc(100%+1rem)] pb-10 sm:mx-0 sm:w-full">
           <div className="relative bg-paper/95 border-x border-t border-stone-200/70 shadow-[0_10px_24px_rgba(36,33,29,0.05)]">
             <div className="px-4 pt-4 pb-3">
               <InlineTicketNav logoUrl={logoUrl} />
