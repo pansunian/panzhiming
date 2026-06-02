@@ -40,6 +40,14 @@ const defaultProfile: Profile = {
   socials: []
 };
 
+const asArray = <T,>(value: unknown): T[] => Array.isArray(value) ? value : [];
+
+const normalizeProfile = (value: any): Profile => ({
+  ...defaultProfile,
+  ...(value || {}),
+  socials: asArray(value?.socials)
+});
+
 // --- 布局组件 ---
 const MainLayout: React.FC<{ children?: React.ReactNode; isDemoMode?: boolean; isHome?: boolean; flushTop?: boolean; }> = ({ children, isDemoMode, isHome, flushTop }) => (
   <div className="min-h-screen flex flex-col text-ink font-sans selection:bg-ink selection:text-paper overflow-x-hidden">
@@ -75,10 +83,10 @@ const App: React.FC = () => {
     if (cached) {
       try {
         const data = JSON.parse(cached);
-        if (data.profile) setProfile(data.profile);
-        if (data.gallery) setPhotoGroups(data.gallery);
-        if (data.thoughts) setThoughts(data.thoughts);
-        if (data.posts) setPosts(data.posts);
+        if (data.profile) setProfile(normalizeProfile(data.profile));
+        setPhotoGroups(asArray<PhotoGroup>(data.gallery));
+        setThoughts(asArray<Thought>(data.thoughts));
+        setPosts(asArray<BlogPost>(data.posts));
         if (data.about) setAboutPage(data.about);
         setHasCache(true);
         setIsLoading(false); 
@@ -132,10 +140,10 @@ const App: React.FC = () => {
                return;
            }
 
-           if (data.profile) setProfile(data.profile);
-           if (data.gallery) setPhotoGroups(data.gallery);
-           if (data.thoughts) setThoughts(data.thoughts);
-           if (data.posts) setPosts(data.posts);
+           if (data.profile) setProfile(normalizeProfile(data.profile));
+           setPhotoGroups(asArray<PhotoGroup>(data.gallery));
+           setThoughts(asArray<Thought>(data.thoughts));
+           setPosts(asArray<BlogPost>(data.posts));
            if (data.about) setAboutPage(data.about);
            
            writeCache(data);

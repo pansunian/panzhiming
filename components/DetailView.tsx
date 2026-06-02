@@ -353,7 +353,8 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
   const { id } = useParams();
   const location = useLocation();
   const currentId = forceId || id;
-  const item = items.find(i => i.id === currentId);
+  const safeItems = Array.isArray(items) ? items : [];
+  const item = safeItems.find(i => i.id === currentId);
   const pageId = item?.id || currentId;
   const [contentImages, setContentImages] = useState<GalleryImage[]>([]);
   const [blogBlocks, setBlogBlocks] = useState<any[]>([]);
