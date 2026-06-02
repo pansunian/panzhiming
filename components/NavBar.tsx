@@ -52,7 +52,7 @@ export const InlineTicketNav: React.FC<NavBarProps> = ({ logoUrl, className = ""
                              </div>
                         </Link>
                     ))}
-                    <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-center text-[9px] font-mono text-stone-400 uppercase tracking-[0.18em] py-2.5 hover:text-ink transition-colors">Home</Link>
+                    <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-center text-[9px] font-mono text-stone-400 tracking-[0.18em] py-2.5 hover:text-ink transition-colors">首页</Link>
                 </div>
             </div>
         )}
