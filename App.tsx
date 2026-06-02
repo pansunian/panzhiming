@@ -55,7 +55,7 @@ const MainLayout: React.FC<{ children?: React.ReactNode; hideNav?: boolean; isDe
     )}
     {!hideNav && <NavBar logoUrl={logoUrl} />}
     <div className={`flex-grow w-full flex flex-col items-center ${isHome ? '' : 'bg-texture'}`}>
-      <main className="w-full max-w-[420px] mx-auto px-2 sm:px-4 pt-12 pb-20 shrink-0">
+      <main className="w-full max-w-[420px] mx-auto px-2 sm:px-4 pt-6 sm:pt-12 pb-20 shrink-0">
         {children}
       </main>
     </div>
