@@ -117,7 +117,13 @@ export const mockNotionBlocks = [
     {
         type: 'callout',
         icon: { emoji: '👋' },
-        content: [{ text: '提示：请检查您的 Vercel 环境变量设置，确保 Notion API Key 和 Database IDs 正确配置。', annotations: {} }]
+        content: [{ text: '提示', annotations: { bold: true } }],
+        children: [
+            {
+                type: 'paragraph',
+                content: [{ text: '请检查您的 Vercel 环境变量设置，确保 Notion API Key 和 Database IDs 正确配置。', annotations: {} }]
+            }
+        ]
     },
     {
         type: 'image',
@@ -126,7 +132,7 @@ export const mockNotionBlocks = [
     },
     {
         type: 'quote',
-        content: [{ text: 'Photography is the story I fail to put into words.', annotations: { italic: true } }]
+        content: [{ text: 'Photography is the story\nI fail to put into words.', annotations: { italic: true } }]
     }
 ];
 

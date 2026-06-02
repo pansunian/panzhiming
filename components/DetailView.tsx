@@ -274,12 +274,23 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
         case 'heading_4':
             return <h5 className="font-serif font-medium text-sm mt-5 mb-2 first:mt-0"><RichText content={block.content} /></h5>;
         case 'quote':
-            return <blockquote className="border-l-[3px] border-stone-300 pl-3 py-[1px] my-4 font-sans text-[17px] md:text-[15px] leading-loose text-ink/90 first:mt-0"><RichText content={block.content} /></blockquote>;
+            return <blockquote className="whitespace-pre-line border-l-[3px] border-stone-300 pl-3 py-[1px] my-4 font-sans text-[17px] md:text-[15px] leading-loose text-ink/90 first:mt-0"><RichText content={block.content} /></blockquote>;
         case 'callout':
             return (
                 <div className={`w-full ${getNotionCalloutBg(block.color)} px-4 py-3 rounded-[3px] my-4 flex gap-3 items-start first:mt-0`}>
                     {block.icon && <span className="w-6 shrink-0 text-[18px] leading-7">{block.icon.emoji || '💡'}</span>}
-                    <div className="font-sans text-[17px] md:text-[15px] leading-7 text-ink/90"><RichText content={block.content} /></div>
+                    <div className="min-w-0 flex-1 font-sans text-[17px] md:text-[15px] leading-7 text-ink/90">
+                        {block.content?.length > 0 && (
+                            <div className="whitespace-pre-line"><RichText content={block.content} /></div>
+                        )}
+                        {block.children?.length > 0 && (
+                            <div className={`mt-2 ${block.content?.length ? 'pt-1' : ''} [&_p]:mb-2 [&_p:last-child]:mb-0 [&_blockquote]:my-2 [&_h2]:mt-3 [&_h2]:mb-2 [&_h3]:mt-3 [&_h3]:mb-2 [&_h4]:mt-2 [&_h4]:mb-1 [&_.notion-callout-child]:my-2`}>
+                                {block.children.map((child: any, idx: number) => (
+                                    <NotionBlock key={idx} block={child} isGallery={isGallery} />
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </div>
             );
         case 'list_item':
