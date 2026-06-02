@@ -30,16 +30,13 @@ const writeCache = (data: unknown) => {
   }
 };
 
-// --- 默认占位图：深色抽象背景 ---
-const FALLBACK_AVATAR = "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=1000&auto=format&fit=crop";
-
 // --- 基础状态 ---
 const defaultProfile: Profile = {
   name: "Loading...",
   role: "...",
   bio: "...",
   location: "...",
-  avatarUrl: FALLBACK_AVATAR,
+  avatarUrl: "",
   socials: []
 };
 

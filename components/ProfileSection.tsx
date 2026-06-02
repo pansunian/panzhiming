@@ -49,8 +49,6 @@ interface Props {
   profile: Profile;
 }
 
-const FALLBACK_AVATAR = "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=1000&auto=format&fit=crop";
-
 const SOCIAL_MAP: Record<string, { label: string; icon: React.ElementType }> = {
     INSTAGRAM: { label: 'Instagram', icon: Instagram },
     TWITTER: { label: 'Twitter', icon: Twitter },
@@ -76,31 +74,31 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
   const [imgError, setImgError] = useState(false);
 
   // 优化头像 URL
-  const avatarSrc = imgError 
-    ? optimizeImage(FALLBACK_AVATAR, 640) 
-    : optimizeImage(profile.avatarUrl || FALLBACK_AVATAR, 640);
+  const avatarSrc = !imgError && profile.avatarUrl ? optimizeImage(profile.avatarUrl, 640) : "";
 
   return (
     <div className="flex justify-center w-full mb-12">
       <TicketBase className="w-full rounded-2xl flex flex-col">
         {/* 顶部海报区 */}
-        <div className="relative aspect-[5/6] w-full rounded-t-2xl overflow-hidden bg-stone-900">
-            <img 
-                src={avatarSrc} 
-                alt="Profile" 
-                className="w-full h-full object-cover filter brightness-[0.85] contrast-110 transition-opacity duration-500" 
-                onError={() => setImgError(true)}
-            />
-            <div className="absolute top-6 left-0 w-full text-center text-white mix-blend-overlay opacity-80">
+        <div className="relative aspect-[5/6] w-full rounded-t-2xl overflow-hidden bg-paper-dark">
+            {avatarSrc && (
+                <img 
+                    src={avatarSrc} 
+                    alt="Profile" 
+                    className="w-full h-full object-cover filter brightness-[0.85] contrast-110 transition-opacity duration-500" 
+                    onError={() => setImgError(true)}
+                />
+            )}
+            <div className={`absolute top-6 left-0 w-full text-center ${avatarSrc ? 'text-white mix-blend-overlay opacity-80' : 'text-ink/30'}`}>
                 <p className="font-mono text-[9px] tracking-[0.55em] uppercase">Life Archives</p>
             </div>
-            <div className="absolute bottom-10 left-7 right-7 text-white">
+            <div className={`absolute bottom-10 left-7 right-7 ${avatarSrc ? 'text-white' : 'text-ink'}`}>
                  <h2 className="text-[9px] font-mono mb-2 tracking-[0.22em] uppercase opacity-75">PanZhiMing / 2026</h2>
                  <h1 className="text-[2.45rem] md:text-[2.25rem] font-serif font-normal tracking-normal leading-[1.05] mb-1">先见志明</h1>
             </div>
              <Link 
                 to="/aboutme"
-                className="absolute bottom-4 right-4 text-white/70 text-[9px] font-mono border border-white/30 px-2.5 py-1 rounded-full hover:bg-white/10 hover:text-white transition-all cursor-pointer backdrop-blur-sm"
+                className={`absolute bottom-4 right-4 text-[9px] font-mono border px-2.5 py-1 rounded-full transition-all cursor-pointer backdrop-blur-sm ${avatarSrc ? 'text-white/70 border-white/30 hover:bg-white/10 hover:text-white' : 'text-ink/50 border-ink/20 hover:bg-ink/5 hover:text-ink'}`}
             >
                 我的说明书 &rarr;
             </Link>
