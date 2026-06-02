@@ -171,11 +171,17 @@
       }
 
       .perforated-bottom {
-        background-color: #faf8f2;
+        background-color: #fdfbf7;
         background-image: radial-gradient(circle at 14px 100%, var(--bg-color) 0 10px, transparent 10.5px);
         background-size: 28px 16px;
         background-repeat: repeat-x;
         background-position: left bottom;
+      }
+
+      @media (min-width: 640px) {
+        .perforated-bottom {
+          background-color: #faf8f2;
+        }
       }
 
       /* 针对 iOS Safari 的 100vh 修复 */

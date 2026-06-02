@@ -77,7 +77,7 @@ export const GallerySection: React.FC<Props> = ({ groups, onViewAll, title = "å½
     <section className="scroll-mt-24 w-full">
       {showPageNav && (
         <div className="-mx-2 mb-10 sm:mx-0">
-          <div className="relative bg-paper/95 border-x border-t border-stone-200/70 shadow-[0_10px_24px_rgba(36,33,29,0.05)]">
+          <div className="relative bg-[#fdfbf7] border-x border-t border-stone-200/70 shadow-[0_10px_24px_rgba(36,33,29,0.05)] sm:bg-paper/95">
             <div className="px-4 pt-4 pb-3">
               <InlineTicketNav logoUrl={logoUrl} />
               <div className="mt-3 border-t border-dashed border-stone-300/70" />

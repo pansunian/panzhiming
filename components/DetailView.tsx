@@ -428,7 +428,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
       <div className="w-full max-w-[420px] mx-auto pb-24 pt-6 sm:pt-10">
             <div className="px-2 sm:px-4">
                 <div className="h-4 w-full jagged-top bg-paper"></div>
-                <TicketBase className="rounded-none bg-paper min-h-[80vh] border-x border-stone-200">
+                <TicketBase className="rounded-none bg-paper min-h-[80vh]">
                     <div className="px-6 sm:px-8 pt-6 pb-6 relative">
                         <InlineTicketNav logoUrl={logoUrl} className="mb-8 border-b border-dashed border-stone-300/70 pb-4" />
                         <div className="flex justify-between items-center mb-10">
