@@ -42,17 +42,17 @@ export const InlineTicketNav: React.FC<NavBarProps> = ({ logoUrl, className = ""
             </button>
         </div>
         {isMenuOpen && (
-            <div className="absolute top-[calc(100%+10px)] right-0 w-48 bg-paper border border-stone-200/70 shadow-[0_12px_28px_rgba(36,33,29,0.12)] z-50 animate-in slide-in-from-top-2 duration-300">
+            <div className="absolute top-[calc(100%+10px)] right-0 w-36 bg-paper border border-stone-200/70 shadow-[0_10px_22px_rgba(36,33,29,0.10)] z-50 animate-in slide-in-from-top-2 duration-300">
                 <div className="flex flex-col">
                     {links.map((link) => (
-                        <Link key={link.id} to={link.path} onClick={() => setIsMenuOpen(false)} className={`flex items-center justify-between p-4 border-b border-dashed border-stone-200 last:border-0 hover:bg-stone-50 transition-colors group ${location.pathname.startsWith(link.path) ? 'bg-stone-50' : ''}`}>
-                             <div className="flex items-baseline gap-3">
-                                <span className={`font-serif font-bold text-sm ${location.pathname.startsWith(link.path) ? 'text-brand-accent' : 'text-ink'}`}>{link.label}</span>
-                                <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest group-hover:text-brand-accent transition-colors">{link.en}</span>
+                        <Link key={link.id} to={link.path} onClick={() => setIsMenuOpen(false)} className={`flex items-center justify-between px-3 py-3 border-b border-dashed border-stone-200 last:border-0 hover:bg-stone-50 transition-colors group ${location.pathname.startsWith(link.path) ? 'bg-stone-50' : ''}`}>
+                             <div className="flex items-baseline gap-2">
+                                <span className={`font-serif text-[13px] ${location.pathname.startsWith(link.path) ? 'text-brand-accent' : 'text-ink'}`}>{link.label}</span>
+                                <span className="font-mono text-[8px] text-stone-400 uppercase tracking-widest group-hover:text-brand-accent transition-colors">{link.en}</span>
                              </div>
                         </Link>
                     ))}
-                    <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-center text-[10px] font-mono text-stone-400 uppercase tracking-[0.2em] p-3 hover:text-ink transition-colors">Home</Link>
+                    <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-center text-[9px] font-mono text-stone-400 uppercase tracking-[0.18em] py-2.5 hover:text-ink transition-colors">Home</Link>
                 </div>
             </div>
         )}
