@@ -170,6 +170,13 @@
         width: 100%; 
       }
 
+      .perforated-bottom {
+        -webkit-mask-image: radial-gradient(circle at 10px calc(100% + 4px), transparent 5px, #000 5.5px);
+        -webkit-mask-size: 20px 100%;
+        -webkit-mask-repeat: repeat-x;
+        -webkit-mask-position: left bottom;
+      }
+
       /* 针对 iOS Safari 的 100vh 修复 */
       .min-h-screen {
         min-height: 100vh;

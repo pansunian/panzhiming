@@ -44,7 +44,7 @@ const defaultProfile: Profile = {
 };
 
 // --- 布局组件 ---
-const MainLayout: React.FC<{ children?: React.ReactNode; isDemoMode?: boolean; isHome?: boolean; }> = ({ children, isDemoMode, isHome }) => (
+const MainLayout: React.FC<{ children?: React.ReactNode; isDemoMode?: boolean; isHome?: boolean; flushTop?: boolean; }> = ({ children, isDemoMode, isHome, flushTop }) => (
   <div className="min-h-screen flex flex-col text-ink font-sans selection:bg-ink selection:text-paper overflow-x-hidden">
     {isDemoMode && (
       <div className="bg-amber-50/90 backdrop-blur-sm border-b border-amber-200 px-4 py-2 flex items-center justify-center gap-2 sticky top-0 z-[60]">
@@ -53,7 +53,7 @@ const MainLayout: React.FC<{ children?: React.ReactNode; isDemoMode?: boolean; i
       </div>
     )}
     <div className={`flex-grow w-full flex flex-col items-center ${isHome ? '' : 'bg-texture'}`}>
-      <main className="w-full max-w-[420px] mx-auto px-2 sm:px-4 pt-6 sm:pt-12 pb-20 shrink-0">
+      <main className={`w-full max-w-[420px] mx-auto px-2 sm:px-4 ${flushTop ? 'pt-0' : 'pt-6 sm:pt-12'} pb-20 shrink-0`}>
         {children}
       </main>
     </div>
@@ -169,10 +169,10 @@ const App: React.FC = () => {
           </div>
         </MainLayout>
       } />
-      <Route path="/gallery" element={<MainLayout isDemoMode={isDemoMode}><GallerySection groups={photoGroups} logoUrl={profile.logoUrl} showPageNav /></MainLayout>} />
+      <Route path="/gallery" element={<MainLayout isDemoMode={isDemoMode} flushTop><GallerySection groups={photoGroups} logoUrl={profile.logoUrl} showPageNav /></MainLayout>} />
       <Route path="/gallery/:id" element={<DetailView items={photoGroups} type="gallery" logoUrl={profile.logoUrl} />} />
-      <Route path="/thoughts" element={<MainLayout isDemoMode={isDemoMode}><ThoughtSection thoughts={thoughts} logoUrl={profile.logoUrl} showPageNav /></MainLayout>} />
-      <Route path="/blog" element={<MainLayout isDemoMode={isDemoMode}><BlogSection posts={posts} logoUrl={profile.logoUrl} showPageNav /></MainLayout>} />
+      <Route path="/thoughts" element={<MainLayout isDemoMode={isDemoMode} flushTop><ThoughtSection thoughts={thoughts} logoUrl={profile.logoUrl} showPageNav /></MainLayout>} />
+      <Route path="/blog" element={<MainLayout isDemoMode={isDemoMode} flushTop><BlogSection posts={posts} logoUrl={profile.logoUrl} showPageNav /></MainLayout>} />
       <Route path="/blog/:id" element={<DetailView items={posts} type="blog" logoUrl={profile.logoUrl} />} />
       <Route path="/aboutme" element={
         isLoading && !hasCache ? (

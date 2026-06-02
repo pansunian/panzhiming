@@ -62,8 +62,8 @@ export const BlogSection: React.FC<Props> = ({ posts, showViewAll, title = "æ–‡ç
   return (
     <section className="scroll-mt-12 w-full">
       {showPageNav && (
-        <div className="mb-8 px-2">
-          <div className="bg-paper/95 border border-stone-200/70 px-4 py-3 shadow-[0_10px_24px_rgba(36,33,29,0.05)]">
+        <div className="mb-10">
+          <div className="bg-paper/95 border-x border-t border-stone-200/70 px-4 pt-4 pb-5 shadow-[0_10px_24px_rgba(36,33,29,0.05)] perforated-bottom">
             <InlineTicketNav logoUrl={logoUrl} />
             <div className="mt-3 border-t border-dashed border-stone-300/70" />
           </div>
