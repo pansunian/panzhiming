@@ -93,7 +93,7 @@ export const GallerySection: React.FC<Props> = ({ groups, onViewAll, title = "�
          </div>
          {onViewAll && (
              <Link to="/gallery" className="inline-flex items-center gap-1 font-mono text-[9px] text-stone-400 hover:text-ink transition-colors pb-1 tracking-widest">
-                 VIEW ALL <ArrowRight size={10} />
+                 更多 <ArrowRight size={10} />
              </Link>
          )}
       </div>

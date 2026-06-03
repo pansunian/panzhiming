@@ -40,7 +40,7 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
                 
                 <div className="flex-grow h-full bg-paper p-3 sm:p-4 flex flex-col relative jagged-right-round rounded-r-none border-r border-stone-200/50">
                     <div className="flex justify-between items-center mb-1">
-                            <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">{post.category}</span>
+                            <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">#{post.category}</span>
                             <span className="font-mono text-[9px] text-stone-500 font-bold">{post.date}</span>
                     </div>
                     <div className="flex-grow flex flex-col justify-center mb-1 pr-0 sm:pr-1">
@@ -78,7 +78,7 @@ export const BlogSection: React.FC<Props> = ({ posts, showViewAll, title = "文�
          </div>
          {showViewAll && (
              <Link to="/blog" className="inline-flex items-center gap-1 font-mono text-[10px] text-stone-400 hover:text-ink transition-colors pb-1">
-                 VIEW ALL <ArrowRight size={10} />
+                 更多 <ArrowRight size={10} />
              </Link>
          )}
       </div>

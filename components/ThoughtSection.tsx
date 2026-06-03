@@ -33,7 +33,7 @@ export const ThoughtSection: React.FC<Props> = ({ thoughts, showViewAll, logoUrl
          </div>
          {showViewAll && (
              <Link to="/thoughts" className="inline-flex items-center gap-1 font-mono text-[10px] text-stone-400 hover:text-ink transition-colors pb-1">
-                 READ ALL <ArrowRight size={10} />
+                 更多 <ArrowRight size={10} />
              </Link>
          )}
       </div>
