@@ -82,7 +82,7 @@ export const GallerySection: React.FC<Props> = ({ groups, onViewAll, title = "å½
               <InlineTicketNav logoUrl={logoUrl} />
               <div className="mt-3 border-t border-dashed border-stone-300/70" />
             </div>
-            <div className="h-4 bg-paper perforated-bottom" aria-hidden="true" />
+            <div className="h-2.5 bg-paper perforated-bottom" aria-hidden="true" />
           </div>
         </div>
       )}
