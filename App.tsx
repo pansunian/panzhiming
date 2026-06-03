@@ -10,23 +10,14 @@ import { Profile, PhotoGroup, Thought, BlogPost } from './types';
 import { Info, AlertCircle } from 'lucide-react';
 import { mockProfile, mockGallery, mockThoughts, mockPosts, mockAbout } from './data/mockData';
 
-// --- 缓存配置 ---
+// --- 旧缓存清理 ---
 const CACHE_KEY = 'portfolio_snapshot_v1';
 
-const readCache = () => {
+const clearCache = () => {
   try {
-    return localStorage.getItem(CACHE_KEY);
+    localStorage.removeItem(CACHE_KEY);
   } catch (e) {
     console.warn("Cache unavailable in this browser context", e);
-    return null;
-  }
-};
-
-const writeCache = (data: unknown) => {
-  try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-  } catch (e) {
-    console.warn("Failed to write cache", e);
   }
 };
 
@@ -79,29 +70,11 @@ const App: React.FC = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [aboutPage, setAboutPage] = useState<BlogPost | null>(null);
 
-  // 1. 初始化时尝试从缓存读取数据 (Fast-path)
+  // 1. 清掉旧的本地快照，避免 Notion 更新和临时图片链接被旧缓存卡住
   useEffect(() => {
-    if (forcePortfolioRefresh) {
-      setHasCache(false);
-      setIsLoading(true);
-      return;
-    }
-
-    const cached = readCache();
-    if (cached) {
-      try {
-        const data = JSON.parse(cached);
-        if (data.profile) setProfile(normalizeProfile(data.profile));
-        setPhotoGroups(asArray<PhotoGroup>(data.gallery));
-        setThoughts(asArray<Thought>(data.thoughts));
-        setPosts(asArray<BlogPost>(data.posts));
-        if (data.about) setAboutPage(data.about);
-        setHasCache(true);
-        setIsLoading(false); 
-      } catch (e) {
-        console.warn("Failed to parse cache", e);
-      }
-    }
+    clearCache();
+    setHasCache(false);
+    setIsLoading(true);
   }, [forcePortfolioRefresh]);
 
   useEffect(() => {
@@ -139,7 +112,7 @@ const App: React.FC = () => {
 
       try {
         if (forcePortfolioRefresh) setIsLoading(true);
-        const res = await fetch(`/api/portfolio${forcePortfolioRefresh ? '?fresh=1' : ''}`);
+        const res = await fetch('/api/portfolio?fresh=1');
         if (res.ok) {
            const data = await res.json();
            
@@ -155,7 +128,6 @@ const App: React.FC = () => {
            setPosts(asArray<BlogPost>(data.posts));
            if (data.about) setAboutPage(data.about);
            
-           writeCache(data);
            setIsDemoMode(false); 
         } else {
             // 只有在没缓存且接口报错的情况下才开启 Demo

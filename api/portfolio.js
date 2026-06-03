@@ -1,26 +1,12 @@
 const { Client } = require('@notionhq/client');
-const { redisGet, redisSet } = require('./lib/redis');
 
 module.exports = async function handler(req, res) {
-res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('Cache-Control', 'no-store');
 
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });
 
-  const forceRefresh = req.query?.fresh === '1' || req.query?.refresh === '1';
-
-  if (!forceRefresh) {
-    // 先读 Redis 缓存
-    try {
-      const cached = await redisGet('portfolio-data');
-      if (cached) {
-        return res.status(200).json(cached);
-      }
-    } catch (e) {
-      console.warn('Redis read failed, falling back to Notion:', e.message);
-    }
-  }
-
-  // 缓存没有，回源 Notion
+  // Always fetch fresh Notion data. Notion file URLs are temporary, so caching
+  // portfolio data can leave the homepage with expired cover images.
   const requiredEnv = ['NOTION_API_KEY','NOTION_PROFILE_DB_ID','NOTION_GALLERY_DB_ID','NOTION_THOUGHTS_DB_ID','NOTION_BLOG_DB_ID'];
   const missingEnv = requiredEnv.filter(key => !process.env[key]);
   if (missingEnv.length > 0) {
@@ -141,9 +127,6 @@ res.setHeader('Cache-Control', 'no-store');
   );
 
   const result = { profile, gallery, thoughts, posts, about, updatedAt: new Date().toISOString() };
-
-  // 写入 Redis 缓存
-  try { await redisSet('portfolio-data', result); } catch (e) { console.warn('Redis write failed:', e.message); }
 
   res.status(200).json(result);
 };
