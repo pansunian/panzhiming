@@ -17,12 +17,11 @@ export const ThoughtSection: React.FC<Props> = ({ thoughts, showViewAll, logoUrl
     <section className="flex flex-col items-center w-full scroll-mt-12">
       {showPageNav && (
         <div className="-mx-2 w-[calc(100%+1rem)] pb-10 sm:mx-0 sm:w-full">
-          <div className="relative bg-[#fdfbf7] border-x border-t border-stone-200/70 shadow-[0_10px_24px_rgba(36,33,29,0.05)] sm:bg-paper/95">
-            <div className="px-4 pt-4 pb-3">
+          <div className="relative bg-[#fdfbf7] sm:bg-paper/95">
+            <div className="px-4 pt-4 pb-4">
               <InlineTicketNav logoUrl={logoUrl} />
               <div className="mt-3 border-t border-dashed border-stone-300/70" />
             </div>
-            <div className="h-2.5 bg-paper perforated-bottom" aria-hidden="true" />
           </div>
         </div>
       )}
