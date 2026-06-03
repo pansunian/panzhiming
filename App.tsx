@@ -67,6 +67,8 @@ const MainLayout: React.FC<{ children?: React.ReactNode; isDemoMode?: boolean; i
 
 const App: React.FC = () => {
   const location = useLocation();
+  const queryForceRefresh = new URLSearchParams(location.search).get('fresh') === '1' || new URLSearchParams(location.search).get('refresh') === '1';
+  const forcePortfolioRefresh = queryForceRefresh || location.pathname === '/aboutme';
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [hasCache, setHasCache] = useState(false);
@@ -79,6 +81,12 @@ const App: React.FC = () => {
 
   // 1. 初始化时尝试从缓存读取数据 (Fast-path)
   useEffect(() => {
+    if (forcePortfolioRefresh) {
+      setHasCache(false);
+      setIsLoading(true);
+      return;
+    }
+
     const cached = readCache();
     if (cached) {
       try {
@@ -94,7 +102,7 @@ const App: React.FC = () => {
         console.warn("Failed to parse cache", e);
       }
     }
-  }, []);
+  }, [forcePortfolioRefresh]);
 
   useEffect(() => {
     const isHome = location.pathname === '/' || location.pathname === '';
@@ -130,7 +138,8 @@ const App: React.FC = () => {
       }
 
       try {
-        const res = await fetch('/api/portfolio');
+        if (forcePortfolioRefresh) setIsLoading(true);
+        const res = await fetch(`/api/portfolio${forcePortfolioRefresh ? '?fresh=1' : ''}`);
         if (res.ok) {
            const data = await res.json();
            
@@ -159,7 +168,7 @@ const App: React.FC = () => {
       }
     };
     initData();
-  }, [hasCache]);
+  }, [hasCache, forcePortfolioRefresh]);
 
   return (
     <Routes>
@@ -183,7 +192,7 @@ const App: React.FC = () => {
         isLoading && !hasCache ? (
           <MainLayout isDemoMode={isDemoMode}><div className="py-20 text-center font-mono text-[10px] opacity-20 tracking-widest">RETRIEVING MANUAL...</div></MainLayout>
         ) : aboutPage ? (
-          <DetailView items={[aboutPage]} forceId={aboutPage.id} type="blog" logoUrl={profile.logoUrl} />
+          <DetailView items={[aboutPage]} forceId={aboutPage.id} type="blog" logoUrl={profile.logoUrl} forceFresh />
         ) : (
           <div className="py-20 flex flex-col items-center gap-4 text-stone-400">
               <AlertCircle size={24} className="opacity-20" />

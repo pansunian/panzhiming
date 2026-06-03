@@ -12,6 +12,7 @@ interface DetailViewProps {
   type: 'blog' | 'gallery';
   logoUrl?: string;
   forceId?: string;
+  forceFresh?: boolean;
 }
 
 interface GalleryImage {
@@ -349,7 +350,7 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
     }
 };
 
-export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, forceId }) => {
+export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, forceId, forceFresh }) => {
   const { id } = useParams();
   const location = useLocation();
   const currentId = forceId || id;
@@ -385,7 +386,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
         const fetchData = async () => {
             try {
                 const searchParams = new URLSearchParams(location.search);
-                const forceRefresh = searchParams.get('fresh') === '1' || searchParams.get('refresh') === '1';
+                const forceRefresh = forceFresh || searchParams.get('fresh') === '1' || searchParams.get('refresh') === '1';
                 const refreshQuery = forceRefresh ? '&fresh=1' : '';
                 const [imgRes, contentRes] = await Promise.all([
                     fetch(`/api/page-images?pageId=${pageId}${refreshQuery}`),
