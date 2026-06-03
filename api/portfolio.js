@@ -46,7 +46,11 @@ module.exports = async function handler(req, res) {
     try {
       const response = await notion.databases.query({ database_id: dbId });
       let results = response.results.map(mapper);
-      results.sort((a, b) => (b.date || '0000').localeCompare(a.date || '0000'));
+      results.sort((a, b) => {
+        const dateCompare = (b.date || '0000').localeCompare(a.date || '0000');
+        if (dateCompare !== 0) return dateCompare;
+        return (b.lastEditedTime || '').localeCompare(a.lastEditedTime || '');
+      });
       return results;
     } catch (error) { return []; }
   };
@@ -113,6 +117,7 @@ module.exports = async function handler(req, res) {
       title: getPropValue(page.properties['Title'] || page.properties['Name']),
       excerpt: getPropValue(page.properties['Excerpt']),
       date: page.properties['Date']?.date?.start || '',
+      lastEditedTime: page.last_edited_time || '',
       readTime: page.properties['ReadTime']?.select?.name || '5 MIN',
       category: page.properties['Category']?.select?.name || 'Blog',
       imageUrl: getImageUrl(page, 'Cover', true),
@@ -120,11 +125,16 @@ module.exports = async function handler(req, res) {
     }))
   ]);
 
-  const about = posts.find(p =>
+  const aboutCandidates = posts.filter(p =>
     p.category.toLowerCase().includes('about') ||
     p.title.includes('关于') ||
-    p.title.toLowerCase().includes('about')
+    p.title.toLowerCase().includes('about') ||
+    p.title.includes('说明书')
   );
+  const about = aboutCandidates.sort((a, b) => {
+    if (a.featured !== b.featured) return a.featured ? -1 : 1;
+    return (b.lastEditedTime || '').localeCompare(a.lastEditedTime || '');
+  })[0];
 
   const result = { profile, gallery, thoughts, posts, about, updatedAt: new Date().toISOString() };
 
