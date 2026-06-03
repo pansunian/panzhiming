@@ -17,8 +17,9 @@ export const ThoughtSection: React.FC<Props> = ({ thoughts, showViewAll, logoUrl
     <section className="flex flex-col items-center w-full scroll-mt-12">
       {showPageNav && (
         <div className="-mx-2 w-[calc(100%+1rem)] pb-10 sm:mx-0 sm:w-full">
-          <div className="ticket-nav-sheet relative bg-[#fdfbf7] sm:bg-paper/95">
-            <div className="px-4 pt-4 pb-6">
+          <div className="relative z-40">
+            <div className="ticket-nav-sheet absolute inset-0 bg-[#fdfbf7] sm:bg-paper/95 pointer-events-none" aria-hidden="true" />
+            <div className="relative px-4 pt-4 pb-6">
               <InlineTicketNav logoUrl={logoUrl} />
               <div className="mt-3 border-t border-dashed border-stone-300/70" />
             </div>
@@ -39,7 +40,7 @@ export const ThoughtSection: React.FC<Props> = ({ thoughts, showViewAll, logoUrl
       <div className="w-full">
           <div className="bg-paper px-6 py-8">
               <div className="text-center border-b border-dashed border-stone-300 pb-6 mb-6">
-                  <h3 className="font-serif font-medium text-lg mb-1 tracking-[0.08em]">思维碎片商店</h3>
+                  <h3 className="font-serif font-medium text-lg mb-1 tracking-[0.08em]">灵感商店</h3>
                   <div className="flex justify-between text-[9px] font-mono text-stone-400 mt-2 uppercase">
                       <span>Store No. 2049</span>
                       <span>{new Date().toDateString()}</span>
