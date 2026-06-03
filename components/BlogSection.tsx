@@ -30,7 +30,6 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
             <div className="w-full h-full flex items-stretch">
                 <div className="w-36 sm:w-[38%] h-full relative overflow-hidden rounded-l-sm bg-stone-200 shrink-0">
                     <img src={coverSrc} alt={post.title} onLoad={() => setIsLoaded(true)} className={`w-full h-full object-cover filter brightness-[0.95] contrast-[1.05] sepia-[0.1] transition-all duration-700 group-hover:scale-105 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} />
-                    <div className="absolute bottom-2 left-2 text-white"><span className="font-mono text-[8px] bg-ink/55 border border-white/30 px-1.5 py-0.5 backdrop-blur-sm tracking-wider uppercase">{post.category}</span></div>
                 </div>
                 
                 <div className="relative w-0 flex flex-col items-center z-20">
@@ -41,7 +40,7 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
                 
                 <div className="flex-grow h-full bg-paper p-3 sm:p-4 flex flex-col relative jagged-right-round rounded-r-none border-r border-stone-200/50">
                     <div className="flex justify-between items-center mb-1">
-                            <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">Admit One</span>
+                            <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">{post.category}</span>
                             <span className="font-mono text-[9px] text-stone-500 font-bold">{post.date}</span>
                     </div>
                     <div className="flex-grow flex flex-col justify-center mb-1 pr-0 sm:pr-1">
