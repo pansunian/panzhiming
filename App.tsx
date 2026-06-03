@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { ProfileSection } from './components/ProfileSection';
 import { GallerySection } from './components/GallerySection';
@@ -10,8 +10,33 @@ import { Profile, PhotoGroup, Thought, BlogPost } from './types';
 import { Info, AlertCircle } from 'lucide-react';
 import { mockProfile, mockGallery, mockThoughts, mockPosts, mockAbout } from './data/mockData';
 
-// --- 旧缓存清理 ---
+// --- 短缓存兜底 ---
 const CACHE_KEY = 'portfolio_snapshot_v1';
+const CACHE_TTL_MS = 2 * 60 * 1000;
+
+const readCache = () => {
+  try {
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (!cached) return null;
+    const parsed = JSON.parse(cached);
+    if (!parsed?.savedAt || Date.now() - parsed.savedAt > CACHE_TTL_MS) {
+      localStorage.removeItem(CACHE_KEY);
+      return null;
+    }
+    return parsed.data || null;
+  } catch (e) {
+    console.warn("Cache unavailable in this browser context", e);
+    return null;
+  }
+};
+
+const writeCache = (data: unknown) => {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), data }));
+  } catch (e) {
+    console.warn("Failed to write cache", e);
+  }
+};
 
 const clearCache = () => {
   try {
@@ -69,10 +94,34 @@ const App: React.FC = () => {
   const [thoughts, setThoughts] = useState<Thought[]>([]);
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [aboutPage, setAboutPage] = useState<BlogPost | null>(null);
+  const hasUsableDataRef = useRef(false);
 
-  // 1. 清掉旧的本地快照，避免 Notion 更新和临时图片链接被旧缓存卡住
+  const applyPortfolioData = (data: any) => {
+    if (data.profile) setProfile(normalizeProfile(data.profile));
+    setPhotoGroups(asArray<PhotoGroup>(data.gallery));
+    setThoughts(asArray<Thought>(data.thoughts));
+    setPosts(asArray<BlogPost>(data.posts));
+    if (data.about) setAboutPage(data.about);
+    hasUsableDataRef.current = true;
+  };
+
+  // 1. 只使用很短的本地兜底，避免 Notion 回源慢时出现空白
   useEffect(() => {
-    clearCache();
+    if (forcePortfolioRefresh) {
+      clearCache();
+      setHasCache(false);
+      setIsLoading(true);
+      return;
+    }
+
+    const cached = readCache();
+    if (cached?.profile?.name) {
+      applyPortfolioData(cached);
+      setHasCache(true);
+      setIsLoading(false);
+      return;
+    }
+
     setHasCache(false);
     setIsLoading(true);
   }, [forcePortfolioRefresh]);
@@ -104,7 +153,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const initData = async () => {
-      if (window.location.protocol === 'file:' && !hasCache) {
+      if (window.location.protocol === 'file:' && !hasUsableDataRef.current) {
         loadDemoData();
         setIsLoading(false);
         return;
@@ -112,35 +161,31 @@ const App: React.FC = () => {
 
       try {
         if (forcePortfolioRefresh) setIsLoading(true);
-        const res = await fetch('/api/portfolio?fresh=1');
+        const res = await fetch(`/api/portfolio?fresh=1&t=${Date.now()}`, { cache: 'no-store' });
         if (res.ok) {
            const data = await res.json();
            
            // 简单的空数据检查，如果 API 返回空对象，也视为需要 Demo
            if (!data.profile || !data.profile.name) {
-               if (!hasCache) loadDemoData();
+               if (!hasUsableDataRef.current) loadDemoData();
                return;
            }
 
-           if (data.profile) setProfile(normalizeProfile(data.profile));
-           setPhotoGroups(asArray<PhotoGroup>(data.gallery));
-           setThoughts(asArray<Thought>(data.thoughts));
-           setPosts(asArray<BlogPost>(data.posts));
-           if (data.about) setAboutPage(data.about);
-           
+           applyPortfolioData(data);
+           writeCache(data);
            setIsDemoMode(false); 
         } else {
             // 只有在没缓存且接口报错的情况下才开启 Demo
-            if (!hasCache) loadDemoData();
+            if (!hasUsableDataRef.current) loadDemoData();
         }
       } catch (e) { 
-          if (!hasCache) loadDemoData();
+          if (!hasUsableDataRef.current) loadDemoData();
       } finally { 
           setIsLoading(false); 
       }
     };
     initData();
-  }, [hasCache, forcePortfolioRefresh]);
+  }, [forcePortfolioRefresh]);
 
   return (
     <Routes>
