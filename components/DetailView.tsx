@@ -265,7 +265,7 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
 
     switch (block.type) {
         case 'paragraph':
-            return <p className="mb-[1.2em] leading-loose text-ink/90 font-sans text-[17px] md:text-[15px] text-justify min-h-[1em] first:mt-0"><RichText content={block.content} /></p>;
+            return <p className="mb-[1.2em] leading-loose text-ink/90 font-sans text-[17px] md:text-[16px] text-justify min-h-[1em] first:mt-0"><RichText content={block.content} /></p>;
         case 'heading_1':
             return <h2 className="font-serif font-medium text-xl mt-10 mb-6 border-b border-stone-100 pb-2 first:mt-0"><RichText content={block.content} /></h2>;
         case 'heading_2':
@@ -275,12 +275,12 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
         case 'heading_4':
             return <h5 className="font-serif font-medium text-sm mt-5 mb-2 first:mt-0"><RichText content={block.content} /></h5>;
         case 'quote':
-            return <blockquote className="whitespace-pre-line border-l-[3px] border-stone-300 pl-3 py-[1px] my-4 font-sans text-[17px] md:text-[15px] leading-loose text-ink/90 first:mt-0"><RichText content={block.content} /></blockquote>;
+            return <blockquote className="whitespace-pre-line border-l-[3px] border-stone-300 pl-3 py-[1px] my-4 font-sans text-[17px] md:text-[16px] leading-loose text-ink/90 first:mt-0"><RichText content={block.content} /></blockquote>;
         case 'callout':
             return (
                 <div className={`w-full ${getNotionCalloutBg(block.color)} px-4 py-3 rounded-[3px] my-4 flex gap-3 items-start first:mt-0`}>
                     {block.icon && <span className="w-6 shrink-0 text-[18px] leading-7">{block.icon.emoji || '💡'}</span>}
-                    <div className="min-w-0 flex-1 font-sans text-[17px] md:text-[15px] leading-7 text-ink/90">
+                    <div className="min-w-0 flex-1 font-sans text-[17px] md:text-[16px] leading-7 text-ink/90">
                         {block.content?.length > 0 && (
                             <div className="whitespace-pre-line"><RichText content={block.content} /></div>
                         )}
@@ -297,7 +297,7 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
         case 'list_item':
             const bullet = block.listType === 'ol' ? 'counter' : '•';
             return (
-                <div className="flex gap-3 mb-3 pl-2 font-sans text-[17px] md:text-[15px] leading-relaxed first:mt-0">
+                <div className="flex gap-3 mb-3 pl-2 font-sans text-[17px] md:text-[16px] leading-relaxed first:mt-0">
                     <span className="text-stone-300 shrink-0 font-mono text-sm">{bullet === 'counter' ? '' : bullet}</span>
                     <div className="text-ink/90"><RichText content={block.content} /></div>
                 </div>
