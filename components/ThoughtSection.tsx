@@ -17,8 +17,8 @@ export const ThoughtSection: React.FC<Props> = ({ thoughts, showViewAll, logoUrl
     <section className="flex flex-col items-center w-full scroll-mt-12">
       {showPageNav && (
         <div className="-mx-2 w-[calc(100%+1rem)] pb-10 sm:mx-0 sm:w-full">
-          <div className="relative bg-[#fdfbf7] sm:bg-paper/95">
-            <div className="px-4 pt-4 pb-4">
+          <div className="ticket-nav-sheet relative bg-[#fdfbf7] sm:bg-paper/95">
+            <div className="px-4 pt-4 pb-6">
               <InlineTicketNav logoUrl={logoUrl} />
               <div className="mt-3 border-t border-dashed border-stone-300/70" />
             </div>
