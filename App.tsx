@@ -84,7 +84,7 @@ const MainLayout: React.FC<{ children?: React.ReactNode; isDemoMode?: boolean; i
 const App: React.FC = () => {
   const location = useLocation();
   const queryForceRefresh = new URLSearchParams(location.search).get('fresh') === '1' || new URLSearchParams(location.search).get('refresh') === '1';
-  const forcePortfolioRefresh = queryForceRefresh || location.pathname === '/aboutme';
+  const forcePortfolioRefresh = queryForceRefresh;
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [hasCache, setHasCache] = useState(false);
@@ -161,7 +161,13 @@ const App: React.FC = () => {
 
       try {
         if (forcePortfolioRefresh) setIsLoading(true);
-        const res = await fetch(`/api/portfolio?fresh=1&t=${Date.now()}`, { cache: 'no-store' });
+        const controller = new AbortController();
+        const timeoutId = window.setTimeout(() => controller.abort(), 12000);
+        const res = await fetch(`/api/portfolio?fresh=1&t=${Date.now()}`, {
+          cache: 'no-store',
+          signal: controller.signal
+        });
+        window.clearTimeout(timeoutId);
         if (res.ok) {
            const data = await res.json();
            
