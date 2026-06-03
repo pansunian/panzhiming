@@ -1,12 +1,26 @@
 const { Client } = require('@notionhq/client');
+const { redisGet, redisSet } = require('./lib/redis');
+
+const CACHE_KEY = 'portfolio-data-v3';
+const CACHE_TTL_SECONDS = Number(process.env.PORTFOLIO_CACHE_TTL_SECONDS || 120);
 
 module.exports = async function handler(req, res) {
-  res.setHeader('Cache-Control', 'no-store');
-
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });
 
-  // Always fetch fresh Notion data. Notion file URLs are temporary, so caching
-  // portfolio data can leave the homepage with expired cover images.
+  const forceRefresh = req.query?.fresh === '1' || req.query?.refresh === '1';
+  res.setHeader('Cache-Control', forceRefresh ? 'no-store' : 's-maxage=60, stale-while-revalidate=120');
+
+  if (!forceRefresh) {
+    try {
+      const cached = await redisGet(CACHE_KEY);
+      if (cached?.profile?.name) {
+        return res.status(200).json(cached);
+      }
+    } catch (error) {
+      console.warn('Portfolio cache read failed:', error.message);
+    }
+  }
+
   const requiredEnv = ['NOTION_API_KEY','NOTION_PROFILE_DB_ID','NOTION_GALLERY_DB_ID','NOTION_THOUGHTS_DB_ID','NOTION_BLOG_DB_ID'];
   const missingEnv = requiredEnv.filter(key => !process.env[key]);
   if (missingEnv.length > 0) {
@@ -137,6 +151,12 @@ module.exports = async function handler(req, res) {
   })[0];
 
   const result = { profile, gallery, thoughts, posts, about, updatedAt: new Date().toISOString() };
+
+  try {
+    await redisSet(CACHE_KEY, result, CACHE_TTL_SECONDS);
+  } catch (error) {
+    console.warn('Portfolio cache write failed:', error.message);
+  }
 
   res.status(200).json(result);
 };

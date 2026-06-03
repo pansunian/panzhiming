@@ -163,8 +163,11 @@ const App: React.FC = () => {
         if (forcePortfolioRefresh) setIsLoading(true);
         const controller = new AbortController();
         const timeoutId = window.setTimeout(() => controller.abort(), 12000);
-        const res = await fetch(`/api/portfolio?fresh=1&t=${Date.now()}`, {
-          cache: 'no-store',
+        const portfolioUrl = forcePortfolioRefresh
+          ? `/api/portfolio?fresh=1&t=${Date.now()}`
+          : '/api/portfolio';
+        const res = await fetch(portfolioUrl, {
+          cache: forcePortfolioRefresh ? 'no-store' : 'default',
           signal: controller.signal
         });
         window.clearTimeout(timeoutId);
