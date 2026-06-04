@@ -17,10 +17,7 @@ module.exports = async function handler(req, res) {
 
   const forceRefresh = req.query?.fresh === '1' || req.query?.refresh === '1';
   const cacheKey = `page-images-v1-${pageId}`;
-  res.setHeader(
-    'Cache-Control',
-    forceRefresh ? 'no-store' : 's-maxage=1800, stale-while-revalidate=1500'
-  );
+  res.setHeader('Cache-Control', 'no-store');
 
   if (!forceRefresh) {
     try {

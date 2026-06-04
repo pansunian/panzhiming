@@ -8,7 +8,7 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });
 
   const forceRefresh = req.query?.fresh === '1' || req.query?.refresh === '1';
-  res.setHeader('Cache-Control', forceRefresh ? 'no-store' : 's-maxage=1800, stale-while-revalidate=1500');
+  res.setHeader('Cache-Control', 'no-store');
 
   if (!forceRefresh) {
     try {
