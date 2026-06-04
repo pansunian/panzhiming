@@ -265,7 +265,7 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
 
     switch (block.type) {
         case 'paragraph':
-            return <p className="mb-[1.2em] leading-loose text-ink/90 font-sans text-[17px] md:text-[16px] text-justify min-h-[1em] first:mt-0"><RichText content={block.content} /></p>;
+            return <p className="mb-[0.6em] leading-[1.55] text-ink/90 font-sans text-[17px] md:text-[16px] text-justify min-h-[1em] first:mt-0"><RichText content={block.content} /></p>;
         case 'heading_1':
             return <h2 className="font-serif font-medium text-xl mt-10 mb-6 border-b border-stone-100 pb-2 first:mt-0"><RichText content={block.content} /></h2>;
         case 'heading_2':
@@ -275,17 +275,17 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
         case 'heading_4':
             return <h5 className="font-serif font-medium text-sm mt-5 mb-2 first:mt-0"><RichText content={block.content} /></h5>;
         case 'quote':
-            return <blockquote className="whitespace-pre-line border-l-[3px] border-stone-300 pl-3 py-[1px] my-4 font-sans text-[17px] md:text-[16px] leading-loose text-ink/90 first:mt-0"><RichText content={block.content} /></blockquote>;
+            return <blockquote className="whitespace-pre-line border-l-[3px] border-stone-300 pl-3 py-[1px] my-2 font-sans text-[17px] md:text-[16px] leading-[1.55] text-ink/90 first:mt-0"><RichText content={block.content} /></blockquote>;
         case 'callout':
             return (
-                <div className={`w-full ${getNotionCalloutBg(block.color)} px-4 py-3 rounded-[3px] my-4 flex gap-3 items-start first:mt-0`}>
-                    {block.icon && <span className="w-6 shrink-0 text-[18px] leading-7">{block.icon.emoji || '💡'}</span>}
-                    <div className="min-w-0 flex-1 font-sans text-[17px] md:text-[16px] leading-7 text-ink/90">
+                <div className={`w-full ${getNotionCalloutBg(block.color)} px-4 py-3 rounded-[3px] my-2 flex gap-3 items-start first:mt-0`}>
+                    {block.icon && <span className="w-6 shrink-0 text-[18px] leading-[1.55]">{block.icon.emoji || '💡'}</span>}
+                    <div className="min-w-0 flex-1 font-sans text-[17px] md:text-[16px] leading-[1.55] text-ink/90">
                         {block.content?.length > 0 && (
                             <div className="whitespace-pre-line"><RichText content={block.content} /></div>
                         )}
                         {block.children?.length > 0 && (
-                            <div className={`mt-2 ${block.content?.length ? 'pt-1' : ''} [&_p]:mb-2 [&_p:last-child]:mb-0 [&_blockquote]:my-2 [&_h2]:mt-3 [&_h2]:mb-2 [&_h3]:mt-3 [&_h3]:mb-2 [&_h4]:mt-2 [&_h4]:mb-1 [&_.notion-callout-child]:my-2`}>
+                            <div className={`mt-1 ${block.content?.length ? 'pt-1' : ''} [&_p]:mb-1 [&_p:last-child]:mb-0 [&_blockquote]:my-1 [&_h2]:mt-2 [&_h2]:mb-1 [&_h3]:mt-2 [&_h3]:mb-1 [&_h4]:mt-1 [&_h4]:mb-1 [&_.notion-callout-child]:my-1`}>
                                 {block.children.map((child: any, idx: number) => (
                                     <NotionBlock key={idx} block={child} isGallery={isGallery} />
                                 ))}
@@ -297,7 +297,7 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
         case 'list_item':
             const bullet = block.listType === 'ol' ? 'counter' : '•';
             return (
-                <div className="flex gap-3 mb-3 pl-2 font-sans text-[17px] md:text-[16px] leading-relaxed first:mt-0">
+                <div className="flex gap-3 mb-1.5 pl-2 font-sans text-[17px] md:text-[16px] leading-[1.55] first:mt-0">
                     <span className="text-stone-300 shrink-0 font-mono text-sm">{bullet === 'counter' ? '' : bullet}</span>
                     <div className="text-ink/90"><RichText content={block.content} /></div>
                 </div>
@@ -333,7 +333,7 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
                 </div>
             );
         case 'divider':
-            return <DashedLine className="my-6 border-stone-400/70 first:mt-0" />;
+            return <DashedLine className="my-3 border-stone-400/70 first:mt-0" />;
         case 'image':
             // 博客内嵌图片优化
             const optimizedContentImg = optimizeImage(block.src, 960);
