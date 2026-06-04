@@ -10,9 +10,9 @@ import { Profile, PhotoGroup, Thought, BlogPost } from './types';
 import { Info, AlertCircle } from 'lucide-react';
 import { mockProfile, mockGallery, mockThoughts, mockPosts, mockAbout } from './data/mockData';
 
-// --- 短缓存兜底 ---
+// --- 本地快照兜底：先显示上一次可用内容，再后台更新 ---
 const CACHE_KEY = 'portfolio_snapshot_v1';
-const CACHE_TTL_MS = 2 * 60 * 1000;
+const CACHE_TTL_MS = 45 * 60 * 1000;
 
 const readCache = () => {
   try {
@@ -105,7 +105,7 @@ const App: React.FC = () => {
     hasUsableDataRef.current = true;
   };
 
-  // 1. 只使用很短的本地兜底，避免 Notion 回源慢时出现空白
+  // 1. 使用本地快照兜底，避免 Notion 回源慢时出现空白或明显重载感
   useEffect(() => {
     if (forcePortfolioRefresh) {
       clearCache();

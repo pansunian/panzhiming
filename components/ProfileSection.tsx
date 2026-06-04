@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Profile } from '../types';
 import { TicketBase, Notch, DashedLine, BarcodeHorizontal } from './TicketUI';
@@ -72,20 +72,35 @@ const getSocialConfig = (platform: string) => {
 
 export const ProfileSection: React.FC<Props> = ({ profile }) => {
   const [imgError, setImgError] = useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   // 优化头像 URL
-  const avatarSrc = !imgError && profile.avatarUrl ? optimizeImage(profile.avatarUrl, 640) : "";
+  const avatarSrc = !imgError && profile.avatarUrl ? optimizeImage(profile.avatarUrl, 640, 70) : "";
+
+  useEffect(() => {
+    setImgError(false);
+    setIsImageLoaded(false);
+  }, [profile.avatarUrl]);
 
   return (
     <div className="flex justify-center w-full mb-12">
       <TicketBase className="w-full rounded-2xl flex flex-col">
         {/* 顶部海报区 */}
-        <div className="relative aspect-[5/6] w-full rounded-t-2xl overflow-hidden bg-paper-dark">
+        <div
+            className="relative aspect-[5/6] w-full rounded-t-2xl overflow-hidden bg-brand-accent"
+            style={{
+                backgroundImage: 'linear-gradient(145deg, rgba(255,255,255,0.08), rgba(0,0,0,0.16))'
+            }}
+        >
             {avatarSrc && (
                 <img 
                     src={avatarSrc} 
                     alt="Profile" 
-                    className="w-full h-full object-cover filter brightness-[0.85] contrast-110 transition-opacity duration-500" 
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
+                    className={`w-full h-full object-cover filter brightness-[0.85] contrast-110 transition-opacity duration-700 ${isImageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                    onLoad={() => setIsImageLoaded(true)}
                     onError={() => setImgError(true)}
                 />
             )}
