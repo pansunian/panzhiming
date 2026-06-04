@@ -2,13 +2,13 @@ const { Client } = require('@notionhq/client');
 const { redisGet, redisSet } = require('./lib/redis');
 
 const CACHE_KEY = 'portfolio-data-v3';
-const CACHE_TTL_SECONDS = Number(process.env.PORTFOLIO_CACHE_TTL_SECONDS || 600);
+const CACHE_TTL_SECONDS = Number(process.env.PORTFOLIO_CACHE_TTL_SECONDS || 3300);
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });
 
   const forceRefresh = req.query?.fresh === '1' || req.query?.refresh === '1';
-  res.setHeader('Cache-Control', forceRefresh ? 'no-store' : 's-maxage=300, stale-while-revalidate=600');
+  res.setHeader('Cache-Control', forceRefresh ? 'no-store' : 's-maxage=1800, stale-while-revalidate=1500');
 
   if (!forceRefresh) {
     try {

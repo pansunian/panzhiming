@@ -2,6 +2,8 @@ const { Client } = require('@notionhq/client');
 const { redisSet } = require('./lib/redis');
 
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
+const PORTFOLIO_CACHE_KEY = 'portfolio-data-v3';
+const CACHE_TTL_SECONDS = Number(process.env.PORTFOLIO_CACHE_TTL_SECONDS || 3300);
 
 const getPropValue = (prop) => {
   if (!prop) return null;
@@ -100,6 +102,7 @@ profile = {
         title: getPropValue(page.properties['Title'] || page.properties['Name']),
         excerpt: getPropValue(page.properties['Excerpt']),
         date: page.properties['Date']?.date?.start || '',
+        lastEditedTime: page.last_edited_time || '',
         readTime: page.properties['ReadTime']?.select?.name || '5 MIN',
         category: page.properties['Category']?.select?.name || 'Blog',
         imageUrl: getImageUrl(page, 'Cover', true),
@@ -107,13 +110,18 @@ profile = {
       }))
     ]);
 
-    const about = posts.find(p =>
+    const aboutCandidates = posts.filter(p =>
       p.category.toLowerCase().includes('about') ||
       p.title.includes('关于') ||
-      p.title.toLowerCase().includes('about')
+      p.title.toLowerCase().includes('about') ||
+      p.title.includes('说明书')
     );
+    const about = aboutCandidates.sort((a, b) => {
+      if (a.featured !== b.featured) return a.featured ? -1 : 1;
+      return (b.lastEditedTime || '').localeCompare(a.lastEditedTime || '');
+    })[0];
 
-    await redisSet('portfolio-data', { profile, gallery, thoughts, posts, about, updatedAt: new Date().toISOString() });
+    await redisSet(PORTFOLIO_CACHE_KEY, { profile, gallery, thoughts, posts, about, updatedAt: new Date().toISOString() }, CACHE_TTL_SECONDS);
 
     res.status(200).json({ success: true, message: '缓存刷新成功' });
   } catch (error) {

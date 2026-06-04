@@ -2,6 +2,7 @@ const { Client } = require('@notionhq/client');
 const { redisGet, redisSet } = require('./lib/redis');
 
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
+const CACHE_TTL_SECONDS = Number(process.env.PAGE_CACHE_TTL_SECONDS || 3300);
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });
@@ -13,7 +14,7 @@ module.exports = async function handler(req, res) {
 
   res.setHeader(
     'Cache-Control',
-    forceRefresh ? 'no-store' : 's-maxage=300, stale-while-revalidate=300'
+    forceRefresh ? 'no-store' : 's-maxage=1800, stale-while-revalidate=1500'
   );
 
   if (!forceRefresh) {
@@ -114,7 +115,7 @@ module.exports = async function handler(req, res) {
     const result = { content, updatedAt: new Date().toISOString() };
 
     // 写入 Redis 缓存
-    try { await redisSet(cacheKey, result); } catch (e) { console.warn('Redis write failed:', e.message); }
+    try { await redisSet(cacheKey, result, CACHE_TTL_SECONDS); } catch (e) { console.warn('Redis write failed:', e.message); }
 
     res.status(200).json(result);
   } catch (error) {
