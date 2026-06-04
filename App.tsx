@@ -52,7 +52,7 @@ const defaultProfile: Profile = {
   role: "...",
   bio: "...",
   location: "...",
-  avatarUrl: "",
+  avatarUrl: "/panzhiming.webp",
   socials: []
 };
 

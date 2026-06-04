@@ -70,12 +70,16 @@ const getSocialConfig = (platform: string) => {
     return SOCIAL_MAP[platform.toUpperCase()] || { label: platform, icon: LinkIcon };
 };
 
+const DEFAULT_AVATAR_URL = '/panzhiming.webp';
+
 export const ProfileSection: React.FC<Props> = ({ profile }) => {
   const [imgError, setImgError] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   // 优化头像 URL
-  const avatarSrc = !imgError && profile.avatarUrl ? optimizeImage(profile.avatarUrl, 640, 70) : "";
+  const defaultAvatarSrc = optimizeImage(DEFAULT_AVATAR_URL, 640, 70);
+  const hasCustomAvatar = !imgError && Boolean(profile.avatarUrl && profile.avatarUrl !== DEFAULT_AVATAR_URL);
+  const avatarSrc = hasCustomAvatar ? optimizeImage(profile.avatarUrl, 640, 70) : "";
 
   useEffect(() => {
     setImgError(false);
@@ -92,6 +96,14 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                 backgroundImage: 'linear-gradient(145deg, rgba(255,255,255,0.08), rgba(0,0,0,0.16))'
             }}
         >
+            <img
+                src={defaultAvatarSrc}
+                alt="Profile" 
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-cover filter brightness-[0.85] contrast-110"
+            />
             {avatarSrc && (
                 <img 
                     src={avatarSrc} 
@@ -99,15 +111,15 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                     loading="eager"
                     fetchPriority="high"
                     decoding="async"
-                    className={`w-full h-full object-cover filter brightness-[0.85] contrast-110 transition-opacity duration-700 ${isImageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                    className={`absolute inset-0 w-full h-full object-cover filter brightness-[0.85] contrast-110 transition-opacity duration-700 ${isImageLoaded ? 'opacity-100' : 'opacity-0'}`}
                     onLoad={() => setIsImageLoaded(true)}
                     onError={() => setImgError(true)}
                 />
             )}
-            <div className={`absolute top-6 left-0 w-full text-center ${avatarSrc ? 'text-white mix-blend-overlay opacity-80' : 'text-ink/30'}`}>
+            <div className="absolute top-6 left-0 w-full text-center text-white mix-blend-overlay opacity-80">
                 <p className="font-mono text-[9px] tracking-[0.55em] uppercase">Life Archives</p>
             </div>
-            <div className={`absolute bottom-10 left-7 right-7 ${avatarSrc ? 'text-white' : 'text-ink'}`}>
+            <div className="absolute bottom-10 left-7 right-7 text-white">
                  <h2 className="text-[9px] font-mono mb-2 tracking-[0.22em] uppercase opacity-75">PanZhiMing / 2026</h2>
                  <h1 className="text-[2.45rem] md:text-[2.25rem] font-serif font-normal tracking-normal leading-[1.05] mb-1">先见志明</h1>
             </div>
