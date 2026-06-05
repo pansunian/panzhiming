@@ -177,6 +177,7 @@ const extFromUrl = (url) => {
 };
 
 const shouldCompressImage = (contentType, ext) => {
+  if (process.env.DISABLE_IMAGE_OPTIMIZATION === '1') return false;
   const normalizedExt = (ext || '').toLowerCase();
   if (!contentType.startsWith('image/')) return false;
   if (contentType.includes('svg') || contentType.includes('gif')) return false;
@@ -186,7 +187,12 @@ const shouldCompressImage = (contentType, ext) => {
 
 const getSharp = async () => {
   if (!sharpPromise) {
-    sharpPromise = import('sharp').then((mod) => mod.default || mod);
+    sharpPromise = import('sharp')
+      .then((mod) => mod.default || mod)
+      .catch((error) => {
+        console.warn(`[sync-notion-static] Sharp unavailable, images will stay original: ${error.message}`);
+        return null;
+      });
   }
   return sharpPromise;
 };
@@ -199,6 +205,11 @@ const writeOptimizedImage = async ({ bytes, filePath, publicUrl, originalUrl, co
 
   try {
     const sharp = await getSharp();
+    if (!sharp) {
+      await fs.writeFile(filePath, bytes);
+      return publicUrl;
+    }
+
     const optimizedBytes = await sharp(bytes)
       .rotate()
       .resize({ width: 1600, withoutEnlargement: true })
