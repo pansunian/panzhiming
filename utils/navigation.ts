@@ -2,8 +2,8 @@ import { NavLink } from '../types';
 
 export const DEFAULT_NAV_LINKS: NavLink[] = [
   { id: 'home', path: '/', label: '首页', en: 'HOME' },
+  { id: 'thoughts', path: '/thoughts', label: '灵感', en: 'NOTES' },
   { id: 'gallery', path: '/gallery', label: '摄影', en: 'GALLERY' },
-  { id: 'thoughts', path: '/thoughts', label: '便签', en: 'NOTES' },
   { id: 'blog', path: '/blog', label: '博客', en: 'BLOG' },
 ];
 

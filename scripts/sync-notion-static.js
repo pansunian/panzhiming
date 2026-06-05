@@ -121,7 +121,7 @@ const parseNavLinks = (value) => {
     .map((label) => label.trim())
     .filter(Boolean)
     .map((label, index) => {
-      const fallbackPaths = ['/', '/gallery', '/thoughts', '/blog'];
+      const fallbackPaths = ['/', '/thoughts', '/gallery', '/blog'];
       const pathName = fallbackPaths[index] || '/';
       return {
         id: pathName === '/' ? 'home' : pathName.slice(1),
