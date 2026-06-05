@@ -20,6 +20,17 @@ interface GalleryImage {
     caption: string;
 }
 
+const fetchStaticVersion = async () => {
+    try {
+        const res = await fetch(`/data/build.json?t=${Date.now()}`, { cache: 'no-store' });
+        if (!res.ok) return '';
+        const data = await res.json();
+        return data.version || data.updatedAt || '';
+    } catch {
+        return '';
+    }
+};
+
 // Notion 颜色映射
 const COLOR_MAP: Record<string, string> = {
     'gray': 'text-stone-400',
@@ -388,8 +399,10 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                 const searchParams = new URLSearchParams(location.search);
                 const forceRefresh = forceFresh || searchParams.get('fresh') === '1' || searchParams.get('refresh') === '1';
                 const refreshQuery = forceRefresh ? '&fresh=1' : '';
-                const imgUrl = forceRefresh ? `/api/page-images?pageId=${pageId}${refreshQuery}` : `/data/page-images/${pageId}.json`;
-                const contentUrl = forceRefresh ? `/api/get-page-content?pageId=${pageId}${refreshQuery}` : `/data/pages/${pageId}.json`;
+                const staticVersion = forceRefresh ? '' : await fetchStaticVersion();
+                const versionQuery = staticVersion ? `?v=${encodeURIComponent(staticVersion)}` : `?t=${Date.now()}`;
+                const imgUrl = forceRefresh ? `/api/page-images?pageId=${pageId}${refreshQuery}` : `/data/page-images/${pageId}.json${versionQuery}`;
+                const contentUrl = forceRefresh ? `/api/get-page-content?pageId=${pageId}${refreshQuery}` : `/data/pages/${pageId}.json${versionQuery}`;
                 let [imgRes, contentRes] = await Promise.all([
                     fetch(imgUrl, { cache: forceRefresh ? 'no-store' : 'default' }),
                     fetch(contentUrl, { cache: forceRefresh ? 'no-store' : 'default' })

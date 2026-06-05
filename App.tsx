@@ -23,16 +23,16 @@ const readCache = () => {
       localStorage.removeItem(CACHE_KEY);
       return null;
     }
-    return parsed.data || null;
+    return parsed || null;
   } catch (e) {
     console.warn("Cache unavailable in this browser context", e);
     return null;
   }
 };
 
-const writeCache = (data: unknown) => {
+const writeCache = (data: unknown, version = '') => {
   try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), data }));
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), version, data }));
   } catch (e) {
     console.warn("Failed to write cache", e);
   }
@@ -63,6 +63,20 @@ const normalizeProfile = (value: any): Profile => ({
   ...(value || {}),
   socials: asArray(value?.socials)
 });
+
+const fetchStaticVersion = async (signal?: AbortSignal) => {
+  try {
+    const res = await fetch(`/data/build.json?t=${Date.now()}`, {
+      cache: 'no-store',
+      signal
+    });
+    if (!res.ok) return '';
+    const data = await res.json();
+    return data.version || data.updatedAt || '';
+  } catch {
+    return '';
+  }
+};
 
 // --- 布局组件 ---
 const MainLayout: React.FC<{ children?: React.ReactNode; isDemoMode?: boolean; isHome?: boolean; flushTop?: boolean; }> = ({ children, isDemoMode, isHome, flushTop }) => (
@@ -105,20 +119,12 @@ const App: React.FC = () => {
     hasUsableDataRef.current = true;
   };
 
-  // 1. 使用本地快照兜底，避免 Notion 回源慢时出现空白或明显重载感
+  // 1. 强制刷新时清掉本地快照；普通访问会先读取静态版本号，再决定是否使用本地快照
   useEffect(() => {
     if (forcePortfolioRefresh) {
       clearCache();
       setHasCache(false);
       setIsLoading(true);
-      return;
-    }
-
-    const cached = readCache();
-    if (cached?.profile?.name) {
-      applyPortfolioData(cached);
-      setHasCache(true);
-      setIsLoading(false);
       return;
     }
 
@@ -163,9 +169,19 @@ const App: React.FC = () => {
         if (forcePortfolioRefresh) setIsLoading(true);
         const controller = new AbortController();
         const timeoutId = window.setTimeout(() => controller.abort(), 12000);
+        const staticVersion = forcePortfolioRefresh ? '' : await fetchStaticVersion(controller.signal);
+        const cached = forcePortfolioRefresh ? null : readCache();
+
+        if (cached?.data?.profile?.name && (!staticVersion || cached.version === staticVersion)) {
+          applyPortfolioData(cached.data);
+          setHasCache(true);
+          setIsLoading(false);
+        }
+
+        const versionQuery = staticVersion ? `?v=${encodeURIComponent(staticVersion)}` : `?t=${Date.now()}`;
         const portfolioUrl = forcePortfolioRefresh
           ? `/api/portfolio?fresh=1&t=${Date.now()}`
-          : '/data/portfolio.json';
+          : `/data/portfolio.json${versionQuery}`;
         let res = await fetch(portfolioUrl, {
           cache: forcePortfolioRefresh ? 'no-store' : 'default',
           signal: controller.signal
@@ -187,7 +203,7 @@ const App: React.FC = () => {
            }
 
            applyPortfolioData(data);
-           writeCache(data);
+           writeCache(data, staticVersion);
            setIsDemoMode(false); 
         } else {
             // 只有在没缓存且接口报错的情况下才开启 Demo

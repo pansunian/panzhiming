@@ -26,6 +26,7 @@ if (missingEnv.length > 0 || process.env.SKIP_NOTION_SYNC === '1') {
 
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
 const assetCache = new Map();
+const buildVersion = new Date().toISOString();
 
 const ensureDirs = async () => {
   await fs.mkdir(pagesDir, { recursive: true });
@@ -357,6 +358,10 @@ const main = async () => {
     posts,
     about,
     updatedAt: new Date().toISOString()
+  });
+  await writeJson(path.join(dataDir, 'build.json'), {
+    version: buildVersion,
+    updatedAt: buildVersion
   });
 
   await syncDetails([...gallery, ...posts]);
