@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BlogPost } from '../types';
+import { BlogPost, NavLink } from '../types';
 import { BarcodeSmall, DashedLine, Notch } from './TicketUI';
 import { ArrowRight } from 'lucide-react';
 import { optimizeImage } from '../utils/imageOptimizer';
@@ -12,6 +12,7 @@ interface Props {
   title?: string;
   logoUrl?: string;
   showPageNav?: boolean;
+  navLinks?: NavLink[];
 }
 
 const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) => {
@@ -57,7 +58,7 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
     );
 };
 
-export const BlogSection: React.FC<Props> = ({ posts, showViewAll, title = "文章", logoUrl, showPageNav }) => {
+export const BlogSection: React.FC<Props> = ({ posts, showViewAll, title = "文章", logoUrl, showPageNav, navLinks }) => {
   return (
     <section className="scroll-mt-12 w-full">
       {showPageNav && (
@@ -65,7 +66,7 @@ export const BlogSection: React.FC<Props> = ({ posts, showViewAll, title = "文�
           <div className="relative z-40">
             <div className="ticket-nav-sheet absolute inset-0 bg-[#fdfbf7] sm:bg-paper/95 pointer-events-none" aria-hidden="true" />
             <div className="relative px-4 pt-4 pb-6">
-              <InlineTicketNav logoUrl={logoUrl} />
+              <InlineTicketNav logoUrl={logoUrl} navLinks={navLinks} />
               <div className="mt-3 border-t border-dashed border-stone-300/70" />
             </div>
           </div>

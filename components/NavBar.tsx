@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, BookOpen } from 'lucide-react';
+import { NavLink } from '../types';
+import { normalizeNavLinks } from '../utils/navigation';
 
 interface NavBarProps {
   logoUrl?: string;
   className?: string;
+  navLinks?: NavLink[];
 }
 
-export const InlineTicketNav: React.FC<NavBarProps> = ({ logoUrl, className = "" }) => {
+export const InlineTicketNav: React.FC<NavBarProps> = ({ logoUrl, className = "", navLinks }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-
-  const links = [
-    { id: 'gallery', path: '/gallery', label: '影像', en: 'GALLERY' },
-    { id: 'thoughts', path: '/thoughts', label: '便签', en: 'NOTES' },
-    { id: 'blog', path: '/blog', label: '文章', en: 'BLOG' },
-  ] as const;
+  const normalizedLinks = normalizeNavLinks(navLinks);
+  const homeLink = normalizedLinks.find((link) => link.path === '/') || normalizedLinks[0];
+  const links = normalizedLinks.filter((link) => link.path !== '/');
 
   return (
     <div className={`relative z-40 w-full ${className}`}>
@@ -52,7 +52,9 @@ export const InlineTicketNav: React.FC<NavBarProps> = ({ logoUrl, className = ""
                              </div>
                         </Link>
                     ))}
-                    <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-center text-[9px] font-mono text-stone-400 tracking-[0.18em] py-2.5 hover:text-ink transition-colors">首页</Link>
+                    {homeLink && (
+                      <Link to={homeLink.path} onClick={() => setIsMenuOpen(false)} className="text-center text-[9px] font-mono text-stone-400 tracking-[0.18em] py-2.5 hover:text-ink transition-colors">{homeLink.label}</Link>
+                    )}
                 </div>
             </div>
         )}

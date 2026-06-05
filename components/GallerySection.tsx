@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { PhotoGroup } from '../types';
+import { NavLink, PhotoGroup } from '../types';
 import { TicketBase, Notch, DashedLine } from './TicketUI';
 import { ArrowUpRight, ArrowRight, MapPin } from 'lucide-react';
 import { optimizeImage } from '../utils/imageOptimizer';
@@ -12,6 +12,7 @@ interface Props {
   title?: string;
   logoUrl?: string;
   showPageNav?: boolean;
+  navLinks?: NavLink[];
 }
 
 const GalleryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ group, index }) => {
@@ -72,7 +73,7 @@ const GalleryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ group, in
     );
 };
 
-export const GallerySection: React.FC<Props> = ({ groups, onViewAll, title = "影像辑", logoUrl, showPageNav }) => {
+export const GallerySection: React.FC<Props> = ({ groups, onViewAll, title = "影像辑", logoUrl, showPageNav, navLinks }) => {
   return (
     <section className="scroll-mt-24 w-full">
       {showPageNav && (
@@ -80,7 +81,7 @@ export const GallerySection: React.FC<Props> = ({ groups, onViewAll, title = "�
           <div className="relative z-40">
             <div className="ticket-nav-sheet absolute inset-0 bg-[#fdfbf7] sm:bg-paper/95 pointer-events-none" aria-hidden="true" />
             <div className="relative px-4 pt-4 pb-6">
-              <InlineTicketNav logoUrl={logoUrl} />
+              <InlineTicketNav logoUrl={logoUrl} navLinks={navLinks} />
               <div className="mt-3 border-t border-dashed border-stone-300/70" />
             </div>
           </div>

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Profile } from '../types';
 import { TicketBase, Notch, DashedLine, BarcodeHorizontal } from './TicketUI';
 import { optimizeImage } from '../utils/imageOptimizer';
+import { normalizeNavLinks } from '../utils/navigation';
 import { 
     Instagram, Twitter, Github, Linkedin, Mail, Youtube, 
     Globe,BookOpen,  Link as LinkIcon 
@@ -75,6 +76,7 @@ const DEFAULT_AVATAR_URL = '/panzhiming.webp';
 export const ProfileSection: React.FC<Props> = ({ profile }) => {
   const [imgError, setImgError] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const navLinks = normalizeNavLinks(profile.navLinks);
 
   // 优化头像 URL
   const defaultAvatarSrc = optimizeImage(DEFAULT_AVATAR_URL, 640, 70);
@@ -156,22 +158,12 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                  
                  {/* 底部导航 */}
                  <div className="grid grid-cols-4 gap-0 text-center border-y border-dashed border-white/25 py-3">
-                     <Link to="/" className="group relative flex flex-col items-center transition-transform duration-300 hover:-translate-y-0.5 after:absolute after:right-0 after:top-1 after:h-8 after:border-r after:border-dashed after:border-white/20">
-                         <span className="text-[9px] font-mono text-white/40 mb-1 tracking-wider">HOME</span>
-                         <span className="font-nav-link text-[15px] font-normal leading-none text-white group-hover:underline">首页</span>
-                     </Link>
-                     <Link to="/gallery" className="group relative flex flex-col items-center transition-transform duration-300 hover:-translate-y-0.5 after:absolute after:right-0 after:top-1 after:h-8 after:border-r after:border-dashed after:border-white/20">
-                         <span className="text-[9px] font-mono text-white/40 mb-1 tracking-wider">GALLERY</span>
-                         <span className="font-nav-link text-[15px] font-normal leading-none text-white group-hover:underline">摄影</span>
-                     </Link>
-                     <Link to="/thoughts" className="group relative flex flex-col items-center transition-transform duration-300 hover:-translate-y-0.5 after:absolute after:right-0 after:top-1 after:h-8 after:border-r after:border-dashed after:border-white/20">
-                         <span className="text-[9px] font-mono text-white/40 mb-1 tracking-wider">NOTES</span>
-                         <span className="font-nav-link text-[15px] font-normal leading-none text-white group-hover:underline">便签</span>
-                     </Link>
-                     <Link to="/blog" className="group flex flex-col items-center transition-transform duration-300 hover:-translate-y-0.5">
-                         <span className="text-[9px] font-mono text-white/40 mb-1 tracking-wider">BLOG</span>
-                         <span className="font-nav-link text-[15px] font-normal leading-none text-white group-hover:underline">博客</span>
-                     </Link>
+                     {navLinks.slice(0, 4).map((link, index) => (
+                         <Link key={`${link.path}-${link.label}`} to={link.path} className={`group relative flex flex-col items-center transition-transform duration-300 hover:-translate-y-0.5 ${index < 3 ? 'after:absolute after:right-0 after:top-1 after:h-8 after:border-r after:border-dashed after:border-white/20' : ''}`}>
+                             <span className="text-[9px] font-mono text-white/40 mb-1 tracking-wider">{link.en || 'LINK'}</span>
+                             <span className="font-nav-link text-[15px] font-normal leading-none text-white group-hover:underline">{link.label}</span>
+                         </Link>
+                     ))}
                  </div>
              </div>
         </div>

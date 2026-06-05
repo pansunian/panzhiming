@@ -65,6 +65,73 @@ const getImageUrl = (page, propertyKey = 'Cover', preferPageCover = true) => {
   return '';
 };
 
+const normalizeNavPath = (value) => {
+  if (!value) return '/';
+  try {
+    const parsed = new URL(value, 'https://panzhiming.com');
+    const isOwnSite = /(^|\.)panzhiming\.com$/.test(parsed.hostname);
+    if (!isOwnSite && value.startsWith('http')) return value;
+    const pathName = parsed.pathname.replace(/\/+$/, '') || '/';
+    const aliases = {
+      '/photos': '/gallery',
+      '/photo': '/gallery',
+      '/idea': '/thoughts',
+      '/ideas': '/thoughts',
+      '/notes': '/thoughts',
+      '/note': '/thoughts',
+      '/article': '/blog',
+      '/articles': '/blog',
+      '/posts': '/blog',
+      '/post': '/blog',
+    };
+    return aliases[pathName.toLowerCase()] || pathName;
+  } catch {
+    return value.startsWith('/') ? value : `/${value}`;
+  }
+};
+
+const inferNavEn = (pathName) => {
+  if (pathName === '/') return 'HOME';
+  if (pathName.startsWith('/gallery')) return 'GALLERY';
+  if (pathName.startsWith('/thoughts')) return 'NOTES';
+  if (pathName.startsWith('/blog')) return 'BLOG';
+  return '';
+};
+
+const parseNavLinks = (value) => {
+  if (!value || typeof value !== 'string') return [];
+
+  const links = [];
+  const markdownLinkPattern = /\[([^\]]+)\]\(([^)]+)\)/g;
+  let match;
+  while ((match = markdownLinkPattern.exec(value)) !== null) {
+    const pathName = normalizeNavPath(match[2]);
+    links.push({
+      id: pathName === '/' ? 'home' : pathName.replace(/^\//, '').replace(/\//g, '-'),
+      path: pathName,
+      label: match[1].trim(),
+      en: inferNavEn(pathName)
+    });
+  }
+
+  if (links.length > 0) return links;
+
+  return value
+    .split(/\||｜|,|，|\n/)
+    .map((label) => label.trim())
+    .filter(Boolean)
+    .map((label, index) => {
+      const fallbackPaths = ['/', '/gallery', '/thoughts', '/blog'];
+      const pathName = fallbackPaths[index] || '/';
+      return {
+        id: pathName === '/' ? 'home' : pathName.slice(1),
+        path: pathName,
+        label,
+        en: inferNavEn(pathName)
+      };
+    });
+};
+
 const safeName = (value) => value.replace(/[^a-zA-Z0-9_-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').slice(0, 96);
 
 const extFromContentType = (contentType) => {
@@ -290,6 +357,7 @@ const buildProfile = async () => {
     avatarUrl: await downloadAsset(getImageUrl(page, 'Avatar', false), 'profile-avatar'),
     logoUrl: await downloadAsset(getImageUrl(page, 'Logo', false), 'profile-logo'),
     tags: getPropValue(p.Tags) || [],
+    navLinks: parseNavLinks(getPropValue(p['导航 1'] || p.Nav || p.Navigation || p.NavLinks || p['导航'])),
     socials
   };
 };

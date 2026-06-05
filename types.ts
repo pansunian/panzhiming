@@ -5,6 +5,13 @@ export interface SocialLink {
   handle: string;
 }
 
+export interface NavLink {
+  id?: string;
+  path: string;
+  label: string;
+  en?: string;
+}
+
 export interface Profile {
   name: string;
   role: string;
@@ -13,6 +20,7 @@ export interface Profile {
   logoUrl?: string; // New field for custom logo
   location: string;
   tags?: string[];
+  navLinks?: NavLink[];
   socials: SocialLink[];
 }
 

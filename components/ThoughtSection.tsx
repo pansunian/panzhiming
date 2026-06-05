@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Thought } from '../types';
+import { NavLink, Thought } from '../types';
 import { BarcodeHorizontal } from './TicketUI';
 import { ArrowRight } from 'lucide-react';
 import { InlineTicketNav } from './NavBar';
@@ -10,9 +10,10 @@ interface Props {
   showViewAll?: boolean;
   logoUrl?: string;
   showPageNav?: boolean;
+  navLinks?: NavLink[];
 }
 
-export const ThoughtSection: React.FC<Props> = ({ thoughts, showViewAll, logoUrl, showPageNav }) => {
+export const ThoughtSection: React.FC<Props> = ({ thoughts, showViewAll, logoUrl, showPageNav, navLinks }) => {
   return (
     <section className="flex flex-col items-center w-full scroll-mt-12">
       {showPageNav && (
@@ -20,7 +21,7 @@ export const ThoughtSection: React.FC<Props> = ({ thoughts, showViewAll, logoUrl
           <div className="relative z-40">
             <div className="ticket-nav-sheet absolute inset-0 bg-[#fdfbf7] sm:bg-paper/95 pointer-events-none" aria-hidden="true" />
             <div className="relative px-4 pt-4 pb-6">
-              <InlineTicketNav logoUrl={logoUrl} />
+              <InlineTicketNav logoUrl={logoUrl} navLinks={navLinks} />
               <div className="mt-3 border-t border-dashed border-stone-300/70" />
             </div>
           </div>

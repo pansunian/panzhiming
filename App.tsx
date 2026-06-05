@@ -224,23 +224,23 @@ const App: React.FC = () => {
         <MainLayout isDemoMode={isDemoMode} isHome>
           <ProfileSection profile={profile} />
           <div className="flex flex-col gap-8">
-            <GallerySection title="纪实摄影" groups={photoGroups.length > 0 ? photoGroups.filter(g => g.featured).slice(0, 2) : []} onViewAll={photoGroups.length > 0} />
+            <GallerySection title="纪实摄影" groups={photoGroups.length > 0 ? photoGroups.filter(g => g.featured).slice(0, 2) : []} onViewAll={photoGroups.length > 0} navLinks={profile.navLinks} />
             <ThoughtSection thoughts={thoughts.length > 0 ? thoughts.filter(t => t.featured) : []} showViewAll={thoughts.length > 0} />
             <BlogSection title="推荐阅读" posts={posts.length > 0 ? posts.filter(p => p.featured).slice(0, 10) : []} showViewAll={posts.length > 0} />
             <ContactSection logoUrl={profile.logoUrl} />
           </div>
         </MainLayout>
       } />
-      <Route path="/gallery" element={<MainLayout isDemoMode={isDemoMode} flushTop><GallerySection groups={photoGroups} logoUrl={profile.logoUrl} showPageNav /></MainLayout>} />
-      <Route path="/gallery/:id" element={<DetailView items={photoGroups} type="gallery" logoUrl={profile.logoUrl} />} />
-      <Route path="/thoughts" element={<MainLayout isDemoMode={isDemoMode} flushTop><ThoughtSection thoughts={thoughts} logoUrl={profile.logoUrl} showPageNav /></MainLayout>} />
-      <Route path="/blog" element={<MainLayout isDemoMode={isDemoMode} flushTop><BlogSection posts={posts} logoUrl={profile.logoUrl} showPageNav /></MainLayout>} />
-      <Route path="/blog/:id" element={<DetailView items={posts} type="blog" logoUrl={profile.logoUrl} />} />
+      <Route path="/gallery" element={<MainLayout isDemoMode={isDemoMode} flushTop><GallerySection groups={photoGroups} logoUrl={profile.logoUrl} showPageNav navLinks={profile.navLinks} /></MainLayout>} />
+      <Route path="/gallery/:id" element={<DetailView items={photoGroups} type="gallery" logoUrl={profile.logoUrl} navLinks={profile.navLinks} />} />
+      <Route path="/thoughts" element={<MainLayout isDemoMode={isDemoMode} flushTop><ThoughtSection thoughts={thoughts} logoUrl={profile.logoUrl} showPageNav navLinks={profile.navLinks} /></MainLayout>} />
+      <Route path="/blog" element={<MainLayout isDemoMode={isDemoMode} flushTop><BlogSection posts={posts} logoUrl={profile.logoUrl} showPageNav navLinks={profile.navLinks} /></MainLayout>} />
+      <Route path="/blog/:id" element={<DetailView items={posts} type="blog" logoUrl={profile.logoUrl} navLinks={profile.navLinks} />} />
       <Route path="/aboutme" element={
         isLoading && !hasCache ? (
           <MainLayout isDemoMode={isDemoMode}><div className="py-20 text-center font-mono text-[10px] opacity-20 tracking-widest">RETRIEVING MANUAL...</div></MainLayout>
         ) : aboutPage ? (
-          <DetailView items={[aboutPage]} forceId={aboutPage.id} type="blog" logoUrl={profile.logoUrl} />
+          <DetailView items={[aboutPage]} forceId={aboutPage.id} type="blog" logoUrl={profile.logoUrl} navLinks={profile.navLinks} />
         ) : (
           <div className="py-20 flex flex-col items-center gap-4 text-stone-400">
               <AlertCircle size={24} className="opacity-20" />

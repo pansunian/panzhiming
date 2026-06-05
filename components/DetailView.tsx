@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Navigate, useLocation } from 'react-router-dom';
-import { BlogPost, PhotoGroup } from '../types';
+import { BlogPost, NavLink, PhotoGroup } from '../types';
 import { TicketBase, DashedLine, Notch, BarcodeVertical } from './TicketUI';
 import { InlineTicketNav } from './NavBar';
 import { Clock, Camera, Loader2, Bookmark as BookmarkIcon, ChevronRight, Github, ExternalLink, FileText } from 'lucide-react';
@@ -13,6 +13,7 @@ interface DetailViewProps {
   logoUrl?: string;
   forceId?: string;
   forceFresh?: boolean;
+  navLinks?: NavLink[];
 }
 
 interface GalleryImage {
@@ -361,7 +362,7 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
     }
 };
 
-export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, forceId, forceFresh }) => {
+export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, forceId, forceFresh, navLinks }) => {
   const { id } = useParams();
   const location = useLocation();
   const currentId = forceId || id;
@@ -454,7 +455,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                 <div className="h-4 w-full jagged-top bg-paper"></div>
                 <TicketBase className="rounded-none bg-paper min-h-[80vh]">
                     <div className="px-6 sm:px-8 pt-6 pb-6 relative">
-                        <InlineTicketNav logoUrl={logoUrl} className="mb-8 border-b border-dashed border-stone-300/70 pb-4" />
+                        <InlineTicketNav logoUrl={logoUrl} navLinks={navLinks} className="mb-8 border-b border-dashed border-stone-300/70 pb-4" />
                         <div className="flex justify-between items-center mb-10">
                             <div className="flex flex-col">
                                 <span className="font-mono text-[9px] text-stone-400 uppercase tracking-[0.2em]">{isBlog ? (blogPost?.category || 'Blog') : 'GALLERY'}</span>
