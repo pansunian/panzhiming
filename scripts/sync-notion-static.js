@@ -1,5 +1,6 @@
 const fs = require('fs/promises');
 const path = require('path');
+const crypto = require('crypto');
 const { Client } = require('@notionhq/client');
 
 const rootDir = path.resolve(__dirname, '..');
@@ -134,6 +135,27 @@ const parseNavLinks = (value) => {
 
 const safeName = (value) => value.replace(/[^a-zA-Z0-9_-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').slice(0, 96);
 
+const stableAssetSignature = (url) => {
+  try {
+    const parsed = new URL(url);
+    const isSignedNotionAsset =
+      parsed.hostname.includes('prod-files-secure.s3') ||
+      parsed.hostname.includes('s3.us-west-2.amazonaws.com');
+
+    if (isSignedNotionAsset) {
+      parsed.search = '';
+    }
+
+    return crypto
+      .createHash('sha1')
+      .update(parsed.toString())
+      .digest('hex')
+      .slice(0, 10);
+  } catch {
+    return crypto.createHash('sha1').update(url).digest('hex').slice(0, 10);
+  }
+};
+
 const extFromContentType = (contentType) => {
   if (!contentType) return '';
   if (contentType.includes('jpeg')) return '.jpg';
@@ -165,7 +187,7 @@ const downloadAsset = async (url, key) => {
 
     const contentType = response.headers.get('content-type') || '';
     const ext = extFromContentType(contentType) || extFromUrl(url) || '.bin';
-    const fileName = `${assetKey}${ext}`;
+    const fileName = `${assetKey}-${stableAssetSignature(url)}${ext}`;
     const filePath = path.join(assetDir, fileName);
     const bytes = Buffer.from(await response.arrayBuffer());
 
