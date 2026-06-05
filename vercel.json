@@ -33,37 +33,37 @@
     {
       "source": "/gallery",
       "headers": [
-        { "key": "Cache-Control", "value": "no-store, no-cache, max-age=0, must-revalidate" }
+        { "key": "Cache-Control", "value": "public, max-age=300, stale-while-revalidate=3600" }
       ]
     },
     {
       "source": "/gallery/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "no-store, no-cache, max-age=0, must-revalidate" }
+        { "key": "Cache-Control", "value": "public, max-age=300, stale-while-revalidate=3600" }
       ]
     },
     {
       "source": "/thoughts",
       "headers": [
-        { "key": "Cache-Control", "value": "no-store, no-cache, max-age=0, must-revalidate" }
+        { "key": "Cache-Control", "value": "public, max-age=300, stale-while-revalidate=3600" }
       ]
     },
     {
       "source": "/blog",
       "headers": [
-        { "key": "Cache-Control", "value": "no-store, no-cache, max-age=0, must-revalidate" }
+        { "key": "Cache-Control", "value": "public, max-age=300, stale-while-revalidate=3600" }
       ]
     },
     {
       "source": "/blog/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "no-store, no-cache, max-age=0, must-revalidate" }
+        { "key": "Cache-Control", "value": "public, max-age=300, stale-while-revalidate=3600" }
       ]
     },
     {
       "source": "/aboutme",
       "headers": [
-        { "key": "Cache-Control", "value": "no-store, no-cache, max-age=0, must-revalidate" }
+        { "key": "Cache-Control", "value": "public, max-age=300, stale-while-revalidate=3600" }
       ]
     },
     {
