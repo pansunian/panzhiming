@@ -28,6 +28,7 @@ if (missingEnv.length > 0 || process.env.SKIP_NOTION_SYNC === '1') {
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
 const assetCache = new Map();
 const buildVersion = new Date().toISOString();
+let sharpPromise = null;
 
 const ensureDirs = async () => {
   await fs.mkdir(pagesDir, { recursive: true });
@@ -175,6 +176,47 @@ const extFromUrl = (url) => {
   }
 };
 
+const shouldCompressImage = (contentType, ext) => {
+  const normalizedExt = (ext || '').toLowerCase();
+  if (!contentType.startsWith('image/')) return false;
+  if (contentType.includes('svg') || contentType.includes('gif')) return false;
+  if (normalizedExt === '.svg' || normalizedExt === '.gif') return false;
+  return true;
+};
+
+const getSharp = async () => {
+  if (!sharpPromise) {
+    sharpPromise = import('sharp').then((mod) => mod.default || mod);
+  }
+  return sharpPromise;
+};
+
+const writeOptimizedImage = async ({ bytes, filePath, publicUrl, originalUrl, contentType, ext }) => {
+  if (!shouldCompressImage(contentType, ext)) {
+    await fs.writeFile(filePath, bytes);
+    return publicUrl;
+  }
+
+  try {
+    const sharp = await getSharp();
+    const optimizedBytes = await sharp(bytes)
+      .rotate()
+      .resize({ width: 1600, withoutEnlargement: true })
+      .webp({ quality: 78, effort: 4 })
+      .toBuffer();
+
+    const webpFilePath = filePath.replace(/\.[^.]+$/, '.webp');
+    const webpPublicUrl = publicUrl.replace(/\.[^.]+$/, '.webp');
+    await fs.writeFile(webpFilePath, optimizedBytes);
+    console.log(`[sync-notion-static] Optimized image ${originalUrl} (${bytes.length} -> ${optimizedBytes.length})`);
+    return webpPublicUrl;
+  } catch (error) {
+    console.warn(`[sync-notion-static] Image optimization failed, using original: ${originalUrl} (${error.message})`);
+    await fs.writeFile(filePath, bytes);
+    return publicUrl;
+  }
+};
+
 const downloadAsset = async (url, key) => {
   if (!url || !/^https?:\/\//.test(url)) return url || '';
   if (assetCache.has(url)) return assetCache.get(url);
@@ -191,10 +233,17 @@ const downloadAsset = async (url, key) => {
     const filePath = path.join(assetDir, fileName);
     const bytes = Buffer.from(await response.arrayBuffer());
 
-    await fs.writeFile(filePath, bytes);
     const publicUrl = `/notion-assets/${fileName}`;
-    assetCache.set(url, publicUrl);
-    return publicUrl;
+    const optimizedPublicUrl = await writeOptimizedImage({
+      bytes,
+      filePath,
+      publicUrl,
+      originalUrl: url,
+      contentType,
+      ext
+    });
+    assetCache.set(url, optimizedPublicUrl);
+    return optimizedPublicUrl;
   } catch (error) {
     console.warn(`[sync-notion-static] Asset download failed: ${url} (${error.message})`);
     assetCache.set(url, url);
