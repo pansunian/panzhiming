@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "vite",
-    "build": "vite build",
+    "sync:notion": "node scripts/sync-notion-static.js",
+    "build": "node scripts/sync-notion-static.js && vite build",
     "preview": "vite preview"
   },
   "dependencies": {

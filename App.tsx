@@ -165,11 +165,17 @@ const App: React.FC = () => {
         const timeoutId = window.setTimeout(() => controller.abort(), 12000);
         const portfolioUrl = forcePortfolioRefresh
           ? `/api/portfolio?fresh=1&t=${Date.now()}`
-          : '/api/portfolio';
-        const res = await fetch(portfolioUrl, {
+          : '/data/portfolio.json';
+        let res = await fetch(portfolioUrl, {
           cache: forcePortfolioRefresh ? 'no-store' : 'default',
           signal: controller.signal
         });
+        if (!res.ok && !forcePortfolioRefresh) {
+          res = await fetch('/api/portfolio', {
+            cache: 'no-store',
+            signal: controller.signal
+          });
+        }
         window.clearTimeout(timeoutId);
         if (res.ok) {
            const data = await res.json();
@@ -218,7 +224,7 @@ const App: React.FC = () => {
         isLoading && !hasCache ? (
           <MainLayout isDemoMode={isDemoMode}><div className="py-20 text-center font-mono text-[10px] opacity-20 tracking-widest">RETRIEVING MANUAL...</div></MainLayout>
         ) : aboutPage ? (
-          <DetailView items={[aboutPage]} forceId={aboutPage.id} type="blog" logoUrl={profile.logoUrl} forceFresh />
+          <DetailView items={[aboutPage]} forceId={aboutPage.id} type="blog" logoUrl={profile.logoUrl} />
         ) : (
           <div className="py-20 flex flex-col items-center gap-4 text-stone-400">
               <AlertCircle size={24} className="opacity-20" />

@@ -63,19 +63,21 @@ npm run start
 
 ## Notion 内容没有及时更新
 
-线上接口会先读 Vercel KV 缓存，默认缓存约 55 分钟。修改 Notion 后，如果想立刻刷新首页缓存，可以访问：
+线上默认读取构建时生成的静态 JSON 和静态图片，不再让访客实时等待 Notion。修改 Notion 后，推荐在 Vercel 里对当前 Production 部署执行一次 Redeploy，构建脚本会重新同步 Notion 内容。
+
+如果临时想绕过静态内容，仍然可以访问 API 强制读取最新首页数据：
 
 ```text
 https://panzhiming.com/api/portfolio?fresh=1
 ```
 
-或者：
+旧的缓存刷新接口仍保留为 API 兜底：
 
 ```text
 https://panzhiming.com/api/refresh-cache
 ```
 
-然后再刷新首页。缓存时间可以通过环境变量调整：
+缓存时间可以通过环境变量调整：
 
 ```text
 PORTFOLIO_CACHE_TTL_SECONDS=3300

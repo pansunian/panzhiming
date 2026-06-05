@@ -388,10 +388,19 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                 const searchParams = new URLSearchParams(location.search);
                 const forceRefresh = forceFresh || searchParams.get('fresh') === '1' || searchParams.get('refresh') === '1';
                 const refreshQuery = forceRefresh ? '&fresh=1' : '';
-                const [imgRes, contentRes] = await Promise.all([
-                    fetch(`/api/page-images?pageId=${pageId}${refreshQuery}`),
-                    fetch(`/api/get-page-content?pageId=${pageId}${refreshQuery}`)
+                const imgUrl = forceRefresh ? `/api/page-images?pageId=${pageId}${refreshQuery}` : `/data/page-images/${pageId}.json`;
+                const contentUrl = forceRefresh ? `/api/get-page-content?pageId=${pageId}${refreshQuery}` : `/data/pages/${pageId}.json`;
+                let [imgRes, contentRes] = await Promise.all([
+                    fetch(imgUrl, { cache: forceRefresh ? 'no-store' : 'default' }),
+                    fetch(contentUrl, { cache: forceRefresh ? 'no-store' : 'default' })
                 ]);
+
+                if ((!imgRes.ok || !contentRes.ok) && !forceRefresh) {
+                    [imgRes, contentRes] = await Promise.all([
+                        fetch(`/api/page-images?pageId=${pageId}`),
+                        fetch(`/api/get-page-content?pageId=${pageId}`)
+                    ]);
+                }
                 
                 // 如果 API 失败（比如 500），也不要留白，加载演示内容作为托底
                 if (!imgRes.ok && !contentRes.ok) {
