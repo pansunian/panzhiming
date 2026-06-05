@@ -7,6 +7,7 @@
   ],
   "images": {
     "sizes": [320, 640, 960, 1200, 2048],
+    "minimumCacheTTL": 31536000,
     "domains": [
       "prod-files-secure.s3.us-west-2.amazonaws.com",
       "s3.us-west-2.amazonaws.com",
@@ -21,13 +22,20 @@
     {
       "source": "/",
       "headers": [
-        { "key": "Cache-Control", "value": "no-store, no-cache, max-age=0, must-revalidate" }
+        { "key": "Cache-Control", "value": "public, max-age=300, stale-while-revalidate=3600" }
       ]
     },
     {
       "source": "/index.html",
       "headers": [
-        { "key": "Cache-Control", "value": "no-store, no-cache, max-age=0, must-revalidate" }
+        { "key": "Cache-Control", "value": "public, max-age=300, stale-while-revalidate=3600" }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
       ]
     },
     {
