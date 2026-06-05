@@ -30,7 +30,14 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
         >
             <div className="w-full h-full flex items-stretch">
                 <div className="w-36 sm:w-[38%] h-full relative overflow-hidden rounded-l-sm bg-stone-200 shrink-0">
-                    <img src={coverSrc} alt={post.title} onLoad={() => setIsLoaded(true)} className={`w-full h-full object-cover filter brightness-[0.95] contrast-[1.05] sepia-[0.1] transition-all duration-700 group-hover:scale-105 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} />
+                    <img
+                        src={coverSrc}
+                        alt={post.title}
+                        loading="lazy"
+                        decoding="async"
+                        onLoad={() => setIsLoaded(true)}
+                        className={`w-full h-full object-cover filter brightness-[0.95] contrast-[1.05] sepia-[0.1] transition-all duration-300 group-hover:scale-105 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+                    />
                 </div>
                 
                 <div className="relative w-0 flex flex-col items-center z-20">

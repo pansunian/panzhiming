@@ -32,8 +32,10 @@ const GalleryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ group, in
                     <img 
                         src={optimizedCover} 
                         alt={group.title} 
+                        loading="lazy"
+                        decoding="async"
                         onLoad={() => setIsLoaded(true)} 
-                        className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} 
+                        className={`w-full h-full object-cover transition-all duration-300 group-hover:scale-105 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} 
                     />
                     <div className="absolute top-4 left-4 bg-paper/95 text-ink text-[9px] font-mono px-2 py-1.5 shadow-sm uppercase tracking-widest">
                         No. {group.ticketNumber}

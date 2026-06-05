@@ -169,15 +169,15 @@ const App: React.FC = () => {
         if (forcePortfolioRefresh) setIsLoading(true);
         const controller = new AbortController();
         const timeoutId = window.setTimeout(() => controller.abort(), 12000);
-        const staticVersion = forcePortfolioRefresh ? '' : await fetchStaticVersion(controller.signal);
         const cached = forcePortfolioRefresh ? null : readCache();
 
-        if (cached?.data?.profile?.name && (!staticVersion || cached.version === staticVersion)) {
+        if (cached?.data?.profile?.name) {
           applyPortfolioData(cached.data);
           setHasCache(true);
           setIsLoading(false);
         }
 
+        const staticVersion = forcePortfolioRefresh ? '' : await fetchStaticVersion(controller.signal);
         const versionQuery = staticVersion ? `?v=${encodeURIComponent(staticVersion)}` : `?t=${Date.now()}`;
         const portfolioUrl = forcePortfolioRefresh
           ? `/api/portfolio?fresh=1&t=${Date.now()}`
