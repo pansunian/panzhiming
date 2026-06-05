@@ -20,7 +20,10 @@ export const optimizeImage = (url: string, width: number = 800, quality: number 
   try {
     // 构建 Vercel 图片优化 URL
     // 格式: /_vercel/image?url={encodedUrl}&w={width}&q={quality}
-    const encodedUrl = encodeURIComponent(url);
+    const sourceUrl = url.startsWith('/') && typeof window !== 'undefined'
+      ? `${window.location.origin}${url}`
+      : url;
+    const encodedUrl = encodeURIComponent(sourceUrl);
     return `/_vercel/image?url=${encodedUrl}&w=${width}&q=${quality}`;
   } catch (e) {
     return url;
