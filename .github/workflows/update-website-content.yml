@@ -83,6 +83,14 @@ jobs:
             ./ossutil64 cp -f "$file" "oss://$ALIYUN_OSS_BUCKET/$key"
           done < <(find dist -type f | sort)
 
+          if [ -f dist/data/static-routes.json ]; then
+            node -e 'const fs=require("fs"); const data=JSON.parse(fs.readFileSync("dist/data/static-routes.json","utf8")); for (const route of data.routes || []) console.log(route);' | while IFS= read -r route; do
+              [ -n "$route" ] || continue
+              ./ossutil64 cp -f dist/index.html "oss://$ALIYUN_OSS_BUCKET/$route"
+              ./ossutil64 set-meta "oss://$ALIYUN_OSS_BUCKET/$route" Content-Type:text/html --update
+            done
+          fi
+
       - name: Write deployment summary
         run: |
           {

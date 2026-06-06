@@ -5,7 +5,7 @@
   "scripts": {
     "start": "vite",
     "sync:notion": "node scripts/sync-notion-static.js",
-    "build": "node scripts/sync-notion-static.js && vite build",
+    "build": "node scripts/sync-notion-static.js && vite build && node scripts/write-static-route-manifest.js",
     "preview": "vite preview"
   },
   "dependencies": {
