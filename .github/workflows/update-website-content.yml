@@ -1,0 +1,89 @@
+name: Update Website Content
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: update-website-content
+  cancel-in-progress: true
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+    env:
+      NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+      NOTION_PROFILE_DB_ID: ${{ secrets.NOTION_PROFILE_DB_ID }}
+      NOTION_GALLERY_DB_ID: ${{ secrets.NOTION_GALLERY_DB_ID }}
+      NOTION_THOUGHTS_DB_ID: ${{ secrets.NOTION_THOUGHTS_DB_ID }}
+      NOTION_BLOG_DB_ID: ${{ secrets.NOTION_BLOG_DB_ID }}
+      ALIYUN_ACCESS_KEY_ID: ${{ secrets.ALIYUN_ACCESS_KEY_ID }}
+      ALIYUN_ACCESS_KEY_SECRET: ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}
+      ALIYUN_OSS_BUCKET: ${{ vars.ALIYUN_OSS_BUCKET || 'panzhiming-notion' }}
+      ALIYUN_OSS_ENDPOINT: ${{ vars.ALIYUN_OSS_ENDPOINT || 'oss-cn-shanghai.aliyuncs.com' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check required secrets
+        shell: bash
+        run: |
+          required=(
+            NOTION_API_KEY
+            NOTION_PROFILE_DB_ID
+            NOTION_GALLERY_DB_ID
+            NOTION_THOUGHTS_DB_ID
+            NOTION_BLOG_DB_ID
+            ALIYUN_ACCESS_KEY_ID
+            ALIYUN_ACCESS_KEY_SECRET
+          )
+          for name in "${required[@]}"; do
+            if [ -z "${!name}" ]; then
+              echo "::error title=Missing secret::$name is not set."
+              exit 1
+            fi
+          done
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build static site from Notion
+        run: npm run build
+
+      - name: Install ossutil
+        shell: bash
+        run: |
+          curl -L -o ossutil64 https://gosspublic.alicdn.com/ossutil/1.7.19/ossutil64
+          chmod +x ossutil64
+          ./ossutil64 config \
+            -e "$ALIYUN_OSS_ENDPOINT" \
+            -i "$ALIYUN_ACCESS_KEY_ID" \
+            -k "$ALIYUN_ACCESS_KEY_SECRET" \
+            -L CH
+
+      - name: Upload dist to Aliyun OSS
+        shell: bash
+        run: |
+          while IFS= read -r file; do
+            key="${file#dist/}"
+            ./ossutil64 cp -f "$file" "oss://$ALIYUN_OSS_BUCKET/$key"
+          done < <(find dist -type f | sort)
+
+      - name: Write deployment summary
+        run: |
+          {
+            echo "### Website content updated"
+            echo ""
+            echo "- Bucket: \`$ALIYUN_OSS_BUCKET\`"
+            echo "- Endpoint: \`$ALIYUN_OSS_ENDPOINT\`"
+            echo "- Source: Notion static sync"
+          } >> "$GITHUB_STEP_SUMMARY"
