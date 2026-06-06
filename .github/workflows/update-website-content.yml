@@ -64,7 +64,8 @@ jobs:
       - name: Install ossutil
         shell: bash
         run: |
-          curl -L -o ossutil64 https://gosspublic.alicdn.com/ossutil/1.7.19/ossutil64
+          curl -L -o ossutil.zip https://gosspublic.alicdn.com/ossutil/1.7.19/ossutil-v1.7.19-linux-amd64.zip
+          unzip -q ossutil.zip
           chmod +x ossutil64
           ./ossutil64 config \
             -e "$ALIYUN_OSS_ENDPOINT" \
