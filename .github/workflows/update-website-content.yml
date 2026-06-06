@@ -54,7 +54,9 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm install --include=optional
+        run: |
+          npm install --include=optional
+          npm install --no-save @rollup/rollup-linux-x64-gnu@4.60.4
 
       - name: Build static site from Notion
         run: npm run build
