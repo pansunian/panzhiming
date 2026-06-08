@@ -29,6 +29,8 @@ const notion = new Client({ auth: process.env.NOTION_API_KEY });
 const assetCache = new Map();
 const buildVersion = new Date().toISOString();
 let sharpPromise = null;
+const updateMode = process.env.UPDATE_MODE === 'smart' ? 'smart' : 'full';
+const staticBaseUrl = (process.env.STATIC_BASE_URL || 'https://panzhiming.com').replace(/\/+$/, '');
 
 const ensureDirs = async () => {
   await fs.mkdir(pagesDir, { recursive: true });
@@ -38,6 +40,20 @@ const ensureDirs = async () => {
 
 const writeJson = async (filePath, data) => {
   await fs.writeFile(filePath, `${JSON.stringify(data, null, 2)}\n`);
+};
+
+const fetchPreviousJson = async (relativePath) => {
+  if (updateMode !== 'smart') return null;
+
+  try {
+    const url = `${staticBaseUrl}/${relativePath.replace(/^\/+/, '')}?t=${Date.now()}`;
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.warn(`[sync-notion-static] Previous ${relativePath} unavailable, falling back as needed: ${error.message}`);
+    return null;
+  }
 };
 
 const getPropValue = (prop) => {
@@ -466,8 +482,22 @@ const syncDetails = async (items) => {
   }
 };
 
+const shouldSyncDetail = (item, previousById) => {
+  if (updateMode !== 'smart') return true;
+  const previous = previousById.get(item.id);
+  if (!previous) return true;
+  return (previous.lastEditedTime || '') !== (item.lastEditedTime || '');
+};
+
 const main = async () => {
   await ensureDirs();
+  console.log(`[sync-notion-static] Mode: ${updateMode}`);
+  const previousPortfolio = await fetchPreviousJson('data/portfolio.json');
+  const previousItems = [
+    ...(previousPortfolio?.gallery || []),
+    ...(previousPortfolio?.posts || [])
+  ];
+  const previousById = new Map(previousItems.map((item) => [item.id, item]));
 
   const [profile, gallery, thoughts, posts] = await Promise.all([
     buildProfile(),
@@ -477,6 +507,7 @@ const main = async () => {
       location: getPropValue(page.properties.Location),
       count: page.properties.Count?.number || 0,
       date: page.properties.Date?.date?.start || '',
+      lastEditedTime: page.last_edited_time || '',
       ticketNumber: getPropValue(page.properties.TicketNumber),
       description: getPropValue(page.properties.Description),
       coverUrl: await downloadAsset(getImageUrl(page, 'Cover', false), `gallery-${page.id}-cover`),
@@ -528,7 +559,14 @@ const main = async () => {
     updatedAt: buildVersion
   });
 
-  await syncDetails([...gallery, ...posts]);
+  const detailItems = [...gallery, ...posts];
+  const itemsToSync = detailItems.filter((item) => shouldSyncDetail(item, previousById));
+  const reusedCount = detailItems.length - itemsToSync.length;
+  if (updateMode === 'smart') {
+    console.log(`[sync-notion-static] Smart detail sync: ${itemsToSync.length} changed/new, ${reusedCount} unchanged`);
+  }
+
+  await syncDetails(itemsToSync);
   console.log(`[sync-notion-static] Complete. Assets: ${assetCache.size}`);
 };
 

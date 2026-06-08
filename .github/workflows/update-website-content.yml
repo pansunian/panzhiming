@@ -2,6 +2,15 @@ name: Update Website Content
 
 on:
   workflow_dispatch:
+    inputs:
+      update_mode:
+        description: '更新模式：smart 只处理新增/修改内容；full 完整重建'
+        type: choice
+        required: true
+        default: smart
+        options:
+          - smart
+          - full
   push:
     branches:
       - main
@@ -23,6 +32,8 @@ jobs:
       ALIYUN_ACCESS_KEY_SECRET: ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}
       ALIYUN_OSS_BUCKET: ${{ vars.ALIYUN_OSS_BUCKET || 'panzhiming-notion' }}
       ALIYUN_OSS_ENDPOINT: ${{ vars.ALIYUN_OSS_ENDPOINT || 'oss-cn-shanghai.aliyuncs.com' }}
+      STATIC_BASE_URL: ${{ vars.STATIC_BASE_URL || 'https://panzhiming.com' }}
+      UPDATE_MODE: ${{ github.event.inputs.update_mode || 'full' }}
 
     steps:
       - name: Checkout repository

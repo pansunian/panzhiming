@@ -165,6 +165,7 @@ module.exports = async function handler(req, res) {
       location: getPropValue(page.properties['Location']),
       count: page.properties['Count']?.number || 0,
       date: page.properties['Date']?.date?.start || '',
+      lastEditedTime: page.last_edited_time || '',
       ticketNumber: getPropValue(page.properties['TicketNumber']),
       description: getPropValue(page.properties['Description']),
       coverUrl: getImageUrl(page, 'Cover', false),

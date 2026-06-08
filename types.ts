@@ -31,6 +31,7 @@ export interface PhotoGroup {
   count: number;
   coverUrl: string;
   date: string;
+  lastEditedTime?: string;
   ticketNumber: string;
   description?: string;
   images?: string[];
