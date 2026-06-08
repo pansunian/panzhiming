@@ -51,8 +51,11 @@ export interface BlogPost {
   title: string;
   excerpt: string;
   date: string;
+  lastEditedTime?: string;
   readTime: string;
   category: string;
+  tags?: string[];
+  relatedPostIds?: string[];
   imageUrl?: string;
   content?: string[];
   featured?: boolean; // New: Controls visibility on Home

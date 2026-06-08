@@ -74,6 +74,8 @@ export const mockPosts: BlogPost[] = [
     date: "2023-10-01",
     readTime: "5 MIN",
     category: "Photography",
+    tags: ["Photography", "Style"],
+    relatedPostIds: ["demo-post-2"],
     imageUrl: "https://images.unsplash.com/photo-1452587925703-749559920625?q=80&w=800&auto=format&fit=crop",
     featured: true
   },
@@ -84,6 +86,8 @@ export const mockPosts: BlogPost[] = [
     date: "2023-12-15",
     readTime: "8 MIN",
     category: "Gear",
+    tags: ["Gear", "Photography"],
+    relatedPostIds: ["demo-post-1"],
     imageUrl: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=800&auto=format&fit=crop",
     featured: true
   }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Navigate, useLocation } from 'react-router-dom';
+import { Link, useParams, Navigate, useLocation } from 'react-router-dom';
 import { BlogPost, NavLink, PhotoGroup } from '../types';
 import { TicketBase, DashedLine, Notch, BarcodeVertical } from './TicketUI';
 import { InlineTicketNav } from './NavBar';
@@ -14,6 +14,7 @@ interface DetailViewProps {
   forceId?: string;
   forceFresh?: boolean;
   navLinks?: NavLink[];
+  allPosts?: BlogPost[];
 }
 
 interface GalleryImage {
@@ -226,6 +227,87 @@ const getNotionCalloutBg = (color?: string) => {
     return backgrounds[color || ''] || 'bg-[#f7f6f3]';
 };
 
+const isAboutLikePost = (post?: BlogPost) => {
+    const category = post?.category?.toLowerCase() || '';
+    const title = post?.title || '';
+    return category.includes('about') || title.includes('关于') || title.toLowerCase().includes('about') || title.includes('说明书');
+};
+
+const getRelatedPosts = (current: BlogPost | undefined, allPosts: BlogPost[] = [], limit = 3) => {
+    if (!current) return [];
+
+    const currentTags = new Set((current.tags || []).map((tag) => tag.toLowerCase()));
+    const postMap = new Map(allPosts.map((post) => [post.id, post]));
+    const selected = new Map<string, BlogPost>();
+
+    for (const id of current.relatedPostIds || []) {
+        const post = postMap.get(id);
+        if (post && post.id !== current.id) selected.set(post.id, post);
+    }
+
+    if (isAboutLikePost(current)) return Array.from(selected.values()).slice(0, limit);
+
+    const candidates = allPosts
+        .filter((post) => post.id !== current.id && !selected.has(post.id) && !isAboutLikePost(post))
+        .map((post) => {
+            const sharedTags = (post.tags || []).filter((tag) => currentTags.has(tag.toLowerCase())).length;
+            const sameCategory = post.category && current.category && post.category === current.category;
+            const score = (sameCategory ? 4 : 0) + sharedTags * 3 + (post.featured ? 1 : 0);
+            return { post, score };
+        })
+        .sort((a, b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            return (b.post.lastEditedTime || b.post.date || '').localeCompare(a.post.lastEditedTime || a.post.date || '');
+        });
+
+    for (const candidate of candidates) {
+        selected.set(candidate.post.id, candidate.post);
+        if (selected.size >= limit) break;
+    }
+
+    return Array.from(selected.values()).slice(0, limit);
+};
+
+const RelatedPosts: React.FC<{ posts: BlogPost[] }> = ({ posts }) => {
+    if (!posts.length) return null;
+
+    return (
+        <div className="mt-12 border-t border-dashed border-stone-300/60 pt-7">
+            <div className="mb-5 flex items-end justify-between">
+                <div>
+                    <p className="font-mono text-[8px] uppercase tracking-[0.24em] text-stone-400">Related Archive</p>
+                    <h2 className="mt-1 font-serif text-lg font-medium leading-tight text-ink">相关档案</h2>
+                </div>
+                <span className="font-mono text-[8px] uppercase tracking-[0.18em] text-stone-300">NO. NEXT</span>
+            </div>
+            <div className="flex flex-col gap-3">
+                {posts.map((post, index) => {
+                    const coverSrc = post.imageUrl ? optimizeImage(post.imageUrl, 360) : '';
+                    return (
+                        <Link key={post.id} to={`/blog/${post.id}`} className="group flex min-h-[86px] overflow-hidden border border-stone-200/80 bg-paper-dark transition-colors hover:bg-[#f2eee5]">
+                            <div className="w-[88px] shrink-0 bg-stone-100">
+                                {coverSrc ? (
+                                    <img src={coverSrc} alt={post.title} loading="lazy" decoding="async" className="h-full w-full object-cover sepia-[0.08] transition-transform duration-300 group-hover:scale-105" />
+                                ) : (
+                                    <div className="flex h-full items-center justify-center font-mono text-[8px] uppercase tracking-widest text-stone-300">Archive</div>
+                                )}
+                            </div>
+                            <div className="min-w-0 flex-1 px-3 py-2.5">
+                                <div className="mb-1.5 flex items-center justify-between gap-2 font-mono text-[8px] uppercase tracking-widest text-stone-400">
+                                    <span className="truncate">#{post.category || 'Blog'}</span>
+                                    <span className="shrink-0">0{index + 1}</span>
+                                </div>
+                                <h3 className="line-clamp-2 font-serif text-[15px] font-medium leading-snug text-ink transition-colors group-hover:text-brand-accent">{post.title}</h3>
+                                {post.excerpt && <p className="mt-1 line-clamp-1 font-sans text-[11px] leading-snug text-stone-500">{post.excerpt}</p>}
+                            </div>
+                        </Link>
+                    );
+                })}
+            </div>
+        </div>
+    );
+};
+
 const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
     const [aspectClass, setAspectClass] = useState("aspect-[3/2]");
     const [isLoaded, setIsLoaded] = useState(false);
@@ -362,7 +444,7 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
     }
 };
 
-export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, forceId, forceFresh, navLinks }) => {
+export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, forceId, forceFresh, navLinks, allPosts }) => {
   const { id } = useParams();
   const location = useLocation();
   const currentId = forceId || id;
@@ -443,6 +525,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
   const isBlog = type === 'blog';
   const blogPost = item as BlogPost;
   const photoGroup = item as PhotoGroup;
+  const relatedPosts = isBlog ? getRelatedPosts(blogPost, allPosts || safeItems as BlogPost[]) : [];
   
   // 详情页顶部封面图优化
   const displayImageRaw = isBlog ? blogPost?.imageUrl : photoGroup?.coverUrl;
@@ -493,6 +576,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                             <div className="[&>*:first-child]:mt-0">
                                 {blogBlocks.map((block, idx) => <NotionBlock key={idx} block={block} isGallery={!isBlog} />)}
                                 {!isBlog && contentImages.map((img, idx) => <GalleryItem key={idx} img={img} />)}
+                                {isBlog && <RelatedPosts posts={relatedPosts} />}
                             </div>
                         )}
                     </div>

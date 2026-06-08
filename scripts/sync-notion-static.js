@@ -58,6 +58,18 @@ const getPropValue = (prop) => {
   }
 };
 
+const getRelationIds = (properties, names) => {
+  const keys = Object.keys(properties || {});
+  for (const name of names) {
+    const key = keys.find((k) => k.trim().toLowerCase() === name.toLowerCase());
+    const prop = key ? properties[key] : null;
+    if (prop?.type === 'relation' && Array.isArray(prop.relation)) {
+      return prop.relation.map((item) => item.id).filter(Boolean);
+    }
+  }
+  return [];
+};
+
 const getImageUrl = (page, propertyKey = 'Cover', preferPageCover = true) => {
   if (preferPageCover && page.cover) return page.cover.file?.url || page.cover.external?.url;
   if (page.properties && page.properties[propertyKey]) {
@@ -485,6 +497,8 @@ const main = async () => {
       lastEditedTime: page.last_edited_time || '',
       readTime: page.properties.ReadTime?.select?.name || '5 MIN',
       category: page.properties.Category?.select?.name || 'Blog',
+      tags: page.properties.Tags?.multi_select?.map((t) => t.name) || [],
+      relatedPostIds: getRelationIds(page.properties, ['Related Posts', 'RelatedPosts', 'Related', '相关文章', '相关档案', '相关内容']),
       imageUrl: await downloadAsset(getImageUrl(page, 'Cover', true), `blog-${page.id}-cover`),
       featured: page.properties.Featured?.checkbox || false
     }))

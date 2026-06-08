@@ -235,12 +235,12 @@ const App: React.FC = () => {
       <Route path="/gallery/:id" element={<DetailView items={photoGroups} type="gallery" logoUrl={profile.logoUrl} navLinks={profile.navLinks} />} />
       <Route path="/thoughts" element={<MainLayout isDemoMode={isDemoMode} flushTop><ThoughtSection thoughts={thoughts} logoUrl={profile.logoUrl} showPageNav navLinks={profile.navLinks} /></MainLayout>} />
       <Route path="/blog" element={<MainLayout isDemoMode={isDemoMode} flushTop><BlogSection posts={posts} logoUrl={profile.logoUrl} showPageNav navLinks={profile.navLinks} /></MainLayout>} />
-      <Route path="/blog/:id" element={<DetailView items={posts} type="blog" logoUrl={profile.logoUrl} navLinks={profile.navLinks} />} />
+      <Route path="/blog/:id" element={<DetailView items={posts} type="blog" logoUrl={profile.logoUrl} navLinks={profile.navLinks} allPosts={posts} />} />
       <Route path="/aboutme" element={
         isLoading && !hasCache ? (
           <MainLayout isDemoMode={isDemoMode}><div className="py-20 text-center font-mono text-[10px] opacity-20 tracking-widest">RETRIEVING MANUAL...</div></MainLayout>
         ) : aboutPage ? (
-          <DetailView items={[aboutPage]} forceId={aboutPage.id} type="blog" logoUrl={profile.logoUrl} navLinks={profile.navLinks} />
+          <DetailView items={[aboutPage]} forceId={aboutPage.id} type="blog" logoUrl={profile.logoUrl} navLinks={profile.navLinks} allPosts={posts} />
         ) : (
           <div className="py-20 flex flex-col items-center gap-4 text-stone-400">
               <AlertCircle size={24} className="opacity-20" />

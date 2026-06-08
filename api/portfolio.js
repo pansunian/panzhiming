@@ -185,6 +185,19 @@ module.exports = async function handler(req, res) {
       lastEditedTime: page.last_edited_time || '',
       readTime: page.properties['ReadTime']?.select?.name || '5 MIN',
       category: page.properties['Category']?.select?.name || 'Blog',
+      tags: page.properties['Tags']?.multi_select?.map(t => t.name) || [],
+      relatedPostIds: (() => {
+        const names = ['Related Posts', 'RelatedPosts', 'Related', '相关文章', '相关档案', '相关内容'];
+        const keys = Object.keys(page.properties || {});
+        for (const name of names) {
+          const key = keys.find(k => k.trim().toLowerCase() === name.toLowerCase());
+          const prop = key ? page.properties[key] : null;
+          if (prop?.type === 'relation' && Array.isArray(prop.relation)) {
+            return prop.relation.map(item => item.id).filter(Boolean);
+          }
+        }
+        return [];
+      })(),
       imageUrl: getImageUrl(page, 'Cover', true),
       featured: page.properties['Featured']?.checkbox || false
     }))
