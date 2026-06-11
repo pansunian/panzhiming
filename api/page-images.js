@@ -1,5 +1,6 @@
 const { Client } = require('@notionhq/client');
 const { redisGet, redisSet } = require('./lib/redis');
+const { getStaticImageUrl } = require('./lib/static-blog-images');
 
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
 const CACHE_TTL_SECONDS = Number(process.env.PAGE_CACHE_TTL_SECONDS || 3300);
@@ -39,7 +40,7 @@ module.exports = async function handler(req, res) {
       .filter((block) => block.type === 'image')
       .map((block) => {
         const type = block.image.type;
-        const url = block.image[type].url;
+        const url = getStaticImageUrl(pageId, block.image[type].url);
         // Extract plain text caption
         const caption = block.image.caption && block.image.caption.length > 0 
             ? block.image.caption.map(t => t.plain_text).join('') 

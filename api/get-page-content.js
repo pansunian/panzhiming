@@ -1,5 +1,6 @@
 const { Client } = require('@notionhq/client');
 const { redisGet, redisSet } = require('./lib/redis');
+const { getStaticImageUrl } = require('./lib/static-blog-images');
 
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
 const CACHE_TTL_SECONDS = Number(process.env.PAGE_CACHE_TTL_SECONDS || 3300);
@@ -97,7 +98,11 @@ module.exports = async function handler(req, res) {
       else if (block.type === 'quote') return { type: 'quote', content: parseRichText(block.quote.rich_text) };
       else if (block.type === 'bulleted_list_item' || block.type === 'numbered_list_item') return { type: 'list_item', listType: block.type === 'numbered_list_item' ? 'ol' : 'ul', content: parseRichText(block[block.type].rich_text) };
       else if (block.type === 'toggle') return { type: 'toggle', content: parseRichText(block.toggle.rich_text), hasChildren: block.has_children };
-      else if (block.type === 'image') { const src = block.image.type === 'external' ? block.image.external.url : block.image.file.url; return { type: 'image', src, caption: parseRichText(block.image.caption) }; }
+      else if (block.type === 'image') {
+        const originalSrc = block.image.type === 'external' ? block.image.external.url : block.image.file.url;
+        const src = getStaticImageUrl(pageId, originalSrc);
+        return { type: 'image', src, caption: parseRichText(block.image.caption) };
+      }
       else if (block.type === 'bookmark') return { type: 'bookmark', url: block.bookmark.url, caption: parseRichText(block.bookmark.caption) };
       else if (block.type === 'embed') return { type: 'embed', url: block.embed.url, caption: parseRichText(block.embed.caption) };
       else if (block.type === 'link_preview') return { type: 'link_preview', url: block.link_preview.url };
