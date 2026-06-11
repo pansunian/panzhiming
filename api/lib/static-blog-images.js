@@ -19,9 +19,14 @@ const PAGE_IMAGES = {
   }
 };
 
+const STATIC_IMAGE_VERSION = 'v=20260611-1';
 const normalizePageId = (pageId = '') => pageId.replace(/-/g, '');
+const withVersion = (url) => `${url}?${STATIC_IMAGE_VERSION}`;
 
-const getStaticCoverUrl = (pageId) => PAGE_IMAGES[normalizePageId(pageId)]?.cover || '';
+const getStaticCoverUrl = (pageId) => {
+  const cover = PAGE_IMAGES[normalizePageId(pageId)]?.cover;
+  return cover ? withVersion(cover) : '';
+};
 
 const getStaticImageUrl = (pageId, originalUrl) => {
   if (!originalUrl) return originalUrl;
@@ -31,7 +36,8 @@ const getStaticImageUrl = (pageId, originalUrl) => {
 
   try {
     const filename = new URL(originalUrl).pathname.split('/').pop();
-    return pageImages.files[filename] || originalUrl;
+    const staticUrl = pageImages.files[filename];
+    return staticUrl ? withVersion(staticUrl) : originalUrl;
   } catch {
     return originalUrl;
   }
