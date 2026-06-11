@@ -2,6 +2,7 @@ const fs = require('fs/promises');
 const path = require('path');
 const crypto = require('crypto');
 const { Client } = require('@notionhq/client');
+const { getStaticCoverUrl } = require('../api/lib/static-blog-images');
 
 const rootDir = path.resolve(__dirname, '..');
 const publicDir = path.join(rootDir, 'public');
@@ -530,7 +531,7 @@ const main = async () => {
       category: page.properties.Category?.select?.name || 'Blog',
       tags: page.properties.Tags?.multi_select?.map((t) => t.name) || [],
       relatedPostIds: getRelationIds(page.properties, ['Related Posts', 'RelatedPosts', 'Related', '相关文章', '相关档案', '相关内容']),
-      imageUrl: await downloadAsset(getImageUrl(page, 'Cover', true), `blog-${page.id}-cover`),
+      imageUrl: await downloadAsset(getStaticCoverUrl(page.id) || getImageUrl(page, 'Cover', true), `blog-${page.id}-cover`),
       featured: page.properties.Featured?.checkbox || false
     }))
   ]);
