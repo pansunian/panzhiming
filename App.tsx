@@ -136,9 +136,9 @@ const App: React.FC = () => {
     const isHome = location.pathname === '/' || location.pathname === '';
     const meta = document.querySelector('meta[name="theme-color"]');
     if (isHome) {
-        document.body.style.backgroundColor = '#e8e2d6';
+        document.body.style.backgroundColor = '#e6e1d6';
         document.body.style.backgroundImage = 'var(--noise-url)';
-        if (meta) meta.setAttribute('content', '#e8e2d6');
+        if (meta) meta.setAttribute('content', '#e6e1d6');
     } else {
         document.body.style.backgroundColor = '#fbfaf4';
         document.body.style.backgroundImage = 'none';

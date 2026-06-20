@@ -145,7 +145,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
             </div>
 
             {/* Slogan Stub (Bottom Section) */}
-            <div className="relative bg-[#d8cfc0] p-8 text-center text-ink">
+            <div className="relative bg-[#ded5c7] p-8 text-center text-ink">
                  <Notch className="-left-4 top-0 -translate-y-1/2" />
                  <Notch className="-right-4 top-0 -translate-y-1/2" />
                  <DashedLine className="absolute top-0 left-4 right-4 border-stone-500/20" />
@@ -179,7 +179,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
         </TicketBase>
         
         {/* Bottom Edge */}
-        <div className="h-3 w-full jagged-bottom bg-[#d8cfc0]"></div>
+        <div className="h-3 w-full jagged-bottom bg-[#ded5c7]"></div>
       </div>
     </section>
   );
