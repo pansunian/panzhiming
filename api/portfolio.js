@@ -1,6 +1,5 @@
 const { Client } = require('@notionhq/client');
 const { redisGet, redisSet } = require('./lib/redis');
-const { getStaticCoverUrl } = require('./lib/static-blog-images');
 
 const CACHE_KEY = 'portfolio-data-v3';
 const CACHE_TTL_SECONDS = Number(process.env.PORTFOLIO_CACHE_TTL_SECONDS || 3300);
@@ -200,7 +199,7 @@ module.exports = async function handler(req, res) {
         }
         return [];
       })(),
-      imageUrl: getStaticCoverUrl(page.id) || getImageUrl(page, 'Cover', true),
+      imageUrl: getImageUrl(page, 'Cover', true),
       featured: page.properties['Featured']?.checkbox || false
     }))
   ]);
