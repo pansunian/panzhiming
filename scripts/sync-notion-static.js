@@ -29,6 +29,7 @@ const notion = new Client({ auth: process.env.NOTION_API_KEY });
 const assetCache = new Map();
 const buildVersion = new Date().toISOString();
 let sharpPromise = null;
+let heicConvertPromise = null;
 const updateMode = process.env.UPDATE_MODE === 'smart' ? 'smart' : 'full';
 const staticBaseUrl = (process.env.STATIC_BASE_URL || 'https://panzhiming.com').replace(/\/+$/, '');
 
@@ -190,6 +191,8 @@ const extFromContentType = (contentType) => {
   if (contentType.includes('jpeg')) return '.jpg';
   if (contentType.includes('png')) return '.png';
   if (contentType.includes('webp')) return '.webp';
+  if (contentType.includes('heic')) return '.heic';
+  if (contentType.includes('heif')) return '.heif';
   if (contentType.includes('gif')) return '.gif';
   if (contentType.includes('svg')) return '.svg';
   return '';
@@ -207,10 +210,20 @@ const extFromUrl = (url) => {
 const shouldCompressImage = (contentType, ext) => {
   if (process.env.DISABLE_IMAGE_OPTIMIZATION === '1') return false;
   const normalizedExt = (ext || '').toLowerCase();
+  if (isHeicImage(contentType, normalizedExt)) return true;
   if (!contentType.startsWith('image/')) return false;
   if (contentType.includes('svg') || contentType.includes('gif')) return false;
   if (normalizedExt === '.svg' || normalizedExt === '.gif') return false;
   return true;
+};
+
+const isHeicImage = (contentType = '', ext = '') => {
+  const normalizedType = (contentType || '').toLowerCase();
+  const normalizedExt = (ext || '').toLowerCase();
+  return normalizedType.includes('heic') ||
+    normalizedType.includes('heif') ||
+    normalizedExt === '.heic' ||
+    normalizedExt === '.heif';
 };
 
 const getSharp = async () => {
@@ -225,22 +238,61 @@ const getSharp = async () => {
   return sharpPromise;
 };
 
+const getHeicConvert = async () => {
+  if (!heicConvertPromise) {
+    heicConvertPromise = Promise.resolve()
+      .then(() => require('heic-convert'))
+      .catch((error) => {
+        console.warn(`[sync-notion-static] HEIC converter unavailable: ${error.message}`);
+        return null;
+      });
+  }
+  return heicConvertPromise;
+};
+
+const convertHeicToJpeg = async (bytes, originalUrl) => {
+  const convert = await getHeicConvert();
+  if (!convert) {
+    throw new Error('HEIC converter is unavailable. Install heic-convert before syncing HEIC images.');
+  }
+
+  const converted = await convert({
+    buffer: bytes,
+    format: 'JPEG',
+    quality: 0.92
+  });
+
+  const convertedBytes = Buffer.from(converted);
+  console.log(`[sync-notion-static] Converted HEIC to JPEG ${originalUrl} (${bytes.length} -> ${convertedBytes.length})`);
+  return convertedBytes;
+};
+
 const writeOptimizedImage = async ({ bytes, filePath, publicUrl, originalUrl, contentType, ext }) => {
   if (!shouldCompressImage(contentType, ext)) {
     await fs.writeFile(filePath, bytes);
     return publicUrl;
   }
 
+  const isHeic = isHeicImage(contentType, ext);
+
   try {
+    const sourceBytes = isHeic ? await convertHeicToJpeg(bytes, originalUrl) : bytes;
     const sharp = await getSharp();
     if (!sharp) {
-      await fs.writeFile(filePath, bytes);
+      if (isHeic) {
+        const jpegFilePath = filePath.replace(/\.[^.]+$/, '.jpg');
+        const jpegPublicUrl = publicUrl.replace(/\.[^.]+$/, '.jpg');
+        await fs.writeFile(jpegFilePath, sourceBytes);
+        return jpegPublicUrl;
+      }
+      await fs.writeFile(filePath, sourceBytes);
       return publicUrl;
     }
 
-    const optimizedBytes = await sharp(bytes)
+    const optimizedBytes = await sharp(sourceBytes)
       .rotate()
       .resize({ width: 1600, withoutEnlargement: true })
+      .toColorspace('srgb')
       .webp({ quality: 78, effort: 4 })
       .toBuffer();
 
@@ -250,6 +302,9 @@ const writeOptimizedImage = async ({ bytes, filePath, publicUrl, originalUrl, co
     console.log(`[sync-notion-static] Optimized image ${originalUrl} (${bytes.length} -> ${optimizedBytes.length})`);
     return webpPublicUrl;
   } catch (error) {
+    if (isHeic) {
+      throw new Error(`HEIC conversion failed for ${originalUrl}: ${error.message}`);
+    }
     console.warn(`[sync-notion-static] Image optimization failed, using original: ${originalUrl} (${error.message})`);
     await fs.writeFile(filePath, bytes);
     return publicUrl;
@@ -261,13 +316,15 @@ const downloadAsset = async (url, key) => {
   if (assetCache.has(url)) return assetCache.get(url);
 
   const assetKey = safeName(key || Buffer.from(url).toString('base64url').slice(0, 48));
+  let contentType = '';
+  let ext = '';
 
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-    const contentType = response.headers.get('content-type') || '';
-    const ext = extFromContentType(contentType) || extFromUrl(url) || '.bin';
+    contentType = response.headers.get('content-type') || '';
+    ext = extFromContentType(contentType) || extFromUrl(url) || '.bin';
     const fileName = `${assetKey}-${stableAssetSignature(url)}${ext}`;
     const filePath = path.join(assetDir, fileName);
     const bytes = Buffer.from(await response.arrayBuffer());
@@ -284,6 +341,9 @@ const downloadAsset = async (url, key) => {
     assetCache.set(url, optimizedPublicUrl);
     return optimizedPublicUrl;
   } catch (error) {
+    if (isHeicImage(contentType, ext)) {
+      throw error;
+    }
     console.warn(`[sync-notion-static] Asset download failed: ${url} (${error.message})`);
     assetCache.set(url, url);
     return url;
