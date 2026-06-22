@@ -66,7 +66,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
                         alt=""
                         loading="lazy"
                         decoding="async"
-                        className="block h-auto w-full mix-blend-multiply"
+                        className="block h-auto w-full drop-shadow-[0_2px_5px_rgba(58,45,32,0.22)]"
                     />
                 </div>
 
