@@ -26,7 +26,7 @@ export const InlineTicketNav: React.FC<NavBarProps> = ({ logoUrl, className = ""
           className="flex min-w-0 items-center justify-start bg-transparent transition-opacity group z-20 relative hover:opacity-70"
         >
            {logoUrl ? (
-             <img src={logoUrl} alt="Logo" className="h-8 w-auto object-contain opacity-85 transition-opacity" />
+             <img src={logoUrl} alt="Logo" className="h-8 w-auto object-contain opacity-[0.68] brightness-75 contrast-90 transition-opacity" />
            ) : (
              <span className="font-serif text-sm tracking-wide text-ink group-hover:text-brand-accent transition-colors">先见志明</span>
            )}

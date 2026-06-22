@@ -163,7 +163,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
                      {/* Signature */}
                      <div className="mt-4 flex justify-center opacity-80">
                          {logoUrl ? (
-                             <img src={logoUrl} alt="Signature" className="h-10 w-auto object-contain mix-blend-multiply" />
+                             <img src={logoUrl} alt="Signature" className="h-10 w-auto object-contain opacity-[0.68] brightness-75 contrast-90 mix-blend-multiply" />
                          ) : (
                              <span className="font-serif italic text-sm">先见志明</span>
                          )}
