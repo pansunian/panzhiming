@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { ProfileSection } from './components/ProfileSection';
-import { GallerySection } from './components/GallerySection';
+import { GalleryDiarySection, GallerySection } from './components/GallerySection';
 import { ThoughtSection } from './components/ThoughtSection';
 import { BlogSection } from './components/BlogSection';
 import { ContactSection } from './components/ContactSection';
@@ -109,6 +109,7 @@ const App: React.FC = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [aboutPage, setAboutPage] = useState<BlogPost | null>(null);
   const hasUsableDataRef = useRef(false);
+  const featuredGallery = photoGroups.length > 0 ? photoGroups.filter(g => g.featured).slice(0, 2) : [];
 
   const applyPortfolioData = (data: any) => {
     if (data.profile) setProfile(normalizeProfile(data.profile));
@@ -226,12 +227,20 @@ const App: React.FC = () => {
           <div className="flex flex-col gap-8">
             <BlogSection title="先见档案" posts={posts.length > 0 ? posts.filter(p => p.featured).slice(0, 10) : []} showViewAll={posts.length > 0} />
             <ThoughtSection thoughts={thoughts.length > 0 ? thoughts.filter(t => t.featured) : []} showViewAll={thoughts.length > 0} />
-            <GallerySection title="纪实摄影" groups={photoGroups.length > 0 ? photoGroups.filter(g => g.featured).slice(0, 2) : []} onViewAll={photoGroups.length > 0} navLinks={profile.navLinks} />
+            <GallerySection title="纪实摄影" groups={featuredGallery} onViewAll={photoGroups.length > 0} navLinks={profile.navLinks} />
+            <GalleryDiarySection title="影像日记" groups={featuredGallery} onViewAll={photoGroups.length > 0} />
             <ContactSection logoUrl={profile.logoUrl} />
           </div>
         </MainLayout>
       } />
-      <Route path="/gallery" element={<MainLayout isDemoMode={isDemoMode} flushTop><GallerySection groups={photoGroups} logoUrl={profile.logoUrl} showPageNav navLinks={profile.navLinks} /></MainLayout>} />
+      <Route path="/gallery" element={
+        <MainLayout isDemoMode={isDemoMode} flushTop>
+          <GallerySection groups={photoGroups} logoUrl={profile.logoUrl} showPageNav navLinks={profile.navLinks} />
+          <div className="mt-12">
+            <GalleryDiarySection title="影像日记" groups={photoGroups} />
+          </div>
+        </MainLayout>
+      } />
       <Route path="/gallery/:id" element={<DetailView items={photoGroups} type="gallery" logoUrl={profile.logoUrl} navLinks={profile.navLinks} />} />
       <Route path="/thoughts" element={<MainLayout isDemoMode={isDemoMode} flushTop><ThoughtSection thoughts={thoughts} logoUrl={profile.logoUrl} showPageNav navLinks={profile.navLinks} /></MainLayout>} />
       <Route path="/blog" element={<MainLayout isDemoMode={isDemoMode} flushTop><BlogSection posts={posts} logoUrl={profile.logoUrl} showPageNav navLinks={profile.navLinks} /></MainLayout>} />
