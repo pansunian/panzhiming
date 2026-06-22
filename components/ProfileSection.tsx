@@ -118,7 +118,15 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
         </div>
 
         {/* 核心信息区 */}
-        <div className="relative bg-[#cbb697] text-[#2f271f] px-7 py-6">
+        <div
+            className="relative text-[#2f271f] px-7 py-6"
+            style={{
+                backgroundColor: '#cbb697',
+                backgroundImage: "linear-gradient(rgba(209, 188, 154, 0.34), rgba(209, 188, 154, 0.34)), url('/profile-info-texture.webp')",
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+            }}
+        >
              <Notch className="-left-4 top-0 -translate-y-1/2" />
              <Notch className="-right-4 top-0 -translate-y-1/2" />
              <DashedLine className="absolute top-0 left-4 right-4 border-ink/16" />
