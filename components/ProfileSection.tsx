@@ -114,10 +114,10 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
         </div>
 
         {/* 核心信息区 */}
-        <div className="relative bg-[#b99b73] text-[#2f271f] px-7 py-6">
+        <div className="relative bg-[#efe7d6] text-[#2f271f] px-7 py-6">
              <Notch className="-left-4 top-0 -translate-y-1/2" />
              <Notch className="-right-4 top-0 -translate-y-1/2" />
-             <DashedLine className="absolute top-0 left-4 right-4 border-ink/20" />
+             <DashedLine className="absolute top-0 left-4 right-4 border-ink/16" />
              
              <div className="mt-2">
                  <div className="flex justify-between items-end mb-4">
@@ -130,16 +130,16 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                          <p className="font-mono text-xs">{profile.location}</p>
                      </div>
                  </div>
-                 <div className="mb-6 border-l border-ink/25 pl-4 py-0.5">
+                 <div className="mb-6 border-l border-ink/20 pl-4 py-0.5">
                      <p className="font-serif text-[13px] leading-6 opacity-85 text-justify whitespace-pre-line">
                          {profile.bio}
                      </p>
                  </div>
                  
                  {/* 底部导航 */}
-                 <div className="grid grid-cols-4 gap-0 text-center border-y border-dashed border-ink/20 py-3">
+                 <div className="grid grid-cols-4 gap-0 text-center border-y border-dashed border-ink/16 py-3">
                      {navLinks.slice(0, 4).map((link, index) => (
-                         <Link key={`${link.path}-${link.label}`} to={link.path} className={`group relative flex flex-col items-center transition-transform duration-300 hover:-translate-y-0.5 ${index < 3 ? 'after:absolute after:right-0 after:top-1 after:h-8 after:border-r after:border-dashed after:border-ink/20' : ''}`}>
+                         <Link key={`${link.path}-${link.label}`} to={link.path} className={`group relative flex flex-col items-center transition-transform duration-300 hover:-translate-y-0.5 ${index < 3 ? 'after:absolute after:right-0 after:top-1 after:h-8 after:border-r after:border-dashed after:border-ink/16' : ''}`}>
                              <span className="text-[9px] font-mono text-ink/45 mb-1 tracking-wider">{link.en || 'LINK'}</span>
                              <span className="font-nav-link text-[15px] font-normal leading-none text-ink group-hover:underline">{link.label}</span>
                          </Link>
