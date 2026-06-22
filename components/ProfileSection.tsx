@@ -101,12 +101,12 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
             <div className="absolute top-6 left-0 w-full text-center text-white mix-blend-overlay opacity-80">
                 <p className="font-mono text-[9px] tracking-[0.55em] uppercase">Life Archives</p>
             </div>
-            <div className="absolute bottom-10 left-7 right-7 text-white drop-shadow-[0_1px_8px_rgba(40,32,22,0.28)]">
+            <div className="absolute bottom-8 left-7 right-7 text-white drop-shadow-[0_1px_8px_rgba(40,32,22,0.28)]">
                  <h2 className="mb-0.5 font-serif text-[10px] tracking-[0.18em] opacity-75">潘志明的AI新手村</h2>
                  <img
                     src="/logo-xianjian-white.webp"
                     alt="先见志明"
-                    className="h-auto w-[158px] max-w-[58%] object-contain opacity-[0.72] brightness-90 contrast-90"
+                    className="h-auto w-[158px] max-w-[58%] object-contain opacity-[0.84] brightness-105 contrast-95"
                  />
             </div>
              <Link 

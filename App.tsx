@@ -109,7 +109,7 @@ const App: React.FC = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [aboutPage, setAboutPage] = useState<BlogPost | null>(null);
   const hasUsableDataRef = useRef(false);
-  const featuredGallery = photoGroups.length > 0 ? photoGroups.filter(g => g.featured).slice(0, 2) : [];
+  const featuredGallery = photoGroups.length > 0 ? photoGroups.filter(g => g.featured).slice(0, 3) : [];
 
   const applyPortfolioData = (data: any) => {
     if (data.profile) setProfile(normalizeProfile(data.profile));
