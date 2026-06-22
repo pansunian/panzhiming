@@ -106,7 +106,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                  <img
                     src="/logo-xianjian-white.webp"
                     alt="先见志明"
-                    className="h-auto w-[205px] max-w-[70%] object-contain"
+                    className="h-auto w-[158px] max-w-[58%] object-contain"
                  />
             </div>
              <Link 
@@ -134,7 +134,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                          <p className="font-mono text-xs">{profile.location}</p>
                      </div>
                  </div>
-                 <div className="mb-7 border-l border-ink/36 pl-4 py-0.5">
+                 <div className="mb-7 border-l border-[#6f6252] pl-4 py-0.5">
                      <p className="font-serif text-[13px] leading-6 opacity-85 text-justify whitespace-pre-line">
                          {profile.bio}
                      </p>
