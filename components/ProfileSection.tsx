@@ -102,7 +102,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                 <p className="font-mono text-[9px] tracking-[0.55em] uppercase">Life Archives</p>
             </div>
             <div className="absolute bottom-10 left-7 right-7 text-white drop-shadow-[0_1px_8px_rgba(40,32,22,0.28)]">
-                 <h2 className="mb-2 font-serif text-[10px] tracking-[0.18em] opacity-75">潘志明的AI实验室</h2>
+                 <h2 className="mb-0.5 font-serif text-[10px] tracking-[0.18em] opacity-75">潘志明的AI实验室</h2>
                  <img
                     src="/logo-xianjian-white.webp"
                     alt="先见志明"
