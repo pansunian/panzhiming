@@ -134,7 +134,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                          <p className="font-mono text-xs">{profile.location}</p>
                      </div>
                  </div>
-                 <div className="mb-7 border-l border-ink/18 pl-4 py-0.5">
+                 <div className="mb-7 border-l border-ink/36 pl-4 py-0.5">
                      <p className="font-serif text-[13px] leading-6 opacity-85 text-justify whitespace-pre-line">
                          {profile.bio}
                      </p>

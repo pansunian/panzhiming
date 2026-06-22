@@ -227,8 +227,12 @@ const App: React.FC = () => {
           <div className="flex flex-col gap-8">
             <BlogSection title="先见档案" posts={posts.length > 0 ? posts.filter(p => p.featured).slice(0, 10) : []} showViewAll={posts.length > 0} />
             <ThoughtSection thoughts={thoughts.length > 0 ? thoughts.filter(t => t.featured) : []} showViewAll={thoughts.length > 0} />
-            <GalleryDiarySection title="纪实摄影" groups={featuredGallery} onViewAll={photoGroups.length > 0} />
-            <ContactSection logoUrl={profile.logoUrl} />
+            <div className="mt-5">
+              <GalleryDiarySection title="纪实摄影" groups={featuredGallery} onViewAll={photoGroups.length > 0} />
+            </div>
+            <div className="mt-6">
+              <ContactSection logoUrl={profile.logoUrl} />
+            </div>
           </div>
         </MainLayout>
       } />

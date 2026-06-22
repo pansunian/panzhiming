@@ -67,7 +67,9 @@ export const ThoughtSection: React.FC<Props> = ({ thoughts, showViewAll, logoUrl
                       <span>{thoughts.length}</span>
                   </div>
                   <BarcodeHorizontal className="w-full h-10 justify-center opacity-40 mb-2" />
-                  <p className="font-serif italic text-[10px] text-stone-400 mt-2">Thanks for visiting</p>
+                  <Link to="/thoughts" className="inline-flex font-serif text-[10px] text-stone-400 mt-2 hover:text-ink transition-colors">
+                    阅读全部灵感
+                  </Link>
               </div>
           </div>
       </div>
