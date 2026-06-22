@@ -68,7 +68,7 @@ const GalleryDiaryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ grou
                     </div>
 
                     <div className="mt-3 border-t border-dashed border-stone-200/80 pt-3">
-                        <h3 className="font-serif text-lg font-medium leading-snug text-ink transition-colors group-hover:text-brand-accent line-clamp-2">
+                        <h3 className="font-serif text-[1rem] font-medium leading-snug text-ink transition-colors group-hover:text-brand-accent line-clamp-2">
                             {group.title}
                         </h3>
                         <p className="mt-2 w-full truncate font-serif text-xs leading-relaxed text-stone-500">
@@ -108,7 +108,7 @@ export const GalleryDiarySection: React.FC<Props> = ({ groups, onViewAll, title 
       )}
       <div className="flex items-end justify-between mb-6 px-2">
          <div className="flex items-end gap-3">
-            <h2 className="font-serif text-[1.08rem] font-medium leading-tight text-ink">{title}</h2>
+            <h2 className="font-serif text-[1.25rem] font-medium leading-tight text-ink">{title}</h2>
             <span className="font-mono text-[9px] text-stone-400 mb-1 tracking-widest">/ GALLERY</span>
          </div>
          {onViewAll && (
