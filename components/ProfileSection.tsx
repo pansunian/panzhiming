@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Profile } from '../types';
 import { TicketBase, Notch, DashedLine, BarcodeHorizontal } from './TicketUI';
@@ -71,22 +71,13 @@ const getSocialConfig = (platform: string) => {
     return SOCIAL_MAP[platform.toUpperCase()] || { label: platform, icon: LinkIcon };
 };
 
-const DEFAULT_AVATAR_URL = '/panzhiming.webp';
+const HERO_AVATAR_URL = '/renwu.webp';
 
 export const ProfileSection: React.FC<Props> = ({ profile }) => {
-  const [imgError, setImgError] = useState(false);
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
   const navLinks = normalizeNavLinks(profile.navLinks);
 
   // 优化头像 URL
-  const defaultAvatarSrc = optimizeImage(DEFAULT_AVATAR_URL, 640, 70);
-  const hasCustomAvatar = !imgError && Boolean(profile.avatarUrl && profile.avatarUrl !== DEFAULT_AVATAR_URL);
-  const avatarSrc = hasCustomAvatar ? optimizeImage(profile.avatarUrl, 640, 70) : "";
-
-  useEffect(() => {
-    setImgError(false);
-    setIsImageLoaded(false);
-  }, [profile.avatarUrl]);
+  const defaultAvatarSrc = optimizeImage(HERO_AVATAR_URL, 640, 70);
 
   return (
     <div className="flex justify-center w-full mb-12">
@@ -105,19 +96,8 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                 fetchPriority="high"
                 decoding="async"
                 className="absolute inset-0 w-full h-full object-cover filter brightness-[0.85] contrast-110"
+                style={{ objectPosition: '50% 56%' }}
             />
-            {avatarSrc && (
-                <img 
-                    src={avatarSrc} 
-                    alt="Profile" 
-                    loading="eager"
-                    fetchPriority="high"
-                    decoding="async"
-                    className={`absolute inset-0 w-full h-full object-cover filter brightness-[0.85] contrast-110 transition-opacity duration-700 ${isImageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                    onLoad={() => setIsImageLoaded(true)}
-                    onError={() => setImgError(true)}
-                />
-            )}
             <div className="absolute top-6 left-0 w-full text-center text-white mix-blend-overlay opacity-80">
                 <p className="font-mono text-[9px] tracking-[0.55em] uppercase">Life Archives</p>
             </div>
@@ -127,7 +107,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
             </div>
              <Link 
                 to="/aboutme"
-                className={`absolute bottom-4 right-4 text-[9px] font-mono border px-2.5 py-1 rounded-full transition-all cursor-pointer backdrop-blur-sm ${avatarSrc ? 'text-white/70 border-white/30 hover:bg-white/10 hover:text-white' : 'text-ink/50 border-ink/20 hover:bg-ink/5 hover:text-ink'}`}
+                className="absolute bottom-4 right-4 text-[9px] font-mono border px-2.5 py-1 rounded-full transition-all cursor-pointer backdrop-blur-sm text-white/70 border-white/30 hover:bg-white/10 hover:text-white"
             >
                 我的说明书 &rarr;
             </Link>
