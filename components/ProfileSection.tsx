@@ -103,7 +103,11 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
             </div>
             <div className="absolute bottom-10 left-7 right-7 text-white drop-shadow-[0_1px_8px_rgba(40,32,22,0.28)]">
                  <h2 className="text-[9px] font-mono mb-2 tracking-[0.22em] uppercase opacity-75">PanZhiMing / 2026</h2>
-                 <h1 className="text-[2.45rem] md:text-[2.25rem] font-serif font-normal tracking-normal leading-[1.05] mb-1">先见志明</h1>
+                 <img
+                    src="/logo-xianjian-white.webp"
+                    alt="先见志明"
+                    className="h-auto w-[230px] max-w-[76%] object-contain"
+                 />
             </div>
              <Link 
                 to="/aboutme"
