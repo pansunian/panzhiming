@@ -95,13 +95,13 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                 loading="eager"
                 fetchPriority="high"
                 decoding="async"
-                className="absolute inset-0 w-full h-full object-cover filter brightness-[0.85] contrast-110"
-                style={{ objectPosition: '50% 56%' }}
+                className="absolute inset-0 w-full h-full object-cover filter brightness-[0.9] contrast-105"
+                style={{ objectPosition: '60% 62%' }}
             />
             <div className="absolute top-6 left-0 w-full text-center text-white mix-blend-overlay opacity-80">
                 <p className="font-mono text-[9px] tracking-[0.55em] uppercase">Life Archives</p>
             </div>
-            <div className="absolute bottom-10 left-7 right-7 text-white">
+            <div className="absolute bottom-10 left-7 right-7 text-white drop-shadow-[0_1px_8px_rgba(40,32,22,0.28)]">
                  <h2 className="text-[9px] font-mono mb-2 tracking-[0.22em] uppercase opacity-75">PanZhiMing / 2026</h2>
                  <h1 className="text-[2.45rem] md:text-[2.25rem] font-serif font-normal tracking-normal leading-[1.05] mb-1">先见志明</h1>
             </div>
@@ -114,10 +114,10 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
         </div>
 
         {/* 核心信息区 */}
-        <div className="relative bg-brand-accent text-white px-7 py-6">
+        <div className="relative bg-[#b99b73] text-[#fffaf0] px-7 py-6">
              <Notch className="-left-4 top-0 -translate-y-1/2" />
              <Notch className="-right-4 top-0 -translate-y-1/2" />
-             <DashedLine className="absolute top-0 left-4 right-4 border-white/30" />
+             <DashedLine className="absolute top-0 left-4 right-4 border-white/35" />
              
              <div className="mt-2">
                  <div className="flex justify-between items-end mb-4">
@@ -130,17 +130,17 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                          <p className="font-mono text-xs">{profile.location}</p>
                      </div>
                  </div>
-                 <div className="mb-6 border-l border-white/30 pl-4 py-0.5">
+                 <div className="mb-6 border-l border-white/35 pl-4 py-0.5">
                      <p className="font-serif text-[13px] leading-6 opacity-90 text-justify whitespace-pre-line">
                          {profile.bio}
                      </p>
                  </div>
                  
                  {/* 底部导航 */}
-                 <div className="grid grid-cols-4 gap-0 text-center border-y border-dashed border-white/25 py-3">
+                 <div className="grid grid-cols-4 gap-0 text-center border-y border-dashed border-white/30 py-3">
                      {navLinks.slice(0, 4).map((link, index) => (
-                         <Link key={`${link.path}-${link.label}`} to={link.path} className={`group relative flex flex-col items-center transition-transform duration-300 hover:-translate-y-0.5 ${index < 3 ? 'after:absolute after:right-0 after:top-1 after:h-8 after:border-r after:border-dashed after:border-white/20' : ''}`}>
-                             <span className="text-[9px] font-mono text-white/40 mb-1 tracking-wider">{link.en || 'LINK'}</span>
+                         <Link key={`${link.path}-${link.label}`} to={link.path} className={`group relative flex flex-col items-center transition-transform duration-300 hover:-translate-y-0.5 ${index < 3 ? 'after:absolute after:right-0 after:top-1 after:h-8 after:border-r after:border-dashed after:border-white/24' : ''}`}>
+                             <span className="text-[9px] font-mono text-white/50 mb-1 tracking-wider">{link.en || 'LINK'}</span>
                              <span className="font-nav-link text-[15px] font-normal leading-none text-white group-hover:underline">{link.label}</span>
                          </Link>
                      ))}
