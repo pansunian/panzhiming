@@ -60,10 +60,14 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
             {/* Form Section */}
             <div className="p-8 pb-12 relative">
                 {/* Decorative Stamp */}
-                <div className="absolute top-6 right-6 border border-stone-200 rounded p-1 opacity-20 rotate-12 pointer-events-none">
-                     <div className="w-16 h-20 border border-dashed border-stone-300 flex items-center justify-center">
-                        <span className="font-mono text-[8px] uppercase text-center leading-tight">Postage<br/>Paid</span>
-                     </div>
+                <div className="absolute top-5 right-5 w-[72px] rotate-[7deg] opacity-85 pointer-events-none sm:w-20">
+                    <img
+                        src="/stamp-2026.webp"
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        className="block h-auto w-full mix-blend-multiply"
+                    />
                 </div>
 
                 <p className="font-serif text-sm text-stone-500 mb-8 italic w-3/4">
