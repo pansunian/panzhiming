@@ -96,7 +96,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                 fetchPriority="high"
                 decoding="async"
                 className="absolute inset-0 w-full h-full object-cover filter brightness-[0.9] contrast-105"
-                style={{ objectPosition: '60% 62%' }}
+                style={{ objectPosition: '60% 74%' }}
             />
             <div className="absolute top-6 left-0 w-full text-center text-white mix-blend-overlay opacity-80">
                 <p className="font-mono text-[9px] tracking-[0.55em] uppercase">Life Archives</p>
@@ -114,7 +114,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
         </div>
 
         {/* 核心信息区 */}
-        <div className="relative bg-[#efe7d6] text-[#2f271f] px-7 py-6">
+        <div className="relative bg-[#dcc8aa] text-[#2f271f] px-7 py-6">
              <Notch className="-left-4 top-0 -translate-y-1/2" />
              <Notch className="-right-4 top-0 -translate-y-1/2" />
              <DashedLine className="absolute top-0 left-4 right-4 border-ink/16" />
