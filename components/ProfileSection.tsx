@@ -114,34 +114,34 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
         </div>
 
         {/* 核心信息区 */}
-        <div className="relative bg-[#b99b73] text-[#fffaf0] px-7 py-6">
+        <div className="relative bg-[#b99b73] text-[#2f271f] px-7 py-6">
              <Notch className="-left-4 top-0 -translate-y-1/2" />
              <Notch className="-right-4 top-0 -translate-y-1/2" />
-             <DashedLine className="absolute top-0 left-4 right-4 border-white/35" />
+             <DashedLine className="absolute top-0 left-4 right-4 border-ink/20" />
              
              <div className="mt-2">
                  <div className="flex justify-between items-end mb-4">
                      <div>
-                         <p className="text-[9px] opacity-70 tracking-widest mb-1 uppercase">Name</p>
+                         <p className="text-[9px] opacity-55 tracking-widest mb-1 uppercase">Name</p>
                          <p className="text-[1.35rem] font-serif font-medium leading-tight">{profile.name}</p>
                      </div>
                     <div className="text-right self-center">
-                         <p className="text-[9px] opacity-70 tracking-widest mb-1 uppercase">City</p>
+                         <p className="text-[9px] opacity-55 tracking-widest mb-1 uppercase">City</p>
                          <p className="font-mono text-xs">{profile.location}</p>
                      </div>
                  </div>
-                 <div className="mb-6 border-l border-white/35 pl-4 py-0.5">
-                     <p className="font-serif text-[13px] leading-6 opacity-90 text-justify whitespace-pre-line">
+                 <div className="mb-6 border-l border-ink/25 pl-4 py-0.5">
+                     <p className="font-serif text-[13px] leading-6 opacity-85 text-justify whitespace-pre-line">
                          {profile.bio}
                      </p>
                  </div>
                  
                  {/* 底部导航 */}
-                 <div className="grid grid-cols-4 gap-0 text-center border-y border-dashed border-white/30 py-3">
+                 <div className="grid grid-cols-4 gap-0 text-center border-y border-dashed border-ink/20 py-3">
                      {navLinks.slice(0, 4).map((link, index) => (
-                         <Link key={`${link.path}-${link.label}`} to={link.path} className={`group relative flex flex-col items-center transition-transform duration-300 hover:-translate-y-0.5 ${index < 3 ? 'after:absolute after:right-0 after:top-1 after:h-8 after:border-r after:border-dashed after:border-white/24' : ''}`}>
-                             <span className="text-[9px] font-mono text-white/50 mb-1 tracking-wider">{link.en || 'LINK'}</span>
-                             <span className="font-nav-link text-[15px] font-normal leading-none text-white group-hover:underline">{link.label}</span>
+                         <Link key={`${link.path}-${link.label}`} to={link.path} className={`group relative flex flex-col items-center transition-transform duration-300 hover:-translate-y-0.5 ${index < 3 ? 'after:absolute after:right-0 after:top-1 after:h-8 after:border-r after:border-dashed after:border-ink/20' : ''}`}>
+                             <span className="text-[9px] font-mono text-ink/45 mb-1 tracking-wider">{link.en || 'LINK'}</span>
+                             <span className="font-nav-link text-[15px] font-normal leading-none text-ink group-hover:underline">{link.label}</span>
                          </Link>
                      ))}
                  </div>
