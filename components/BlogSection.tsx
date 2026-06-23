@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BlogPost, NavLink } from '../types';
-import { BarcodeSmall, DashedLine, Notch } from './TicketUI';
-import { ArrowRight } from 'lucide-react';
+import { DashedLine, Notch } from './TicketUI';
+import { ArrowRight, Clock } from 'lucide-react';
 import { optimizeImage } from '../utils/imageOptimizer';
 import { InlineTicketNav } from './NavBar';
 
@@ -22,6 +22,7 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
     const coverSrc = post.imageUrl 
         ? optimizeImage(post.imageUrl, 640)
         : `https://picsum.photos/seed/${post.id}/500/300`;
+    const readTime = post.readTime || '5 MIN';
 
     return (
         <Link 
@@ -56,7 +57,10 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
                         <p className="font-serif text-[10px] sm:text-xs text-stone-500 leading-snug line-clamp-1 opacity-80">{post.excerpt}</p>
                     </div>
                     <div className="mt-auto pt-2 border-t border-stone-100 flex items-end justify-between pr-2">
-                        <BarcodeSmall className="h-3 w-1/2 opacity-40" />
+                        <div className="flex min-w-0 items-center gap-1.5 font-mono text-[8px] uppercase tracking-widest text-stone-500">
+                            <Clock size={10} className="shrink-0 text-stone-300" strokeWidth={1.8} />
+                            <span className="truncate font-bold text-stone-500">{readTime}</span>
+                        </div>
                         <span className="font-mono text-[8px] text-stone-300">NO.00{index + 1}</span>
                     </div>
                 </div>
@@ -86,7 +90,7 @@ export const BlogSection: React.FC<Props> = ({ posts, showViewAll, title = "文�
          </div>
          {showViewAll && (
              <Link to="/blog" className="inline-flex items-center gap-1 font-mono text-[10px] text-stone-400 hover:text-ink transition-colors pb-1">
-                 更多 <ArrowRight size={10} />
+                 更多文章 <ArrowRight size={10} />
              </Link>
          )}
       </div>
