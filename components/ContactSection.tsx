@@ -157,7 +157,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
                  <div className="my-6">
                      {/* Updated: 字体改为 font-sans (XiXianTingMingTi), 字号改小一号 (text-lg sm:text-xl) */}
                      <p className="font-sans font-normal text-lg sm:text-xl tracking-widest mb-3 opacity-90">
-                        有时热衷科技 &nbsp;有时沉溺文艺
+                        有时痴迷科技，有时沉溺文艺。
                      </p>
                      
                      {/* Signature */}
