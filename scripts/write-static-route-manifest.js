@@ -24,10 +24,12 @@ const main = async () => {
 
     for (const item of Array.isArray(portfolio.gallery) ? portfolio.gallery : []) {
       if (item?.id) addRoute(routes, `gallery/${item.id}`);
+      if (item?.slug) addRoute(routes, `gallery/${item.slug}`);
     }
 
     for (const item of Array.isArray(portfolio.posts) ? portfolio.posts : []) {
       if (item?.id) addRoute(routes, `blog/${item.id}`);
+      if (item?.slug) addRoute(routes, `blog/${item.slug}`);
     }
   } catch (error) {
     console.warn(`[static-routes] Portfolio data unavailable, writing base routes only: ${error.message}`);

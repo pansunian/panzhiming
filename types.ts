@@ -26,6 +26,7 @@ export interface Profile {
 
 export interface PhotoGroup {
   id: string;
+  slug?: string;
   title: string;
   location: string;
   count: number;
@@ -49,6 +50,7 @@ export interface Thought {
 
 export interface BlogPost {
   id: string;
+  slug?: string;
   title: string;
   excerpt: string;
   date: string;

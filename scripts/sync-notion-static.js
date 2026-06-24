@@ -87,6 +87,149 @@ const getRelationIds = (properties, names) => {
   return [];
 };
 
+const normalizeSlug = (value) => {
+  return String(value || '')
+    .normalize('NFKC')
+    .trim()
+    .toLowerCase()
+    .replace(/[｜|]/g, '-')
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80)
+    .replace(/-+$/g, '');
+};
+
+const shortId = (id) => String(id || '').replace(/-/g, '').slice(0, 6);
+
+const titleKeywordMap = [
+  ['个人说明书', 'manual'],
+  ['个人主页', 'personal-site'],
+  ['作品集', 'portfolio'],
+  ['营销寓言故事', 'fable'],
+  ['营销寓言', 'fable'],
+  ['皇帝的新装', 'emperor'],
+  ['掩耳盗铃', 'bell'],
+  ['刻舟求剑', 'sword'],
+  ['小猴子下山', 'monkey'],
+  ['高速收费站', 'toll'],
+  ['收费站', 'toll'],
+  ['纪实摄影', 'photo'],
+  ['摄影', 'photo'],
+  ['内容创作', 'content'],
+  ['自媒体', 'self-media'],
+  ['工作流', 'workflow'],
+  ['工具', 'tools'],
+  ['新手村', 'village'],
+  ['学徒', 'apprentice'],
+  ['师傅', 'master'],
+  ['团队', 'team'],
+  ['项目', 'project'],
+  ['系统', 'system'],
+  ['搭建', 'build'],
+  ['缓存', 'cache'],
+  ['封面', 'cover'],
+  ['阅读', 'reading'],
+  ['播客', 'podcast'],
+  ['博客', 'blog'],
+  ['春节', 'spring-festival'],
+  ['仪式感', 'ritual'],
+  ['中年危机', 'midlife'],
+  ['小学生', 'student'],
+  ['得到', 'dedao'],
+  ['南京大学', 'nju'],
+  ['校庆', 'anniversary'],
+  ['星光集市', 'market'],
+  ['社团巡礼', 'club-fair'],
+  ['毕业作品展', 'grad-show'],
+  ['中央美术学院', 'cafa'],
+];
+
+const importantEnglishWords = new Set([
+  'ai', 'html', 'ppt', 'notion', 'github', 'claude', 'gemini', 'codex',
+  'prompt', 'ipad', 'iphone', 'z-library', 'app'
+]);
+
+const addSlugParts = (parts, slug) => {
+  for (const part of normalizeSlug(slug).split('-')) {
+    if (part) parts.push(part);
+  }
+};
+
+const generateTitleSlug = (title, id) => {
+  const source = String(title || '').normalize('NFKC');
+  const lower = source.toLowerCase();
+
+  if (lower.includes('html') && lower.includes('ppt')) {
+    return 'html-new-ppt';
+  }
+
+  const matches = [];
+
+  for (const [keyword, slug] of titleKeywordMap) {
+    const index = source.indexOf(keyword);
+    if (index >= 0) matches.push({ index, slug });
+  }
+
+  const englishPattern = /[a-z][a-z0-9]*(?:-[a-z0-9]+)*/gi;
+  let match;
+  while ((match = englishPattern.exec(source)) !== null) {
+    const word = match[0].toLowerCase();
+    if (importantEnglishWords.has(word) || word.length >= 3) {
+      matches.push({ index: match.index, slug: word });
+    }
+  }
+
+  const numberPattern = /\d{1,4}/g;
+  while ((match = numberPattern.exec(source)) !== null) {
+    matches.push({ index: match.index, slug: match[0] });
+  }
+
+  const parts = [];
+  const seen = new Set();
+  matches
+    .sort((a, b) => a.index - b.index)
+    .forEach(({ slug }) => {
+      const nextParts = [];
+      addSlugParts(nextParts, slug);
+      for (const part of nextParts) {
+        if (!seen.has(part)) {
+          seen.add(part);
+          parts.push(part);
+        }
+      }
+    });
+
+  if (!parts.length) return `post-${shortId(id)}`;
+
+  const nonNumericParts = parts.filter((part) => !/^\d+$/.test(part));
+  const compactParts = nonNumericParts.length >= 2
+    ? nonNumericParts
+    : parts.filter((part) => !/^\d{4}$/.test(part));
+  return (compactParts.length ? compactParts : parts).slice(0, 3).join('-');
+};
+
+const assignSlugs = (items) => {
+  const used = new Set();
+
+  return items.map((item) => {
+    let base = item.slug ? normalizeSlug(item.slug) : generateTitleSlug(item.title, item.id);
+    if (!base) base = `item-${shortId(item.id)}`;
+    let slug = base;
+    let index = 2;
+
+    while (used.has(slug)) {
+      slug = `${base}-${shortId(item.id) || index}`;
+      if (!used.has(slug)) break;
+      slug = `${base}-${index}`;
+      index += 1;
+    }
+
+    used.add(slug);
+    return { ...item, slug };
+  });
+};
+
 const getImageUrl = (page, propertyKey = 'Cover', preferPageCover = true) => {
   if (preferPageCover && page.cover) return page.cover.file?.url || page.cover.external?.url;
   if (page.properties && page.properties[propertyKey]) {
@@ -563,6 +706,7 @@ const main = async () => {
     buildProfile(),
     queryDatabase(process.env.NOTION_GALLERY_DB_ID, async (page) => ({
       id: page.id,
+      slug: getPropValue(page.properties.Slug),
       title: getPropValue(page.properties.Title || page.properties.Name),
       location: getPropValue(page.properties.Location),
       count: page.properties.Count?.number || 0,
@@ -582,6 +726,7 @@ const main = async () => {
     })),
     queryDatabase(process.env.NOTION_BLOG_DB_ID, async (page) => ({
       id: page.id,
+      slug: getPropValue(page.properties.Slug),
       title: getPropValue(page.properties.Title || page.properties.Name),
       excerpt: getPropValue(page.properties.Excerpt),
       date: page.properties.Date?.date?.start || '',
@@ -595,7 +740,10 @@ const main = async () => {
     }))
   ]);
 
-  const aboutCandidates = posts.filter((p) =>
+  const galleryWithSlugs = assignSlugs(gallery);
+  const postsWithSlugs = assignSlugs(posts);
+
+  const aboutCandidates = postsWithSlugs.filter((p) =>
     p.category.toLowerCase().includes('about') ||
     p.title.includes('关于') ||
     p.title.toLowerCase().includes('about') ||
@@ -608,9 +756,9 @@ const main = async () => {
 
   await writeJson(path.join(dataDir, 'portfolio.json'), {
     profile,
-    gallery,
+    gallery: galleryWithSlugs,
     thoughts,
-    posts,
+    posts: postsWithSlugs,
     about,
     updatedAt: new Date().toISOString()
   });
@@ -619,7 +767,7 @@ const main = async () => {
     updatedAt: buildVersion
   });
 
-  const detailItems = [...gallery, ...posts];
+  const detailItems = [...galleryWithSlugs, ...postsWithSlugs];
   const itemsToSync = detailItems.filter((item) => shouldSyncDetail(item, previousById));
   const reusedCount = detailItems.length - itemsToSync.length;
   if (updateMode === 'smart') {

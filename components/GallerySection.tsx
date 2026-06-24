@@ -4,6 +4,7 @@ import { NavLink, PhotoGroup } from '../types';
 import { ArrowRight, MapPin } from 'lucide-react';
 import { optimizeImage } from '../utils/imageOptimizer';
 import { InlineTicketNav } from './NavBar';
+import { getGalleryPath } from '../utils/routes';
 
 interface Props {
   groups: PhotoGroup[];
@@ -37,7 +38,7 @@ const GalleryDiaryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ grou
 
     return (
         <Link
-            to={`/gallery/${group.id}`}
+            to={getGalleryPath(group)}
             className="group block bg-paper border border-stone-200/45 transition-colors duration-300 hover:border-brand-accent/30"
         >
             <div className="grid grid-cols-[76px_minmax(0,1fr)] sm:grid-cols-[84px_minmax(0,1fr)]">

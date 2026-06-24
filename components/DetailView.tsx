@@ -5,6 +5,7 @@ import { TicketBase, DashedLine, Notch, BarcodeVertical } from './TicketUI';
 import { InlineTicketNav } from './NavBar';
 import { Clock, Camera, Loader2, Bookmark as BookmarkIcon, ChevronRight, Github, ExternalLink, FileText } from 'lucide-react';
 import { optimizeImage } from '../utils/imageOptimizer';
+import { getBlogPath } from '../utils/routes';
 import { mockNotionBlocks, mockPageImages } from '../data/mockData';
 
 interface DetailViewProps {
@@ -284,7 +285,7 @@ const RelatedPosts: React.FC<{ posts: BlogPost[] }> = ({ posts }) => {
                 {posts.map((post, index) => {
                     const coverSrc = post.imageUrl ? optimizeImage(post.imageUrl, 360) : '';
                     return (
-                        <Link key={post.id} to={`/blog/${post.id}`} className="group flex min-h-[86px] overflow-hidden border border-stone-200/80 bg-paper-dark transition-colors hover:bg-[#f2eee5]">
+                        <Link key={post.id} to={getBlogPath(post)} className="group flex min-h-[86px] overflow-hidden border border-stone-200/80 bg-paper-dark transition-colors hover:bg-[#f2eee5]">
                             <div className="w-[88px] shrink-0 bg-stone-100">
                                 {coverSrc ? (
                                     <img src={coverSrc} alt={post.title} loading="lazy" decoding="async" className="h-full w-full object-cover sepia-[0.08] transition-transform duration-300 group-hover:scale-105" />
@@ -448,9 +449,10 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
   const { id } = useParams();
   const location = useLocation();
   const currentId = forceId || id;
+  const routeKey = currentId ? decodeURIComponent(currentId) : currentId;
   const safeItems = Array.isArray(items) ? items : [];
-  const item = safeItems.find(i => i.id === currentId);
-  const pageId = item?.id || currentId;
+  const item = safeItems.find(i => i.id === routeKey || i.slug === routeKey);
+  const pageId = item?.id || routeKey;
   const [contentImages, setContentImages] = useState<GalleryImage[]>([]);
   const [blogBlocks, setBlogBlocks] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);

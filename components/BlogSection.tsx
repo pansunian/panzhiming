@@ -5,6 +5,7 @@ import { DashedLine, Notch } from './TicketUI';
 import { ArrowRight, Clock } from 'lucide-react';
 import { optimizeImage } from '../utils/imageOptimizer';
 import { InlineTicketNav } from './NavBar';
+import { getBlogPath } from '../utils/routes';
 
 interface Props {
   posts: BlogPost[];
@@ -26,7 +27,7 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
 
     return (
         <Link 
-            to={`/blog/${post.id}`}
+            to={getBlogPath(post)}
             className="relative w-full h-32 group cursor-pointer transition-all duration-300 hover:-translate-y-1 block"
         >
             <div className="w-full h-full flex items-stretch">
