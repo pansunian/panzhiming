@@ -15,7 +15,7 @@ interface Props {
 
 export const ThoughtSection: React.FC<Props> = ({ thoughts, showViewAll, logoUrl, showPageNav, navLinks }) => {
   return (
-    <section className="flex flex-col items-center w-full scroll-mt-12">
+    <section className="page-enter-soft flex flex-col items-center w-full scroll-mt-12">
       {showPageNav && (
         <div className="-mx-2 w-[calc(100%+1rem)] pb-10 sm:mx-0 sm:w-full">
           <div className="relative z-40">
@@ -49,7 +49,7 @@ export const ThoughtSection: React.FC<Props> = ({ thoughts, showViewAll, logoUrl
               </div>
               <div className="space-y-8">
                   {thoughts.map((thought, index) => (
-                      <div key={thought.id} className="group">
+                      <div key={thought.id} className="motion-card group">
                           <div className="flex justify-between items-baseline mb-2">
                               <span className="text-[10px] text-stone-300 font-[system-ui,sans-serif] tracking-widest">{String(index + 1).padStart(3, '0')}</span>
                               <span className="text-[9px] font-mono text-stone-400">{thought.date} {thought.time}</span>

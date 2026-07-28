@@ -39,7 +39,7 @@ const GalleryDiaryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ grou
     return (
         <Link
             to={getGalleryPath(group)}
-            className="group block bg-paper border border-stone-200/45 transition-colors duration-300 hover:border-brand-accent/30"
+            className="motion-card group block bg-paper border border-stone-200/45 hover:border-brand-accent/30"
         >
             <div className="grid grid-cols-[76px_minmax(0,1fr)] sm:grid-cols-[84px_minmax(0,1fr)]">
                 <div className="relative border-r border-dashed border-stone-200/80 px-3 pt-5">
@@ -61,7 +61,7 @@ const GalleryDiaryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ grou
                             loading="lazy"
                             decoding="async"
                             onLoad={() => setIsLoaded(true)}
-                            className={`h-full w-full object-cover transition-all duration-300 group-hover:scale-[1.02] ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+                            className={`motion-card-media h-full w-full object-cover ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
                         />
                         <div className="absolute right-2 top-2 rounded-full border border-paper/60 bg-paper/65 px-1.5 py-0.5 font-mono text-[8px] tracking-widest text-stone-500">
                             {String(index + 1).padStart(2, '0')}
@@ -95,7 +95,7 @@ export const GalleryDiarySection: React.FC<Props> = ({ groups, onViewAll, title 
   if (!groups.length) return null;
 
   return (
-    <section className="scroll-mt-24 w-full">
+    <section className="page-enter-soft scroll-mt-24 w-full">
       {showPageNav && (
         <div className="-mx-2 mb-10 sm:mx-0">
           <div className="relative z-40">

@@ -28,7 +28,7 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
     return (
         <Link 
             to={getBlogPath(post)}
-            className="relative w-full h-32 group cursor-pointer transition-all duration-300 hover:-translate-y-1 block"
+            className="motion-card relative w-full h-32 group cursor-pointer block"
         >
             <div className="w-full h-full flex items-stretch">
                 <div className="w-36 sm:w-[38%] h-full relative overflow-hidden rounded-l-sm bg-stone-200 shrink-0">
@@ -38,7 +38,7 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
                         loading="lazy"
                         decoding="async"
                         onLoad={() => setIsLoaded(true)}
-                        className={`w-full h-full object-cover filter brightness-[0.95] contrast-[1.05] sepia-[0.1] transition-all duration-300 group-hover:scale-105 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+                        className={`motion-card-media w-full h-full object-cover filter brightness-[0.95] contrast-[1.05] sepia-[0.1] ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
                     />
                 </div>
                 
@@ -72,7 +72,7 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
 
 export const BlogSection: React.FC<Props> = ({ posts, showViewAll, title = "文章", logoUrl, showPageNav, navLinks }) => {
   return (
-    <section className="scroll-mt-12 w-full">
+    <section className="page-enter-soft scroll-mt-12 w-full">
       {showPageNav && (
         <div className="-mx-2 mb-10 sm:mx-0">
           <div className="relative z-40">

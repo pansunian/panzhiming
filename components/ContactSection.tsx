@@ -46,7 +46,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
   };
 
   return (
-    <section id="contact" className="mb-8 w-full">
+    <section id="contact" className="page-enter-soft mb-8 w-full">
        
        <div className="flex items-end gap-4 mb-4 px-2">
          <h2 className="font-serif text-[1.35rem] font-medium leading-tight text-ink">给我留言</h2>

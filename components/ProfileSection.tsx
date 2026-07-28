@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Profile } from '../types';
 import { TicketBase, Notch, DashedLine, BarcodeHorizontal } from './TicketUI';
 import { optimizeImage } from '../utils/imageOptimizer';
@@ -75,12 +75,20 @@ const HERO_AVATAR_URL = '/renwu.webp';
 
 export const ProfileSection: React.FC<Props> = ({ profile }) => {
   const navLinks = normalizeNavLinks(profile.navLinks);
+  const location = useLocation();
+  const visibleNavLinks = navLinks.slice(0, 4);
+  const activeNavIndex = Math.max(
+    0,
+    visibleNavLinks.findIndex((link) =>
+      link.path === '/' ? location.pathname === '/' : location.pathname.startsWith(link.path)
+    )
+  );
 
   // 优化头像 URL
   const defaultAvatarSrc = optimizeImage(HERO_AVATAR_URL, 640, 70);
 
   return (
-    <div className="flex justify-center w-full mb-12">
+    <div className="page-enter-soft flex justify-center w-full mb-12">
       <TicketBase className="w-full rounded-2xl flex flex-col">
         {/* 顶部海报区 */}
         <div
@@ -149,13 +157,18 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                  </div>
                  
                  {/* 底部导航 */}
-                 <div className="grid grid-cols-4 gap-2 text-center">
-                     {navLinks.slice(0, 4).map((link) => (
-                         <Link key={`${link.path}-${link.label}`} to={link.path} className="group flex flex-col items-center rounded-sm py-2 transition-all duration-300 hover:-translate-y-0.5 hover:bg-paper/25">
+                 <div
+                    className="profile-nav-track grid grid-cols-4 gap-2 text-center"
+                    style={{ '--nav-active-index': activeNavIndex } as React.CSSProperties}
+                 >
+                     {visibleNavLinks.map((link) => {
+                         const isActive = link.path === '/' ? location.pathname === '/' : location.pathname.startsWith(link.path);
+                         return (
+                         <Link key={`${link.path}-${link.label}`} to={link.path} className={`profile-nav-link group flex flex-col items-center rounded-sm py-2 transition-colors duration-300 hover:bg-paper/25 ${isActive ? 'text-ink' : ''}`}>
                              <span className="mb-1 font-mono text-[8px] tracking-[0.16em] text-ink/42">{link.en || 'LINK'}</span>
                              <span className="font-nav-link text-[15px] font-normal leading-none text-ink/90 group-hover:text-ink">{link.label}</span>
                          </Link>
-                     ))}
+                     )})}
                  </div>
              </div>
         </div>

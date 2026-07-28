@@ -285,10 +285,10 @@ const RelatedPosts: React.FC<{ posts: BlogPost[] }> = ({ posts }) => {
                 {posts.map((post, index) => {
                     const coverSrc = post.imageUrl ? optimizeImage(post.imageUrl, 360) : '';
                     return (
-                        <Link key={post.id} to={getBlogPath(post)} className="group flex min-h-[86px] overflow-hidden border border-stone-200/80 bg-paper-dark transition-colors hover:bg-[#f2eee5]">
+                        <Link key={post.id} to={getBlogPath(post)} className="motion-card group flex min-h-[86px] overflow-hidden border border-stone-200/80 bg-paper-dark hover:bg-[#f2eee5]">
                             <div className="w-[88px] shrink-0 bg-stone-100">
                                 {coverSrc ? (
-                                    <img src={coverSrc} alt={post.title} loading="lazy" decoding="async" className="h-full w-full object-cover sepia-[0.08] transition-transform duration-300 group-hover:scale-105" />
+                                    <img src={coverSrc} alt={post.title} loading="lazy" decoding="async" className="motion-card-media h-full w-full object-cover sepia-[0.08]" />
                                 ) : (
                                     <div className="flex h-full items-center justify-center font-mono text-[8px] uppercase tracking-widest text-stone-300">Archive</div>
                                 )}
@@ -534,7 +534,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
   const displayImage = optimizeImage(displayImageRaw, 1200);
 
   return (
-    <div className="min-h-screen w-full flex flex-col bg-texture overflow-x-hidden">
+    <div className="page-enter-soft min-h-screen w-full flex flex-col bg-texture overflow-x-hidden">
       <div className="w-full max-w-[420px] mx-auto pb-24 pt-6 sm:pt-10">
             <div className="px-2 sm:px-4">
                 <div className="h-4 w-full jagged-top bg-paper"></div>

@@ -191,6 +191,114 @@
         mask-position: left bottom;
       }
 
+      @keyframes pageSoftReveal {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+          filter: blur(2px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+          filter: blur(0);
+        }
+      }
+
+      .page-enter-soft {
+        animation: pageSoftReveal 560ms cubic-bezier(0.19, 1, 0.22, 1) both;
+      }
+
+      .motion-card {
+        transform: translateZ(0);
+        transition:
+          transform 260ms cubic-bezier(0.19, 1, 0.22, 1),
+          border-color 260ms ease,
+          background-color 260ms ease,
+          opacity 260ms ease;
+        will-change: transform;
+      }
+
+      .motion-card-media {
+        transition:
+          transform 420ms cubic-bezier(0.19, 1, 0.22, 1),
+          filter 420ms ease,
+          opacity 420ms ease;
+      }
+
+      .profile-nav-track {
+        --nav-active-index: 0;
+        position: relative;
+      }
+
+      .profile-nav-track::after {
+        content: "";
+        position: absolute;
+        left: calc((var(--nav-active-index) * 25%) + 18px);
+        bottom: 0;
+        width: calc(25% - 36px);
+        height: 2px;
+        background: rgba(47, 39, 31, 0.45);
+        transform-origin: center;
+        transition:
+          left 360ms cubic-bezier(0.19, 1, 0.22, 1),
+          width 260ms ease,
+          opacity 260ms ease;
+        opacity: 0.72;
+      }
+
+      .nav-popover-link {
+        position: relative;
+      }
+
+      .nav-popover-link::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 12px;
+        bottom: 12px;
+        width: 2px;
+        background: rgba(138, 109, 80, 0.62);
+        transform: scaleY(0);
+        transform-origin: center;
+        transition: transform 220ms cubic-bezier(0.19, 1, 0.22, 1);
+      }
+
+      .nav-popover-link.is-active::before,
+      .nav-popover-link:hover::before {
+        transform: scaleY(1);
+      }
+
+      @media (hover: hover) and (pointer: fine) {
+        .motion-card:hover {
+          transform: translateY(-4px);
+        }
+
+        .motion-card:hover .motion-card-media {
+          transform: scale(1.024);
+          filter: saturate(0.96) contrast(1.03);
+        }
+
+        .profile-nav-track:hover::after {
+          opacity: 0.95;
+        }
+
+        .profile-nav-link:hover {
+          transform: translateY(-2px);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .page-enter-soft,
+        .motion-card,
+        .motion-card-media,
+        .profile-nav-track::after,
+        .nav-popover-link::before {
+          animation: none !important;
+          transition: none !important;
+          transform: none !important;
+        }
+      }
+
       /* 针对 iOS Safari 的 100vh 修复 */
       .min-h-screen {
         min-height: 100vh;
