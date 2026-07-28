@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Profile } from '../types';
 import { TicketBase, Notch, DashedLine, BarcodeHorizontal } from './TicketUI';
@@ -76,6 +76,7 @@ const HERO_AVATAR_URL = '/renwu.webp';
 export const ProfileSection: React.FC<Props> = ({ profile }) => {
   const navLinks = normalizeNavLinks(profile.navLinks);
   const location = useLocation();
+  const [hoveredNavIndex, setHoveredNavIndex] = useState<number | null>(null);
   const visibleNavLinks = navLinks.slice(0, 4);
   const activeNavIndex = Math.max(
     0,
@@ -83,6 +84,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
       link.path === '/' ? location.pathname === '/' : location.pathname.startsWith(link.path)
     )
   );
+  const navCursorIndex = hoveredNavIndex ?? activeNavIndex;
 
   // 优化头像 URL
   const defaultAvatarSrc = optimizeImage(HERO_AVATAR_URL, 640, 70);
@@ -159,12 +161,24 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                  {/* 底部导航 */}
                  <div
                     className="profile-nav-track grid grid-cols-4 gap-2 text-center"
-                    style={{ '--nav-active-index': activeNavIndex } as React.CSSProperties}
+                    style={{ '--nav-active-index': navCursorIndex } as React.CSSProperties}
+                    onMouseLeave={() => setHoveredNavIndex(null)}
+                    onBlur={(event) => {
+                        if (!event.currentTarget.contains(event.relatedTarget)) {
+                            setHoveredNavIndex(null);
+                        }
+                    }}
                  >
-                     {visibleNavLinks.map((link) => {
+                     {visibleNavLinks.map((link, index) => {
                          const isActive = link.path === '/' ? location.pathname === '/' : location.pathname.startsWith(link.path);
                          return (
-                         <Link key={`${link.path}-${link.label}`} to={link.path} className={`profile-nav-link group flex flex-col items-center rounded-sm py-2 transition-colors duration-300 hover:bg-paper/25 ${isActive ? 'text-ink' : ''}`}>
+                         <Link
+                            key={`${link.path}-${link.label}`}
+                            to={link.path}
+                            onMouseEnter={() => setHoveredNavIndex(index)}
+                            onFocus={() => setHoveredNavIndex(index)}
+                            className={`profile-nav-link group relative z-10 flex flex-col items-center rounded-sm py-2 transition-all duration-300 hover:bg-paper/20 ${isActive ? 'text-ink' : ''}`}
+                         >
                              <span className="mb-1 font-mono text-[8px] tracking-[0.16em] text-ink/42">{link.en || 'LINK'}</span>
                              <span className="font-nav-link text-[15px] font-normal leading-none text-ink/90 group-hover:text-ink">{link.label}</span>
                          </Link>

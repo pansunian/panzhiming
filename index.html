@@ -228,22 +228,25 @@
       .profile-nav-track {
         --nav-active-index: 0;
         position: relative;
+        padding-bottom: 5px;
       }
 
       .profile-nav-track::after {
         content: "";
         position: absolute;
-        left: calc((var(--nav-active-index) * 25%) + 18px);
-        bottom: 0;
-        width: calc(25% - 36px);
-        height: 2px;
-        background: rgba(47, 39, 31, 0.45);
+        left: calc((var(--nav-active-index) * 25%) + 14px);
+        bottom: 1px;
+        width: calc(25% - 28px);
+        height: 4px;
+        border-radius: 999px;
+        background: rgba(47, 39, 31, 0.42);
+        box-shadow: 0 0 0 1px rgba(250, 248, 242, 0.2);
         transform-origin: center;
         transition:
-          left 360ms cubic-bezier(0.19, 1, 0.22, 1),
+          left 420ms cubic-bezier(0.19, 1, 0.22, 1),
           width 260ms ease,
           opacity 260ms ease;
-        opacity: 0.72;
+        opacity: 0.86;
       }
 
       .nav-popover-link {
@@ -279,7 +282,7 @@
         }
 
         .profile-nav-track:hover::after {
-          opacity: 0.95;
+          opacity: 1;
         }
 
         .profile-nav-link:hover {
