@@ -189,7 +189,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
              <DashedLine className="absolute top-0 left-4 right-4" />
              
         <div className="mt-2 flex flex-col items-center gap-6">
-  <div className="flex flex-wrap justify-center items-center gap-3 px-1">
+  <div className="flex flex-wrap justify-center items-center gap-4 px-1">
     {profile.socials.map(social => {
       const { label, icon: Icon } = getSocialConfig(social.platform);
       const isWechat = social.platform === 'WECHAT';
