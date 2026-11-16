@@ -137,13 +137,13 @@ const App: React.FC = () => {
     const isHome = location.pathname === '/' || location.pathname === '';
     const meta = document.querySelector('meta[name="theme-color"]');
     if (isHome) {
-        document.body.style.backgroundColor = '#e3e1d5';
+        document.body.style.backgroundColor = '#e3e4e2';
         document.body.style.backgroundImage = 'var(--noise-url)';
-        if (meta) meta.setAttribute('content', '#e3e1d5');
+        if (meta) meta.setAttribute('content', '#e3e4e2');
     } else {
-        document.body.style.backgroundColor = '#fdfbf7';
-        document.body.style.backgroundImage = 'none';
-        if (meta) meta.setAttribute('content', '#fdfbf7');
+        document.body.style.backgroundColor = '#e3e4e2';
+        document.body.style.backgroundImage = 'var(--noise-url)';
+        if (meta) meta.setAttribute('content', '#e3e4e2');
     }
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [location.pathname]);

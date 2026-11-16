@@ -71,7 +71,7 @@ const getSocialConfig = (platform: string) => {
     return SOCIAL_MAP[platform.toUpperCase()] || { label: platform, icon: LinkIcon };
 };
 
-const HERO_AVATAR_URL = '/renwu.webp';
+const HERO_AVATAR_URL = '/renwu-cloud-dancer.webp';
 
 export const ProfileSection: React.FC<Props> = ({ profile }) => {
   const navLinks = normalizeNavLinks(profile.navLinks);
@@ -85,6 +85,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
     )
   );
   const navCursorIndex = hoveredNavIndex ?? activeNavIndex;
+  const displayName = profile.name === '潘志明的AI实验室' ? '潘志明的AI新手村' : profile.name;
 
   // 优化头像 URL
   const defaultAvatarSrc = optimizeImage(HERO_AVATAR_URL, 640, 70);
@@ -94,34 +95,31 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
       <TicketBase className="w-full rounded-2xl flex flex-col">
         {/* 顶部海报区 */}
         <div
-            className="relative aspect-[5/6] w-full rounded-t-2xl overflow-hidden bg-brand-accent"
-            style={{
-                backgroundImage: 'linear-gradient(145deg, rgba(255,255,255,0.08), rgba(0,0,0,0.16))'
-            }}
+            className="relative aspect-[5/6] w-full rounded-t-2xl overflow-hidden bg-paper"
         >
             <img
                 src={defaultAvatarSrc}
                 alt="Profile" 
                 loading="eager"
-                fetchPriority="high"
                 decoding="async"
-                className="absolute inset-0 w-full h-full object-cover filter brightness-[0.9] contrast-105"
+                className="absolute inset-0 w-full h-full object-cover"
                 style={{ objectPosition: '60% 74%' }}
             />
-            <div className="absolute top-6 left-0 w-full text-center text-white mix-blend-overlay opacity-80">
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[36%] bg-gradient-to-t from-[#6f7c7e]/80 via-[#9dacad]/32 to-transparent" />
+            <div className="absolute top-6 left-0 w-full text-center text-ink/65">
                 <p className="font-mono text-[9px] tracking-[0.55em] uppercase">Life Archives</p>
             </div>
-            <div className="absolute bottom-8 left-7 right-7 text-white drop-shadow-[0_1px_8px_rgba(40,32,22,0.28)]">
+            <div className="absolute bottom-8 left-7 right-7 text-white drop-shadow-[0_1px_8px_rgba(17,18,18,0.2)]">
                  <h2 className="mb-0.5 font-serif text-[10px] tracking-[0.18em] opacity-75">潘志明的AI新手村</h2>
                  <img
                     src="/logo-xianjian-white.webp"
                     alt="先见志明"
-                    className="h-auto w-[158px] max-w-[58%] object-contain opacity-[0.84] brightness-105 contrast-95"
+                    className="h-auto w-[158px] max-w-[58%] object-contain opacity-[0.88]"
                  />
             </div>
              <Link 
                 to="/aboutme"
-                className="absolute bottom-4 right-4 text-[9px] font-mono border px-2.5 py-1 rounded-full transition-all cursor-pointer backdrop-blur-sm text-white/70 border-white/30 hover:bg-white/10 hover:text-white"
+                className="absolute bottom-4 right-4 text-[9px] font-mono border px-2.5 py-1 rounded-full transition-all cursor-pointer backdrop-blur-sm text-white/75 border-white/35 hover:bg-white/10 hover:text-white"
             >
                 我的说明书 &rarr;
             </Link>
@@ -129,12 +127,9 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
 
         {/* 核心信息区 */}
         <div
-            className="relative text-[#2f271f] px-7 py-6"
+            className="relative bg-paper-dark text-ink px-7 py-6"
             style={{
-                backgroundColor: '#cbb697',
-                backgroundImage: "linear-gradient(rgba(209, 188, 154, 0.34), rgba(209, 188, 154, 0.34)), url('/profile-info-texture.webp')",
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
+                backgroundImage: 'linear-gradient(145deg, rgba(255,255,255,0.18), rgba(174,201,217,0.08))',
             }}
         >
              <Notch className="-left-4 top-0 -translate-y-1/2" />
@@ -144,15 +139,15 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
              <div className="mt-2">
                  <div className="flex justify-between items-end mb-4">
                      <div>
-                         <p className="text-[9px] opacity-55 tracking-widest mb-1 uppercase">Name</p>
-                         <p className="text-[1.35rem] font-serif font-medium leading-tight">{profile.name}</p>
+                         <p className="text-[9px] opacity-70 tracking-widest mb-1 uppercase">Name</p>
+                         <p className="text-[1.35rem] font-serif font-medium leading-tight">{displayName}</p>
                      </div>
                     <div className="text-right self-center">
                          <p className="text-[9px] opacity-55 tracking-widest mb-1 uppercase">City</p>
                          <p className="font-mono text-xs">{profile.location}</p>
                      </div>
                  </div>
-                 <div className="mb-7 border-l border-[#6f6252] pl-4 py-0.5">
+                 <div className="mb-7 border-l border-ink/25 pl-4 py-0.5">
                      <p className="font-serif text-[13px] leading-6 opacity-85 text-justify whitespace-pre-line">
                          {profile.bio}
                      </p>
@@ -212,7 +207,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
                   <Icon size={iconSize} className="transition-colors group-hover:text-paper" />
                  </span>
               </div>
-              <span className="border-b border-transparent group-hover:border-brand-accent" hidden sm:block>{label}</span>
+              <span className="hidden border-b border-transparent group-hover:border-brand-accent sm:block">{label}</span>
             </div>
           ) : (
             <a href={social.url} target="_blank" rel="noopener noreferrer"
@@ -222,7 +217,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
               <Icon size={iconSize} className="transition-colors group-hover:text-paper" />
                </span>
               </div>
-             <span className="border-b border-transparent group-hover:border-brand-accent" hidden sm:block>{label}</span>
+             <span className="hidden border-b border-transparent group-hover:border-brand-accent sm:block">{label}</span>
             </a>
           )}
 

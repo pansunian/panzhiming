@@ -38,7 +38,7 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
                         loading="lazy"
                         decoding="async"
                         onLoad={() => setIsLoaded(true)}
-                        className={`motion-card-media w-full h-full object-cover filter brightness-[0.95] contrast-[1.05] sepia-[0.1] ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+                        className={`motion-card-media w-full h-full object-cover ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
                     />
                 </div>
                 

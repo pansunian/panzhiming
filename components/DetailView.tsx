@@ -285,10 +285,10 @@ const RelatedPosts: React.FC<{ posts: BlogPost[] }> = ({ posts }) => {
                 {posts.map((post, index) => {
                     const coverSrc = post.imageUrl ? optimizeImage(post.imageUrl, 360) : '';
                     return (
-                        <Link key={post.id} to={getBlogPath(post)} className="motion-card group flex min-h-[86px] overflow-hidden border border-stone-200/80 bg-paper-dark hover:bg-[#f2eee5]">
+                        <Link key={post.id} to={getBlogPath(post)} className="motion-card group flex min-h-[86px] overflow-hidden border border-stone-200/80 bg-paper-dark hover:bg-[#e7e8e5]">
                             <div className="w-[88px] shrink-0 bg-stone-100">
                                 {coverSrc ? (
-                                    <img src={coverSrc} alt={post.title} loading="lazy" decoding="async" className="motion-card-media h-full w-full object-cover sepia-[0.08]" />
+                                    <img src={coverSrc} alt={post.title} loading="lazy" decoding="async" className="motion-card-media h-full w-full object-cover" />
                                 ) : (
                                     <div className="flex h-full items-center justify-center font-mono text-[8px] uppercase tracking-widest text-stone-300">Archive</div>
                                 )}
@@ -417,7 +417,7 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
             return <LinkPreviewCard url={block.url} caption={block.caption} variant="file" title={block.name} />;
         case 'code':
             return (
-                <div className="my-8 overflow-hidden rounded-lg border border-stone-200 bg-[#f7f4ed] first:mt-0">
+                <div className="my-8 overflow-hidden rounded-lg border border-stone-200 bg-[#f4f4f1] first:mt-0">
                     <div className="flex items-center justify-between border-b border-stone-200/70 px-4 py-2">
                         <span className="font-mono text-[9px] uppercase tracking-widest text-stone-400">{block.language || 'code'}</span>
                     </div>
