@@ -189,7 +189,7 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
              <DashedLine className="absolute top-0 left-4 right-4" />
              
         <div className="mt-2 flex flex-col items-center gap-6">
-  <div className="flex flex-wrap justify-center items-center gap-x-5 gap-y-3 px-1">
+  <div className="flex flex-wrap justify-center items-center gap-3 px-1">
     {profile.socials.map(social => {
       const { label, icon: Icon } = getSocialConfig(social.platform);
       const isWechat = social.platform === 'WECHAT';
@@ -201,29 +201,30 @@ export const ProfileSection: React.FC<Props> = ({ profile }) => {
       return (
         <div key={social.platform + social.url} className="relative group">
           {isWechat ? (
-            <div className="flex items-center gap-2 cursor-pointer text-xs font-bold font-mono uppercase text-ink/70 group">
-            <div className="w-6 h-6 rounded-full border border-ink/30 flex items-center justify-center transition-colors group-hover:bg-brand-accent group-hover:border-brand-accent">
-             <span className="transition-colors group-hover:text-white">
-                  <Icon size={iconSize} className="transition-colors group-hover:text-paper" />
-                 </span>
-              </div>
-              <span className="hidden border-b border-transparent group-hover:border-brand-accent sm:block">{label}</span>
-            </div>
+            <button
+              type="button"
+              aria-label={`${label}二维码`}
+              title={label}
+              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-ink/25 text-ink/65 transition-colors hover:border-brand-accent hover:bg-brand-accent hover:text-paper focus-visible:border-brand-accent focus-visible:bg-brand-accent focus-visible:text-paper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent/25"
+            >
+              <Icon size={iconSize} />
+            </button>
           ) : (
-            <a href={social.url} target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-2 text-xs font-bold font-mono uppercase text-ink/70 hover:text-brand-accent transition-all">
-          <div className="w-6 h-6 rounded-full border border-ink/30 flex items-center justify-center transition-colors group-hover:bg-brand-accent group-hover:border-brand-accent">
-               <span className="transition-colors group-hover:text-white">
-              <Icon size={iconSize} className="transition-colors group-hover:text-paper" />
-               </span>
-              </div>
-             <span className="hidden border-b border-transparent group-hover:border-brand-accent sm:block">{label}</span>
+            <a
+              href={social.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={label}
+              title={label}
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-ink/25 text-ink/65 transition-colors hover:border-brand-accent hover:bg-brand-accent hover:text-paper focus-visible:border-brand-accent focus-visible:bg-brand-accent focus-visible:text-paper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent/25"
+            >
+              <Icon size={iconSize} />
             </a>
           )}
 
           {/* 公众号二维码弹出层 */}
           {isWechat && (
-           <div className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden group-hover:block z-50 w-36">
+           <div className="absolute bottom-12 left-1/2 -translate-x-1/2 hidden group-hover:block group-focus-within:block z-50 w-36">
           <div className="bg-white rounded-xl shadow-lg p-3 flex flex-col items-center">
                 <img src="/wechat-qr.jpg" alt="公众号二维码" className="w-28 object-contain" />
                 <p className="text-[10px] text-ink/50 mt-1 font-mono">扫码关注公众号</p>
