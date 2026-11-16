@@ -14,6 +14,7 @@ interface DetailViewProps {
   logoUrl?: string;
   forceId?: string;
   forceFresh?: boolean;
+  coverImageOverride?: string;
   navLinks?: NavLink[];
   allPosts?: BlogPost[];
 }
@@ -445,7 +446,7 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
     }
 };
 
-export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, forceId, forceFresh, navLinks, allPosts }) => {
+export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, forceId, forceFresh, coverImageOverride, navLinks, allPosts }) => {
   const { id } = useParams();
   const location = useLocation();
   const currentId = forceId || id;
@@ -530,7 +531,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
   const relatedPosts = isBlog ? getRelatedPosts(blogPost, allPosts || safeItems as BlogPost[]) : [];
   
   // 详情页顶部封面图优化
-  const displayImageRaw = isBlog ? blogPost?.imageUrl : photoGroup?.coverUrl;
+  const displayImageRaw = coverImageOverride || (isBlog ? blogPost?.imageUrl : photoGroup?.coverUrl);
   const displayImage = optimizeImage(displayImageRaw, 1200);
 
   return (

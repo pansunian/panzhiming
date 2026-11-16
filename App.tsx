@@ -249,7 +249,15 @@ const App: React.FC = () => {
         isLoading && !hasCache ? (
           <MainLayout isDemoMode={isDemoMode}><div className="py-20 text-center font-mono text-[10px] opacity-20 tracking-widest">RETRIEVING MANUAL...</div></MainLayout>
         ) : aboutPage ? (
-          <DetailView items={[aboutPage]} forceId={aboutPage.id} type="blog" logoUrl={profile.logoUrl} navLinks={profile.navLinks} allPosts={posts} />
+          <DetailView
+            items={[aboutPage]}
+            forceId={aboutPage.id}
+            type="blog"
+            logoUrl={profile.logoUrl}
+            coverImageOverride="/aboutme-cover-cloud-dancer.webp"
+            navLinks={profile.navLinks}
+            allPosts={posts}
+          />
         ) : (
           <div className="py-20 flex flex-col items-center gap-4 text-stone-400">
               <AlertCircle size={24} className="opacity-20" />
