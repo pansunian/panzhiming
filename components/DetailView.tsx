@@ -330,7 +330,7 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
              </div>
 
              {/* 影像元数据与页面文字对齐，图片则通栏展示 */}
-             <figcaption className="flex items-start justify-between gap-4 px-6 pb-3 pt-4 sm:px-8">
+             <figcaption className="flex items-start justify-between gap-4 bg-white px-6 pb-3 pt-4 sm:px-8">
                   <div className="flex flex-col">
                       <span className="font-sans font-normal text-[10px] text-ink uppercase tracking-tight leading-none">{parsed.device || 'Digital Camera'}</span>
                       <span className="font-sans text-[9px] text-stone-400 mt-1">{parsed.date || 'Unknown Date'}</span>
