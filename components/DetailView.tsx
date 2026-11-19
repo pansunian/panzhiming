@@ -324,13 +324,13 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
     };
 
     return (
-        <div className="w-full bg-white mb-10 last:mb-0">
-             <div className={`w-full relative overflow-hidden ${aspectClass} rounded-sm`}>
-                <img src={optimizedSrc} alt={parsed.locationMain} className={`w-full h-full object-cover transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} onLoad={handleImageLoad} />
+        <figure className="-mx-6 mb-10 w-[calc(100%+3rem)] bg-paper last:mb-0 sm:-mx-8 sm:w-[calc(100%+4rem)]">
+             <div className={`relative w-full overflow-hidden ${aspectClass}`}>
+                <img src={optimizedSrc} alt={parsed.locationMain || '摄影作品'} className={`h-full w-full object-cover transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`} onLoad={handleImageLoad} />
              </div>
-             
-             {/* 影像元数据样式 */}
-             <div className="flex justify-between items-start mt-4 px-1 pb-2 mx-[3px]">
+
+             {/* 影像元数据与页面文字对齐，图片则通栏展示 */}
+             <figcaption className="flex items-start justify-between gap-4 px-6 pb-3 pt-4 sm:px-8">
                   <div className="flex flex-col">
                       <span className="font-sans font-normal text-[10px] text-ink uppercase tracking-tight leading-none">{parsed.device || 'Digital Camera'}</span>
                       <span className="font-sans text-[9px] text-stone-400 mt-1">{parsed.date || 'Unknown Date'}</span>
@@ -348,8 +348,8 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
                           </span>
                       </div>
                   </div>
-             </div>
-        </div>
+             </figcaption>
+        </figure>
     );
 };
 
