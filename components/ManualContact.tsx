@@ -80,7 +80,7 @@ function ContactDialog({ wechat, email, children, onClose }: ContactProps & { on
                 if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) onClose();
             }}>
             <header className="contact-heading">
-                <h2 id={titleId}>来找我聊聊</h2>
+                <h2 id={titleId} className="font-serif font-medium">来找我聊聊</h2>
                 <button type="button" onClick={onClose} aria-label="关闭联系方式" autoFocus><X size={18} /></button>
             </header>
             {email && <div className="contact-methods" role="group" aria-label="联系方式">
@@ -94,7 +94,7 @@ function ContactDialog({ wechat, email, children, onClose }: ContactProps & { on
                 </> : email && <>
                     <Mail size={29} strokeWidth={1.4} className="contact-envelope" />
                     <CopyContact key="email" label="邮箱" value={email} />
-                    <a className="contact-mail" href={`mailto:${email}`}>给我发邮件 <ArrowUpRight size={14} /></a>
+                    <a className="contact-mail content-link" href={`mailto:${email}`}>给我发邮件 <ArrowUpRight size={14} /></a>
                 </>}
             </div>
             {children && <footer className="contact-extra">{children}</footer>}

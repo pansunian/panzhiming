@@ -67,15 +67,15 @@ const RichText: React.FC<{ content: any[] }> = ({ content }) => {
         <>
             {content.map((part, i) => {
                 const { annotations = {}, text, href, type, mention } = part;
+                const url = type === 'mention' ? mention?.url || href : href;
                 let className = "";
                 if (annotations.bold) className += " font-bold";
                 if (annotations.italic) className += " italic";
-                if (annotations.underline) className += " underline";
+                if (annotations.underline && !url) className += " underline";
                 if (annotations.strikethrough) className += " line-through";
                 if (annotations.code) className += " font-mono bg-stone-100 text-[#e03e3e] px-1.5 py-0.5 rounded text-[0.9em]";
                 if (annotations.color && COLOR_MAP[annotations.color]) className += ` ${COLOR_MAP[annotations.color]}`;
 
-                const url = type === 'mention' ? mention?.url || href : href;
                 const element = url ? (
                     <ArticleLink key={i} href={url} text={text} className={className} />
                 ) : (
@@ -143,7 +143,7 @@ const LinkPreviewCard: React.FC<{ url: string; caption?: any[]; variant?: 'bookm
     const label = !title && !link.brand && link.host ? link.host : link.label;
     return (
         <figure className="my-5 first:mt-0">
-            <a href={url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-md border border-ink/15 bg-white/50 px-3 py-2.5 text-ink hover:border-ink/35 focus-visible:outline-ink">
+            <a href={url} target="_blank" rel="noopener noreferrer" className="content-link flex items-center gap-3 rounded-md border border-ink/15 bg-white/50 px-3 py-2.5 hover:border-ink/35">
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center text-base" aria-hidden="true">
                     {link.brand ? <LinkBrand brand={link.brand} /> : <Icon size={15} />}
                 </span>

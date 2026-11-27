@@ -22,7 +22,7 @@ export function describeLink(href: string, text?: string) {
 
 export function LinkBrand({ brand }: { brand: string }) {
     if (brand === 'GitHub') return <Github aria-hidden="true" size="0.9em" />;
-    if (brand === 'App Store') return <img src="/fonts/apple.svg" alt="" className="apple-link-icon" />;
+    if (brand === 'App Store') return <span aria-hidden="true" className="apple-link-icon" />;
     if (brand === 'Notion') return <span aria-hidden="true" className="notion-link-initial">N</span>;
     return null;
 }
@@ -31,7 +31,7 @@ export function ArticleLink({ href, text, className }: { href: string; text: str
     const link = describeLink(href, text);
     return (
         <a href={href} target={/^https?:/i.test(href) ? '_blank' : undefined} rel="noopener noreferrer"
-           className={`article-link ${className}`} title={link.brand || undefined}>
+           className={`article-link content-link ${className}`} title={link.brand || undefined}>
             {link.brand && <span aria-hidden="true" className={link.brand === 'App Store' ? 'article-link-mark apple-link-mark' : 'article-link-mark'}><LinkBrand brand={link.brand} /></span>}
             {link.label}
         </a>

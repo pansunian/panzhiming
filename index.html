@@ -9,10 +9,10 @@
     <meta name="author" content="潘志明" />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://panzhiming.com/" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=portrait-centered" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png?v=portrait-centered" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=portrait-centered" />
-    <link rel="manifest" href="/site.webmanifest?v=portrait-centered" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=portrait-blue" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png?v=portrait-blue" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=portrait-blue" />
+    <link rel="manifest" href="/site.webmanifest?v=portrait-blue" />
     <meta property="og:title" content="先见志明｜潘志明的AI新手村" />
     <meta property="og:description" content="潘志明的个人主页，记录 AI 工具、Notion 个人系统、营销判断、内容表达、知识管理和纪实摄影实践。" />
     <meta property="og:type" content="website" />
@@ -137,6 +137,9 @@
       }
      
       :root {
+        --link-color: #206da0;
+        --link-hover-color: #154e78;
+        --link-mark-color: #cfdfeb;
         --bg-color: #e3e4e2;
         --noise-url: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.025'/%3E%3C/svg%3E");
       }
@@ -258,25 +261,35 @@
         opacity: 0.86;
       }
 
+      a.content-link {
+        color: var(--link-color);
+        text-decoration: none;
+      }
+      a.content-link:hover { color: var(--link-hover-color); }
+      a.content-link:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
+        border-radius: 2px;
+      }
       .article-link {
-        color: inherit;
-        text-decoration: underline;
-        text-decoration-color: #8f9697;
-        text-underline-offset: .18em;
         overflow-wrap: anywhere;
       }
-      .article-link:hover, .article-link:focus-visible { text-decoration-color: currentColor; }
+      .article-link.line-through { text-decoration-line: line-through; }
       .article-link-mark {
         display: inline-flex;
         align-items: center;
         margin-inline-end: .22em;
         vertical-align: -.08em;
+        background: linear-gradient(to top, var(--link-mark-color) 32%, transparent 32%);
       }
       .apple-link-icon {
         display: block;
         width: 1.44em;
         height: 1.44em;
         max-width: none;
+        background-color: currentColor;
+        -webkit-mask: url('/fonts/apple.svg') center / contain no-repeat;
+        mask: url('/fonts/apple.svg') center / contain no-repeat;
       }
       .apple-link-mark {
         position: relative;

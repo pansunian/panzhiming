@@ -41,7 +41,7 @@
     justify-content: space-between;
     margin: 0;
 }
-.contact-heading h2 { font: 600 18px/1.4 system-ui, sans-serif; }
+.contact-heading h2 { font-size: 18px; line-height: 1.4; }
 .contact-heading button {
     display: grid;
     place-items: center;
@@ -94,7 +94,6 @@
 .contact-feedback { width: 100%; text-align: center; font-size: 12px; }
 .contact-feedback:empty { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 .contact-envelope { margin: 1.5rem 0 .5rem; }
-.contact-mail { text-decoration: underline; text-underline-offset: 3px; }
 .contact-extra { border-top: 1px dashed #d6d8d3; padding-top: 10px; }
 .contact-extra p { margin: 0; font-size: 13px; color: #60635c; text-align: center; }
 .manual-contact-dialog :focus-visible, .manual-contact-trigger:focus-visible {
