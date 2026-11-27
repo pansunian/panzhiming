@@ -35,7 +35,7 @@ export const InlineTicketNav: React.FC<NavBarProps> = ({ logoUrl, className = ""
           onClick={() => setIsMenuOpen(false)}
           className="flex min-w-0 items-center gap-2 py-1 bg-transparent transition-opacity group z-20 relative hover:opacity-80"
         >
-           <img src="/pwa-icon-192.png" width={30} height={30} alt="" className="h-[30px] w-[30px] shrink-0 rounded-full object-cover" />
+           <img src="/pwa-icon-192.png?v=home-portrait" width={30} height={30} alt="" className="h-[30px] w-[30px] shrink-0 rounded-full object-cover" />
            <img src={logoUrl || '/logo-xianjian-white.webp'} alt="" className={`h-8 w-auto min-w-0 max-w-[6rem] object-contain object-left opacity-80 ${logoUrl ? 'brightness-75 contrast-90' : 'brightness-0'}`} />
         </Link>
         <div className="flex shrink-0 items-center gap-2 z-20">

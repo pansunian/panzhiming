@@ -1,0 +1,99 @@
+.manual-contact-trigger,
+.contact-mail,
+.contact-copy button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .45rem;
+}
+.manual-contact-trigger {
+    margin: .15rem 0 1rem;
+    min-height: 44px;
+    padding: 0 1.15rem;
+    color: #fff;
+    background: #292b2a;
+    border-radius: 6px;
+    font-size: 15px;
+}
+.manual-contact-trigger:hover { background: #414440; }
+.manual-contact-dialog {
+    box-sizing: border-box;
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    width: min(360px, calc(100% - 32px));
+    max-width: none;
+    height: fit-content;
+    max-height: calc(100dvh - 32px);
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: 16px 20px 20px;
+    border: 1px solid #e2e3df;
+    border-radius: 12px;
+    background: #fff;
+    color: #252724;
+    box-shadow: 0 12px 54px #17191529;
+}
+.manual-contact-dialog::backdrop { background: rgb(28 30 28 / 40%); }
+.contact-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 0 .65rem;
+}
+.contact-heading h2 { font: 600 20px/1.4 system-ui, sans-serif; }
+.contact-heading button {
+    display: grid;
+    place-items: center;
+    min-width: 44px;
+    min-height: 44px;
+    margin-right: -10px;
+    color: #63665f;
+}
+.contact-methods {
+    display: flex;
+    padding: 3px;
+    margin-bottom: .85rem;
+    background: #f2f3f0;
+    border-radius: 7px;
+}
+.contact-methods button {
+    flex: 1;
+    min-height: 44px;
+    font-size: 15px;
+    color: #62655f;
+    border: 1px solid transparent;
+    border-radius: 5px;
+}
+.contact-methods button[aria-pressed="true"] { color: #252724; background: #fff; border-color: #dedfdb; }
+.contact-panel {
+    display: grid;
+    justify-items: center;
+    padding: 12px 8px;
+    background: #f8f9f6;
+    border-radius: 6px;
+}
+.contact-qr {
+    display: block;
+    width: min(236px, 100%);
+    height: auto;
+}
+.contact-copy {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0 .65rem;
+    width: 100%;
+}
+.contact-value { font: 500 15px/1.5 system-ui, sans-serif; overflow-wrap: anywhere; user-select: all; }
+.contact-copy button, .contact-mail { min-height: 44px; font-size: 13px; color: #444740; }
+.contact-feedback { width: 100%; text-align: center; font-size: 12px; }
+.contact-envelope { margin: 1.5rem 0 .5rem; }
+.contact-mail { text-decoration: underline; text-underline-offset: 3px; }
+.contact-extra { padding-top: 12px; }
+.contact-extra p { margin: 0; font-size: 13px; color: #60635c; text-align: center; }
+.manual-contact-dialog :focus-visible, .manual-contact-trigger:focus-visible {
+    outline: 2px solid #505953;
+    outline-offset: 2px;
+}

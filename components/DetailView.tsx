@@ -5,6 +5,7 @@ import { TicketBase, DashedLine, Notch, BarcodeVertical } from './TicketUI';
 import { InlineTicketNav } from './NavBar';
 import { Clock, Camera, Loader2, Bookmark as BookmarkIcon, ChevronRight, ExternalLink, FileText } from 'lucide-react';
 import { ArticleLink, describeLink, LinkBrand } from './ArticleLinks';
+import { ManualContact, readManualContact } from './ManualContact';
 import { optimizeImage } from '../utils/imageOptimizer';
 import { getBlogPath } from '../utils/routes';
 import { mockNotionBlocks, mockPageImages } from '../data/mockData';
@@ -299,7 +300,7 @@ const GalleryItem: React.FC<{ img: GalleryImage }> = ({ img }) => {
 };
 
 // 块渲染引擎
-const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGallery }) => {
+const NotionBlock: React.FC<{ block: any, isGallery: boolean, isManual?: boolean }> = ({ block, isGallery, isManual }) => {
     // 影像辑模式下隐藏所有图片块和空段落块
     if (isGallery && (block.type === 'image' || (block.type === 'paragraph' && !block.content?.length))) return null;
 
@@ -317,6 +318,12 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
         case 'quote':
             return <blockquote className="whitespace-pre-line border-l-[3px] border-stone-300 pl-3 py-[1px] my-3 font-sans text-[17px] md:text-[16px] leading-[1.78] text-ink/90 first:mt-0"><RichText content={block.content} /></blockquote>;
         case 'callout':
+            if (isManual) {
+                const contact = readManualContact(block);
+                if (contact) return <ManualContact wechat={contact.wechat} email={contact.email}>
+                    {contact.other.length > 0 && contact.other.map((child, i) => <NotionBlock key={i} block={child} isGallery={false} />)}
+                </ManualContact>;
+            }
             return (
                 <div className={`w-full ${getNotionCalloutBg(block.color)} px-4 py-3 rounded-[3px] my-3 flex gap-3 items-start first:mt-0`}>
                     {block.icon && <span className="w-6 shrink-0 text-[18px] leading-[1.78]">{block.icon.emoji || '💡'}</span>}
@@ -532,7 +539,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                             <div className="flex flex-col items-center py-20 text-stone-300 font-mono text-[10px] tracking-widest"><Loader2 className="animate-spin mb-3" size={16} />LOADING CONTENT...</div>
                         ) : (
                             <div className="[&>*:first-child]:mt-0">
-                                {blogBlocks.map((block, idx) => <NotionBlock key={idx} block={block} isGallery={!isBlog} />)}
+                                {blogBlocks.map((block, idx) => <NotionBlock key={idx} block={block} isGallery={!isBlog} isManual={location.pathname.replace(/\/$/, '') === '/aboutme'} />)}
                                 {!isBlog && contentImages.map((img, idx) => <GalleryItem key={idx} img={img} />)}
                                 {loadFailed && <p role="status" className="my-6 text-sm text-stone-600">内容暂时没加载完整。 <button type="button" className="underline underline-offset-4" onClick={() => setRetryCount(n => n + 1)}>重新加载</button></p>}
                                 {isBlog && <RelatedPosts posts={relatedPosts} />}

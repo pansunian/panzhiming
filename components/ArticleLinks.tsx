@@ -10,8 +10,9 @@ export function describeLink(href: string, text?: string) {
         return { label: label || href, host: '', brand: '' };
     }
     const host = url.hostname.replace(/^www\./, '');
+    const isNotionCertificate = host === 'verify.skilljar.com' && url.pathname.replace(/\/$/, '') === '/c/4vjmy5f7qphb';
     const brand = /(^|\.)github\.com$/.test(host) ? 'GitHub'
-        : /(^|\.)notion\.(so|com|site)$/.test(host) ? 'Notion'
+        : isNotionCertificate || /(^|\.)notion\.(so|com|site)$/.test(host) ? 'Notion'
         : host === 'apps.apple.com' ? 'App Store' : '';
     const segments = url.pathname.split('/').filter(Boolean);
     const shortLabel = brand === 'GitHub' ? segments.slice(0, 2).join('/') : '';
@@ -21,7 +22,7 @@ export function describeLink(href: string, text?: string) {
 
 export function LinkBrand({ brand }: { brand: string }) {
     if (brand === 'GitHub') return <Github aria-hidden="true" size="0.9em" />;
-    if (brand === 'App Store') return <img src="/fonts/apple.svg" alt="" width="12" height="12" />;
+    if (brand === 'App Store') return <img src="/fonts/apple.svg" alt="" style={{ width: '1.25em', height: '1.25em', marginInline: '-.12em', verticalAlign: 'middle' }} />;
     if (brand === 'Notion') return <span aria-hidden="true" className="notion-link-initial">N</span>;
     return null;
 }
