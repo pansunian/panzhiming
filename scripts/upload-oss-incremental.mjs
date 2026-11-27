@@ -134,7 +134,12 @@ console.log(
   `[deploy] Comparing ${Object.keys(entries).length} objects (${bootstrapFromRemote ? 'remote bootstrap' : 'manifest mode'}).`,
 );
 
-for (const key of Object.keys(entries).sort()) {
+// Publish the HTML only after all files it references are in the bucket.
+const sortedKeys = Object.keys(entries).sort();
+const pageKeys = sortedKeys.filter(key => entries[key].kind === 'route' || key.endsWith('.html'));
+const pages = new Set(pageKeys);
+const uploadOrder = [...sortedKeys.filter(key => !pages.has(key)), ...pageKeys];
+for (const key of uploadOrder) {
   const current = entries[key];
   const previous = previousEntries[key];
   const sameAsManifest = previous

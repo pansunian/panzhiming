@@ -92,6 +92,7 @@
 .contact-value { font: 500 15px/1.5 system-ui, sans-serif; overflow-wrap: anywhere; user-select: all; }
 .contact-copy button, .contact-mail { min-height: 44px; font-size: 13px; color: #444740; }
 .contact-feedback { width: 100%; text-align: center; font-size: 12px; }
+.contact-feedback:empty { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 .contact-envelope { margin: 1.5rem 0 .5rem; }
 .contact-mail { text-decoration: underline; text-underline-offset: 3px; }
 .contact-extra { border-top: 1px dashed #d6d8d3; padding-top: 10px; }

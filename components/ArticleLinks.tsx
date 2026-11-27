@@ -32,7 +32,7 @@ export function ArticleLink({ href, text, className }: { href: string; text: str
     return (
         <a href={href} target={/^https?:/i.test(href) ? '_blank' : undefined} rel="noopener noreferrer"
            className={`article-link ${className}`} title={link.brand || undefined}>
-            {link.brand && <span className={link.brand === 'App Store' ? 'article-link-mark apple-link-mark' : 'article-link-mark'}><LinkBrand brand={link.brand} /></span>}
+            {link.brand && <span aria-hidden="true" className={link.brand === 'App Store' ? 'article-link-mark apple-link-mark' : 'article-link-mark'}><LinkBrand brand={link.brand} /></span>}
             {link.label}
         </a>
     );
