@@ -276,33 +276,31 @@
       }
       .article-link.line-through { text-decoration-line: line-through; }
       .article-link-mark {
-        display: inline-flex;
-        align-items: center;
-        margin-inline-end: .22em;
-        vertical-align: -.08em;
-        background: linear-gradient(to top, var(--link-mark-color) 32%, transparent 32%);
+        display: inline-block;
+        position: relative;
+        width: 1.24em;
+        height: 1.24em;
+        flex: none;
+        border-radius: 50%;
+        background-color: var(--link-mark-color);
+        line-height: 1;
+      }
+      .article-link-mark > * {
+        position: absolute;
+        inset: 0;
+        margin: auto;
+      }
+      .article-link > .article-link-mark {
+        margin-inline-end: .24em;
+        vertical-align: -.25em;
       }
       .apple-link-icon {
         display: block;
-        width: 1.44em;
-        height: 1.44em;
-        max-width: none;
+        width: 1.04em;
+        height: 1.04em;
         background-color: currentColor;
         -webkit-mask: url('/fonts/apple.svg') center / contain no-repeat;
         mask: url('/fonts/apple.svg') center / contain no-repeat;
-      }
-      .apple-link-mark {
-        position: relative;
-        display: inline-block;
-        width: 1em;
-        height: 1.1em;
-        vertical-align: -.19em;
-      }
-      .apple-link-mark .apple-link-icon {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
       }
       .notion-link-initial {
         display: inline-grid;
@@ -312,7 +310,7 @@
         box-sizing: border-box;
         border: 1px solid currentColor;
         border-radius: 2px;
-        font: bold .85em/1 Georgia, serif;
+        font: bold .74em/1 Georgia, serif;
       }
       .nav-popover-link {
         position: relative;

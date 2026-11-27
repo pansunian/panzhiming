@@ -21,10 +21,14 @@ export function describeLink(href: string, text?: string) {
 }
 
 export function LinkBrand({ brand }: { brand: string }) {
-    if (brand === 'GitHub') return <Github aria-hidden="true" size="0.9em" />;
-    if (brand === 'App Store') return <span aria-hidden="true" className="apple-link-icon" />;
-    if (brand === 'Notion') return <span aria-hidden="true" className="notion-link-initial">N</span>;
-    return null;
+    let icon: React.ReactNode;
+    switch (brand) {
+        case 'GitHub': icon = <Github size=".79em" />; break;
+        case 'App Store': icon = <span className="apple-link-icon" />; break;
+        case 'Notion': icon = <span className="notion-link-initial">N</span>; break;
+        default: return null;
+    }
+    return <span className="article-link-mark" aria-hidden="true">{icon}</span>;
 }
 
 export function ArticleLink({ href, text, className }: { href: string; text: string; className: string }) {
@@ -32,7 +36,7 @@ export function ArticleLink({ href, text, className }: { href: string; text: str
     return (
         <a href={href} target={/^https?:/i.test(href) ? '_blank' : undefined} rel="noopener noreferrer"
            className={`article-link content-link ${className}`} title={link.brand || undefined}>
-            {link.brand && <span aria-hidden="true" className={link.brand === 'App Store' ? 'article-link-mark apple-link-mark' : 'article-link-mark'}><LinkBrand brand={link.brand} /></span>}
+            <LinkBrand brand={link.brand} />
             {link.label}
         </a>
     );
