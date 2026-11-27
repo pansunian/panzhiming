@@ -4,7 +4,7 @@ import { BlogPost, NavLink, PhotoGroup } from '../types';
 import { TicketBase, DashedLine, Notch, BarcodeVertical } from './TicketUI';
 import { InlineTicketNav } from './NavBar';
 import { Clock, Camera, Loader2, Bookmark as BookmarkIcon, ChevronRight, ExternalLink, FileText } from 'lucide-react';
-import { ArticleLink, describeLink, LinkBrand } from './ArticleLinks';
+import { ArticleLink, describeLink, WebLinkMark } from './ArticleLinks';
 import { ManualContact, readManualContact } from './ManualContact';
 import { optimizeImage } from '../utils/imageOptimizer';
 import { getBlogPath } from '../utils/routes';
@@ -145,7 +145,7 @@ const LinkPreviewCard: React.FC<{ url: string; caption?: any[]; variant?: 'bookm
         <figure className="my-5 first:mt-0">
             <a href={url} target="_blank" rel="noopener noreferrer" className="content-link flex items-center gap-3 rounded-md border border-ink/15 bg-white/50 px-3 py-2.5 hover:border-ink/35">
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center text-base" aria-hidden="true">
-                    {link.brand ? <LinkBrand brand={link.brand} /> : <Icon size={15} />}
+                    {link.isWeb && (link.brand || variant !== 'file') ? <WebLinkMark brand={link.brand} /> : <Icon size={15} />}
                 </span>
                 <span className="min-w-0 flex-1 break-words text-[14px] leading-snug">
                     {label}

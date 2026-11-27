@@ -138,7 +138,6 @@
      
       :root {
         --link-color: #206da0;
-        --link-hover-color: #154e78;
         --link-mark-color: #cfdfeb;
         --bg-color: #e3e4e2;
         --noise-url: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.025'/%3E%3C/svg%3E");
@@ -265,8 +264,17 @@
         color: var(--link-color);
         text-decoration: none;
       }
-      a.content-link:hover { color: var(--link-hover-color); }
+      @media (hover: hover) {
+        a.content-link:hover {
+          color: inherit;
+          --link-mark-color: #111212;
+          --link-icon-color: #fff;
+        }
+      }
       a.content-link:focus-visible {
+        color: inherit;
+        --link-mark-color: #111212;
+        --link-icon-color: #fff;
         outline: 2px solid currentColor;
         outline-offset: 2px;
         border-radius: 2px;
@@ -283,6 +291,7 @@
         flex: none;
         border-radius: 50%;
         background-color: var(--link-mark-color);
+        color: var(--link-icon-color, inherit);
         line-height: 1;
       }
       .article-link-mark > * {
@@ -294,23 +303,20 @@
         margin-inline-end: .24em;
         vertical-align: -.25em;
       }
-      .apple-link-icon {
+      .link-brand-icon {
         display: block;
-        width: 1.04em;
-        height: 1.04em;
+        width: .71em;
+        height: .71em;
         background-color: currentColor;
-        -webkit-mask: url('/fonts/apple.svg') center / contain no-repeat;
-        mask: url('/fonts/apple.svg') center / contain no-repeat;
+        -webkit-mask: var(--brand-mask) center / contain no-repeat;
+        mask: var(--brand-mask) center / contain no-repeat;
       }
-      .notion-link-initial {
-        display: inline-grid;
-        place-items: center;
-        width: 1em;
-        height: 1em;
-        box-sizing: border-box;
-        border: 1px solid currentColor;
-        border-radius: 2px;
-        font: bold .74em/1 Georgia, serif;
+      .link-brand-github { --brand-mask: url('/icons/github.svg'); }
+      .link-brand-notion { --brand-mask: url('/icons/notion.svg'); }
+      .link-brand-apple {
+        --brand-mask: url('/fonts/apple.svg');
+        width: .93em;
+        height: .93em;
       }
       .nav-popover-link {
         position: relative;
