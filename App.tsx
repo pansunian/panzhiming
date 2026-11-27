@@ -241,10 +241,10 @@ const App: React.FC = () => {
           <GalleryDiarySection groups={photoGroups} logoUrl={profile.logoUrl} showPageNav navLinks={profile.navLinks} />
         </MainLayout>
       } />
-      <Route path="/gallery/:id" element={<DetailView items={photoGroups} type="gallery" logoUrl={profile.logoUrl} navLinks={profile.navLinks} />} />
+      <Route path="/gallery/:id" element={<DetailView indexLoading={isLoading} items={photoGroups} type="gallery" logoUrl={profile.logoUrl} navLinks={profile.navLinks} />} />
       <Route path="/thoughts" element={<MainLayout isDemoMode={isDemoMode} flushTop><ThoughtSection thoughts={thoughts} logoUrl={profile.logoUrl} showPageNav navLinks={profile.navLinks} /></MainLayout>} />
       <Route path="/blog" element={<MainLayout isDemoMode={isDemoMode} flushTop><BlogSection posts={posts} logoUrl={profile.logoUrl} showPageNav navLinks={profile.navLinks} /></MainLayout>} />
-      <Route path="/blog/:id" element={<DetailView items={posts} type="blog" logoUrl={profile.logoUrl} navLinks={profile.navLinks} allPosts={posts} />} />
+      <Route path="/blog/:id" element={<DetailView indexLoading={isLoading} items={posts} type="blog" logoUrl={profile.logoUrl} navLinks={profile.navLinks} allPosts={posts} />} />
       <Route path="/aboutme" element={
         isLoading && !hasCache ? (
           <MainLayout isDemoMode={isDemoMode}><div className="py-20 text-center font-mono text-[10px] opacity-20 tracking-widest">RETRIEVING MANUAL...</div></MainLayout>

@@ -15,6 +15,7 @@ interface DetailViewProps {
   logoUrl?: string;
   forceId?: string;
   forceFresh?: boolean;
+  indexLoading?: boolean;
   navLinks?: NavLink[];
   allPosts?: BlogPost[];
 }
@@ -389,17 +390,20 @@ const NotionBlock: React.FC<{ block: any, isGallery: boolean }> = ({ block, isGa
     }
 };
 
-export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, forceId, forceFresh, navLinks, allPosts }) => {
+export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, forceId, forceFresh, indexLoading, navLinks, allPosts }) => {
   const { id } = useParams();
   const location = useLocation();
   const currentId = forceId || id;
   const routeKey = currentId ? decodeURIComponent(currentId) : currentId;
   const safeItems = Array.isArray(items) ? items : [];
   const item = safeItems.find(i => i.id === routeKey || i.slug === routeKey);
-  const pageId = item?.id || routeKey;
+  const waitingForIndex = indexLoading && !item;
+  const pageId = item?.id || (waitingForIndex ? undefined : routeKey);
   const [contentImages, setContentImages] = useState<GalleryImage[]>([]);
   const [blogBlocks, setBlogBlocks] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   const [isDataFetched, setIsDataFetched] = useState(false);
 
   useEffect(() => {
@@ -407,64 +411,72 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
     setBlogBlocks([]);
     setContentImages([]);
     setIsDataFetched(false);
+    setLoadFailed(false);
 
-    if (pageId) {
-        setLoading(true);
-        
-        // 检查是否是演示数据 ID
-        if (pageId.startsWith('demo-')) {
-            // 模拟加载延迟，让体验更真实
-            setTimeout(() => {
-                setBlogBlocks(mockNotionBlocks);
-                setContentImages(mockPageImages);
+    if (!pageId) {
+        setLoading(Boolean(waitingForIndex));
+        setIsDataFetched(!waitingForIndex);
+        return;
+    }
+    setLoading(true);
+
+    // 检查是否是演示数据 ID
+    if (pageId.startsWith('demo-')) {
+        // 模拟加载延迟，让体验更真实
+        const timer = setTimeout(() => {
+            setBlogBlocks(mockNotionBlocks);
+            setContentImages(mockPageImages);
+            setLoading(false);
+            setIsDataFetched(true);
+        }, 800);
+        return () => clearTimeout(timer);
+    }
+
+    let current = true;
+    const fetchData = async () => {
+        try {
+            const searchParams = new URLSearchParams(location.search);
+            const forceRefresh = forceFresh || searchParams.get('fresh') === '1' || searchParams.get('refresh') === '1';
+            const refreshQuery = forceRefresh ? '&fresh=1' : '';
+            const staticVersion = forceRefresh ? '' : await fetchStaticVersion();
+            const versionQuery = staticVersion ? `?v=${encodeURIComponent(staticVersion)}` : `?t=${Date.now()}`;
+            const loadList = async (folder: string, endpoint: string, field: string) => {
+                const read = async (url: string) => {
+                    const response = await fetch(url, { cache: forceRefresh ? 'no-store' : 'default' });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const payload = await response.json();
+                    if (!Array.isArray(payload[field])) throw new Error(`Missing ${field}`);
+                    return payload[field];
+                };
+                if (!forceRefresh) {
+                    try {
+                        return await read(`/data/${folder}/${pageId}.json${versionQuery}`);
+                    } catch {
+                        // A static export may be unavailable during an update.
+                    }
+                }
+                return read(`/api/${endpoint}?pageId=${pageId}${refreshQuery}`);
+            };
+            const [body, pictures] = await Promise.allSettled([
+                loadList('pages', 'get-page-content', 'content'),
+                type === 'gallery' ? loadList('page-images', 'page-images', 'images') : Promise.resolve([])
+            ]);
+            if (!current) return;
+            if (body.status === 'fulfilled') setBlogBlocks(body.value);
+            if (pictures.status === 'fulfilled') setContentImages(pictures.value);
+            setLoadFailed(body.status === 'rejected' || pictures.status === 'rejected');
+        } catch {
+            if (current) setLoadFailed(true);
+        } finally {
+            if (current) {
                 setLoading(false);
                 setIsDataFetched(true);
-            }, 800);
-            return;
-        }
-
-        const fetchData = async () => {
-            try {
-                const searchParams = new URLSearchParams(location.search);
-                const forceRefresh = forceFresh || searchParams.get('fresh') === '1' || searchParams.get('refresh') === '1';
-                const refreshQuery = forceRefresh ? '&fresh=1' : '';
-                const staticVersion = forceRefresh ? '' : await fetchStaticVersion();
-                const versionQuery = staticVersion ? `?v=${encodeURIComponent(staticVersion)}` : `?t=${Date.now()}`;
-                const imgUrl = forceRefresh ? `/api/page-images?pageId=${pageId}${refreshQuery}` : `/data/page-images/${pageId}.json${versionQuery}`;
-                const contentUrl = forceRefresh ? `/api/get-page-content?pageId=${pageId}${refreshQuery}` : `/data/pages/${pageId}.json${versionQuery}`;
-                let [imgRes, contentRes] = await Promise.all([
-                    fetch(imgUrl, { cache: forceRefresh ? 'no-store' : 'default' }),
-                    fetch(contentUrl, { cache: forceRefresh ? 'no-store' : 'default' })
-                ]);
-
-                if ((!imgRes.ok || !contentRes.ok) && !forceRefresh) {
-                    [imgRes, contentRes] = await Promise.all([
-                        fetch(`/api/page-images?pageId=${pageId}`),
-                        fetch(`/api/get-page-content?pageId=${pageId}`)
-                    ]);
-                }
-                
-                // 如果 API 失败（比如 500），也不要留白，加载演示内容作为托底
-                if (!imgRes.ok && !contentRes.ok) {
-                    setBlogBlocks(mockNotionBlocks);
-                    setContentImages(mockPageImages);
-                } else {
-                    if (imgRes.ok) { const d = await imgRes.json(); setContentImages(d.images); }
-                    if (contentRes.ok) { const d = await contentRes.json(); setBlogBlocks(d.content); }
-                }
-
-            } catch (e) {
-                 // 网络错误也加载演示内容
-                 setBlogBlocks(mockNotionBlocks);
-                 setContentImages(mockPageImages);
-            } finally { 
-                setLoading(false); 
-                setIsDataFetched(true); 
             }
-        };
-        fetchData();
-    }
-  }, [pageId, location.search]);
+        }
+    };
+    fetchData();
+    return () => { current = false; };
+  }, [pageId, location.search, waitingForIndex, forceFresh, type, retryCount]);
 
   if (!pageId && isDataFetched) return <Navigate to="/" replace />;
 
@@ -522,6 +534,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ items, type, logoUrl, fo
                             <div className="[&>*:first-child]:mt-0">
                                 {blogBlocks.map((block, idx) => <NotionBlock key={idx} block={block} isGallery={!isBlog} />)}
                                 {!isBlog && contentImages.map((img, idx) => <GalleryItem key={idx} img={img} />)}
+                                {loadFailed && <p role="status" className="my-6 text-sm text-stone-600">内容暂时没加载完整。 <button type="button" className="underline underline-offset-4" onClick={() => setRetryCount(n => n + 1)}>重新加载</button></p>}
                                 {isBlog && <RelatedPosts posts={relatedPosts} />}
                             </div>
                         )}
