@@ -2,6 +2,7 @@ const fs = require('fs/promises');
 const path = require('path');
 const crypto = require('crypto');
 const { Client } = require('@notionhq/client');
+const { parseRichText } = require('../api/lib/notion-rich-text');
 
 const rootDir = path.resolve(__dirname, '..');
 const publicDir = path.join(rootDir, 'public');
@@ -531,19 +532,6 @@ const queryDatabase = async (databaseId, mapper) => {
   return mapped;
 };
 
-const parseRichText = (richTextArray) => {
-  if (!richTextArray) return [];
-  return richTextArray.map((t) => ({
-    type: t.type,
-    text: t.plain_text,
-    annotations: t.annotations,
-    href: t.href,
-    mention: t.type === 'mention' ? {
-      type: t.mention?.type,
-      url: t.mention?.link_preview?.url || t.href || ''
-    } : null
-  }));
-};
 
 const transformBlocks = async (blocks) => {
   const content = [];

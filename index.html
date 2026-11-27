@@ -258,6 +258,30 @@
         opacity: 0.86;
       }
 
+      .article-link {
+        color: inherit;
+        text-decoration: underline;
+        text-decoration-color: #8f9697;
+        text-underline-offset: .18em;
+        overflow-wrap: anywhere;
+      }
+      .article-link:hover, .article-link:focus-visible { text-decoration-color: currentColor; }
+      .article-link-mark {
+        display: inline-flex;
+        align-items: center;
+        margin-inline-end: .22em;
+        vertical-align: -.08em;
+      }
+      .notion-link-initial {
+        display: inline-grid;
+        place-items: center;
+        width: 1em;
+        height: 1em;
+        box-sizing: border-box;
+        border: 1px solid currentColor;
+        border-radius: 2px;
+        font: bold .85em/1 Georgia, serif;
+      }
       .nav-popover-link {
         position: relative;
       }

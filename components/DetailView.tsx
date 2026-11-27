@@ -3,7 +3,8 @@ import { Link, useParams, Navigate, useLocation } from 'react-router-dom';
 import { BlogPost, NavLink, PhotoGroup } from '../types';
 import { TicketBase, DashedLine, Notch, BarcodeVertical } from './TicketUI';
 import { InlineTicketNav } from './NavBar';
-import { Clock, Camera, Loader2, Bookmark as BookmarkIcon, ChevronRight, Github, ExternalLink, FileText } from 'lucide-react';
+import { Clock, Camera, Loader2, Bookmark as BookmarkIcon, ChevronRight, ExternalLink, FileText } from 'lucide-react';
+import { ArticleLink, describeLink, LinkBrand } from './ArticleLinks';
 import { optimizeImage } from '../utils/imageOptimizer';
 import { getBlogPath } from '../utils/routes';
 import { mockNotionBlocks, mockPageImages } from '../data/mockData';
@@ -56,34 +57,6 @@ const COLOR_MAP: Record<string, string> = {
     'red_background': 'bg-[#fbe4e4] px-1 rounded-sm',
 };
 
-const getInlineLinkLabel = (value: string) => {
-    try {
-        const parsed = new URL(value);
-        const path = parsed.pathname.replace(/^\/|\/$/g, '');
-        if (parsed.hostname.includes('github.com') && path) return path;
-        return parsed.hostname.replace(/^www\./, '');
-    } catch {
-        return value;
-    }
-};
-
-const isGithubUrl = (value: string) => {
-    try {
-        return new URL(value).hostname.includes('github.com');
-    } catch {
-        return false;
-    }
-};
-
-const getGithubMentionLabel = (text: string, url: string) => {
-    if (text && !text.includes('github.com')) return text.replace(/^@/, '');
-    try {
-        const segments = new URL(url).pathname.split('/').filter(Boolean);
-        return segments[1] || segments[0] || 'GitHub';
-    } catch {
-        return text || 'GitHub';
-    }
-};
 
 // 富文本渲染组件
 const RichText: React.FC<{ content: any[] }> = ({ content }) => {
@@ -91,7 +64,7 @@ const RichText: React.FC<{ content: any[] }> = ({ content }) => {
     return (
         <>
             {content.map((part, i) => {
-                const { annotations, text, href, type, mention } = part;
+                const { annotations = {}, text, href, type, mention } = part;
                 let className = "";
                 if (annotations.bold) className += " font-bold";
                 if (annotations.italic) className += " italic";
@@ -100,24 +73,9 @@ const RichText: React.FC<{ content: any[] }> = ({ content }) => {
                 if (annotations.code) className += " font-mono bg-stone-100 text-[#e03e3e] px-1.5 py-0.5 rounded text-[0.9em]";
                 if (annotations.color && COLOR_MAP[annotations.color]) className += ` ${COLOR_MAP[annotations.color]}`;
 
-                const isMention = type === 'mention';
-                const mentionHref = mention?.url || href;
-                const isGithubMention = isMention && mentionHref && isGithubUrl(mentionHref);
-
-                const element = isGithubMention ? (
-                    <a key={i} href={mentionHref} target="_blank" rel="noopener noreferrer" className={`${className} inline-flex items-baseline gap-1 align-baseline text-ink underline decoration-ink/40 decoration-1 underline-offset-4 transition-colors hover:text-ink/70 hover:decoration-ink/55`}>
-                        <Github size={18} className="relative top-[3px] shrink-0 fill-current stroke-current" />
-                        <span>{getGithubMentionLabel(text, mentionHref)}</span>
-                    </a>
-                ) : isMention && mentionHref ? (
-                    <a key={i} href={mentionHref} target="_blank" rel="noopener noreferrer" className={`${className} mx-0.5 inline-flex max-w-full items-center gap-1 rounded-sm border border-stone-300/60 bg-stone-100/60 px-1 py-[1px] align-baseline font-mono text-[0.78em] leading-none text-ink/80 no-underline transition-colors hover:bg-stone-100`}>
-                        <span className="truncate">{getInlineLinkLabel(text || mentionHref)}</span>
-                        <ExternalLink size={9} className="shrink-0 opacity-55" />
-                    </a>
-                ) : href ? (
-                    <a key={i} href={href} target="_blank" rel="noopener noreferrer" className={`${className} text-ink/90 hover:text-ink transition-colors underline decoration-ink/35 decoration-1 underline-offset-4`}>
-                        {text}
-                    </a>
+                const url = type === 'mention' ? mention?.url || href : href;
+                const element = url ? (
+                    <ArticleLink key={i} href={url} text={text} className={className} />
                 ) : (
                     <span key={i} className={className}>{text}</span>
                 );
@@ -176,39 +134,25 @@ const parseCaptionData = (caption: string) => {
     return { device, date, locationMain: others[0] || '', locationSub: others.slice(1).join(' · ') };
 };
 
-const getUrlLabel = (url: string) => {
-    try {
-        const parsed = new URL(url);
-        const path = parsed.pathname.replace(/^\/|\/$/g, '');
-        if (parsed.hostname.includes('github.com') && path) return path;
-        return parsed.hostname.replace(/^www\./, '');
-    } catch {
-        return url;
-    }
-};
 
 const LinkPreviewCard: React.FC<{ url: string; caption?: any[]; variant?: 'bookmark' | 'embed' | 'link_preview' | 'file'; title?: string }> = ({ url, caption, variant = 'bookmark', title }) => {
-    const isGithub = url?.includes('github.com');
-    const Icon = variant === 'file' ? FileText : isGithub ? Github : BookmarkIcon;
-    const label = title || getUrlLabel(url);
-    const typeLabel = variant === 'embed' ? 'Embedded Link' : variant === 'link_preview' ? 'Link Preview' : variant === 'file' ? 'File Attachment' : 'External Link';
-
+    const link = describeLink(url, title);
+    const Icon = variant === 'file' ? FileText : BookmarkIcon;
+    const label = !title && !link.brand && link.host ? link.host : link.label;
     return (
-        <a href={url} target="_blank" rel="noopener noreferrer" className="block border border-stone-200/80 rounded-md px-3 py-2.5 my-5 hover:bg-stone-50/70 transition-colors group overflow-hidden first:mt-0">
-            <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-stone-100/80 rounded flex items-center justify-center shrink-0">
-                    <Icon size={15} className="text-stone-500" />
-                </div>
-                <div className="min-w-0 flex-1">
-                    <p className="font-sans font-medium text-[13px] leading-tight truncate text-ink">{label}</p>
-                    <p className="font-mono text-[8px] text-stone-400 truncate mt-0.5 uppercase tracking-wider">{typeLabel}</p>
-                    {caption && caption.length > 0 && (
-                        <p className="font-sans text-[11px] leading-snug text-stone-500 mt-1 line-clamp-1"><RichText content={caption} /></p>
-                    )}
-                </div>
-                <ExternalLink size={12} className="text-stone-300 shrink-0 group-hover:text-stone-500 transition-colors" />
-            </div>
-        </a>
+        <figure className="my-5 first:mt-0">
+            <a href={url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-md border border-ink/15 bg-white/50 px-3 py-2.5 text-ink hover:border-ink/35 focus-visible:outline-ink">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center text-base" aria-hidden="true">
+                    {link.brand ? <LinkBrand brand={link.brand} /> : <Icon size={15} />}
+                </span>
+                <span className="min-w-0 flex-1 break-words text-[14px] leading-snug">
+                    {label}
+                    {link.host && label !== link.host && <small className="block font-mono text-[10px] text-stone-600">{link.host}</small>}
+                </span>
+                <ExternalLink size={13} aria-hidden="true" className="shrink-0 text-stone-500" />
+            </a>
+            {!!caption?.length && <figcaption className="mt-1 px-1 text-[12px] leading-normal text-stone-600"><RichText content={caption} /></figcaption>}
+        </figure>
     );
 };
 

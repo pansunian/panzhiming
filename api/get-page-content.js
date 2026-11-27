@@ -1,4 +1,5 @@
 const { Client } = require('@notionhq/client');
+const { parseRichText } = require('./lib/notion-rich-text');
 const { redisGet, redisSet } = require('./lib/redis');
 const { getStaticImageUrl } = require('./lib/static-blog-images');
 
@@ -43,19 +44,6 @@ module.exports = async function handler(req, res) {
 
     const rootBlocks = await fetchChildren(pageId);
 
-    const parseRichText = (richTextArray) => {
-      if (!richTextArray) return [];
-      return richTextArray.map(t => ({
-        type: t.type,
-        text: t.plain_text,
-        annotations: t.annotations,
-        href: t.href,
-        mention: t.type === 'mention' ? {
-          type: t.mention?.type,
-          url: t.mention?.link_preview?.url || t.href || ''
-        } : null
-      }));
-    };
 
     const transformBlocks = async (blocks) => {
       const content = [];
