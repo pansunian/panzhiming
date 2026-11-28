@@ -131,9 +131,9 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
         <TicketBase className="rounded-none bg-paper">
             {/* Form Section */}
             <div className="p-8 pb-12 relative">
-                <div className="mb-4 -mt-3 -mr-3 flex items-center justify-between gap-3">
-                    <p className="font-serif text-sm text-stone-500 italic" style={{ textWrap: 'balance' }}>
-                        如果想联系我请留下一张便签...
+                <div className="-mt-5 -mr-3 flex items-center justify-between gap-3">
+                    <p className="font-serif text-sm text-stone-500 italic">
+                        留张便签吧。
                     </p>
                     <ContactPostmark delivered={status === 'success'} />
                 </div>
