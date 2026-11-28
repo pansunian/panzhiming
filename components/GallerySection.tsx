@@ -72,7 +72,7 @@ const GalleryDiaryCard: React.FC<{ group: PhotoGroup; index: number }> = ({ grou
                         <h3 className="font-serif text-[1rem] font-medium leading-snug text-ink transition-colors group-hover:text-brand-accent line-clamp-2">
                             {group.title}
                         </h3>
-                        <p className="mt-2 w-full truncate font-serif text-xs leading-relaxed text-stone-500">
+                        <p className="mt-2 w-full line-clamp-2 font-serif text-xs leading-relaxed text-stone-500">
                             {group.description || `${group.count} 张影像，记录一个现场。`}
                         </p>
                         <div className="mt-3 flex items-center justify-between gap-3 border-t border-stone-100/80 pt-2">

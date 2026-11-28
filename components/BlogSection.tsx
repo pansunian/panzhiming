@@ -9,6 +9,7 @@ import { getBlogPath } from '../utils/routes';
 
 interface Props {
   posts: BlogPost[];
+  isHome?: boolean;
   showViewAll?: boolean;
   title?: string;
   logoUrl?: string;
@@ -16,7 +17,7 @@ interface Props {
   navLinks?: NavLink[];
 }
 
-const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) => {
+const BlogCard: React.FC<{ post: BlogPost; index: number; isHome: boolean }> = ({ post, index, isHome }) => {
     const [isLoaded, setIsLoaded] = useState(false);
     
     // 博客列表图较小，使用 640px 足够（适配 Retina 屏）
@@ -24,6 +25,8 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
         ? optimizeImage(post.imageUrl, 640)
         : `https://picsum.photos/seed/${post.id}/500/300`;
     const readTime = post.readTime || '5 MIN';
+    const coverWidth = isHome ? 'w-[clamp(88px,32%,120px)] sm:w-1/3' : 'w-36 sm:w-[38%]';
+    const titleSize = isHome ? 'text-base sm:text-[15px]' : 'text-sm';
 
     return (
         <Link 
@@ -31,7 +34,7 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
             className="motion-card relative w-full h-32 group cursor-pointer block"
         >
             <div className="w-full h-full flex items-stretch">
-                <div className="w-36 sm:w-[38%] h-full relative overflow-hidden rounded-l-sm bg-stone-200 shrink-0">
+                <div className={`h-full relative overflow-hidden rounded-l-sm bg-stone-200 shrink-0 ${coverWidth}`}>
                     <img
                         src={coverSrc}
                         alt={post.title}
@@ -48,13 +51,13 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
                     <Notch className="!w-4 !h-4 -translate-x-1/2 -bottom-2 left-1/2" />
                 </div>
                 
-                <div className="flex-grow h-full bg-paper p-3 sm:p-4 flex flex-col relative jagged-right-round rounded-r-none border-r border-stone-200/50">
+                <div className="min-w-0 flex-grow h-full bg-paper p-3 sm:p-4 flex flex-col relative jagged-right-round rounded-r-none border-r border-stone-200/50">
                     <div className="flex justify-between items-center mb-1">
                             <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">#{post.category}</span>
                             <span className="font-mono text-[9px] text-stone-500 font-bold">{post.date}</span>
                     </div>
                     <div className="flex-grow flex flex-col justify-center mb-1 pr-0 sm:pr-1">
-                        <h3 className="font-serif font-medium text-ink text-sm sm:text-[14px] leading-tight mb-1 group-hover:text-brand-accent transition-colors line-clamp-2">{post.title}</h3>
+                        <h3 className={`font-serif font-medium text-ink leading-tight mb-1 group-hover:text-brand-accent transition-colors line-clamp-2 ${titleSize}`}>{post.title}</h3>
                         <p className="font-serif text-[10px] sm:text-xs text-stone-500 leading-snug line-clamp-1 opacity-80">{post.excerpt}</p>
                     </div>
                     <div className="mt-auto pt-2 border-t border-stone-100 flex items-end justify-between pr-2">
@@ -70,7 +73,7 @@ const BlogCard: React.FC<{ post: BlogPost; index: number }> = ({ post, index }) 
     );
 };
 
-export const BlogSection: React.FC<Props> = ({ posts, showViewAll, title = "文章", logoUrl, showPageNav, navLinks }) => {
+export const BlogSection: React.FC<Props> = ({ posts, showViewAll, title = "文章", logoUrl, showPageNav, navLinks, isHome = false }) => {
   return (
     <section className="page-enter-soft scroll-mt-12 w-full">
       {showPageNav && (
@@ -96,7 +99,7 @@ export const BlogSection: React.FC<Props> = ({ posts, showViewAll, title = "文�
          )}
       </div>
       <div className="flex flex-col gap-6 w-full">
-        {posts.map((post, index) => <BlogCard key={post.id} post={post} index={index} />)}
+        {posts.map((post, index) => <BlogCard key={post.id} post={post} index={index} isHome={isHome} />)}
       </div>
     </section>
   );
