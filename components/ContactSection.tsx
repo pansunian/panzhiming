@@ -128,10 +128,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
         
         <TicketBase className="rounded-none bg-paper">
             {/* Form Section */}
-            <div className="p-8 pb-12 relative">
-                <div className="-mt-5 -mr-3 flex items-center justify-between gap-3">
-                    <p className="font-serif text-[15px] leading-6 text-stone-600">
-                        读到这儿，<span className="font-medium text-ink">聊两句？</span>
+            <div className="p-8 pb-12 relative max-[359px]:px-4">
+                <div className="-mt-5 -mr-3 flex items-center justify-between gap-3 max-[359px]:mr-0 max-[359px]:gap-1.5">
+                    <p className="font-serif text-[15px] leading-6 text-stone-600 max-[359px]:text-sm">
+                        想说什么就写个<span className="font-medium text-ink">留言便签</span>吧
                     </p>
                     <ContactPostmark delivered={status === 'success'} />
                 </div>
