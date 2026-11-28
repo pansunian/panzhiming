@@ -40,10 +40,10 @@ function ContactPostmark({ delivered }: { delivered: boolean }) {
       className="block w-24 shrink-0 -rotate-3 text-[#405e6b] sm:w-[104px]">
       <defs>
         <clipPath id="contact-stamp-scenery"><circle cx="98" cy="62" r="54" /></clipPath>
-        <mask id="contact-stamp-wordmark" x="47" y="55" width="102" height="29" maskUnits="userSpaceOnUse">
-          <image href="/logo-xianjian-white.webp" x="47" y="55" width="102" height="29" />
+        <mask id="contact-stamp-wordmark" x="52" y="54" width="92" height="26" maskUnits="userSpaceOnUse">
+          <image href="/logo-xianjian-white.webp" x="52" y="54" width="92" height="26" />
         </mask>
-        <path id="contact-stamp-date" d="M 48 84 Q 98 125 148 84" />
+        <path id="contact-stamp-date" d="M 47 92 Q 98 121 149 92" />
         <path id="contact-stamp-wave" d="M 2 53 C 14 53 16 45 27 45 C 32 45 35 47 39 48" />
       </defs>
       <g fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" opacity=".76">
@@ -67,11 +67,9 @@ function ContactPostmark({ delivered }: { delivered: boolean }) {
                                    M 111 46.5 H 119 V 51 H 111 Z M 112 47.5 V 49 H 117.5 V 47.5 Z" />
         <path d="M 42 54 L 153 49" fill="none" stroke="currentColor" strokeWidth="1.1" />
       </g>
-      <path d="M 58 29 A 52 52 0 0 1 137 28 M 64 103 A 52 52 0 0 0 132 102"
-        fill="none" stroke="currentColor" strokeWidth="1" />
-      <rect x="47" y="55" width="102" height="29" fill="currentColor" mask="url(#contact-stamp-wordmark)" />
+      <rect x="52" y="54" width="92" height="26" fill="currentColor" mask="url(#contact-stamp-wordmark)" />
       <text textAnchor="middle" fill="currentColor" fontFamily="ui-monospace, monospace"
-        fontSize="15.5" fontWeight="600" letterSpacing=".3">
+        fontSize="15.5" fontWeight="500" letterSpacing=".3">
         <textPath href="#contact-stamp-date" startOffset="50%">{date}</textPath>
       </text>
     </svg>
