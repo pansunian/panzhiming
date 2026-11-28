@@ -1,9 +1,57 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TicketBase, DashedLine, Notch, BarcodeHorizontal } from './TicketUI';
 import { Send, Check, Loader2, AlertCircle } from 'lucide-react';
 
 interface ContactSectionProps {
     logoUrl?: string;
+}
+
+function postmarkDate(now: Date) {
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return [now.getFullYear(), month, day].join('.');
+}
+
+function ContactPostmark({ delivered }: { delivered: boolean }) {
+  const [date, setDate] = useState(() => postmarkDate(new Date()));
+
+  useEffect(() => {
+    let midnightTimer: number;
+    function refresh() {
+      window.clearTimeout(midnightTimer);
+      const now = new Date();
+      setDate(postmarkDate(now));
+      if (delivered) return;
+      const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+      midnightTimer = window.setTimeout(refresh, midnight.getTime() - now.getTime());
+    }
+
+    refresh();
+    if (delivered) return;
+    document.addEventListener('visibilitychange', refresh);
+    return () => {
+      window.clearTimeout(midnightTimer);
+      document.removeEventListener('visibilitychange', refresh);
+    };
+  }, [delivered]);
+
+  return (
+    <svg viewBox="0 0 100 100" role="img" aria-label={`先见志明留言邮戳，${date}`}
+      className="block w-[82px] shrink-0 -rotate-6 text-brand-accent sm:w-[90px]">
+      <defs>
+        <path id="contact-stamp-top" d="M 18 50 A 32 32 0 0 1 82 50" />
+        <path id="contact-stamp-bottom" d="M 11 50 A 39 39 0 0 0 89 50" />
+      </defs>
+      <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeWidth="1.6" />
+      <g fill="currentColor" textAnchor="middle" className="font-serif" fontSize="12" letterSpacing="2">
+        <text><textPath href="#contact-stamp-top" startOffset="50%">先见志明</textPath></text>
+        <text><textPath href="#contact-stamp-bottom" startOffset="50%">留言邮局</textPath></text>
+      </g>
+      <path d="M 12 38 H 88 M 12 62 H 88" fill="none" stroke="currentColor" strokeWidth="1" />
+      <text x="50" y="55" textAnchor="middle" fill="currentColor"
+        fontFamily="ui-monospace, monospace" fontSize="13.5" fontWeight="600">{date}</text>
+    </svg>
+  );
 }
 
 export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
@@ -59,20 +107,12 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
         <TicketBase className="rounded-none bg-paper">
             {/* Form Section */}
             <div className="p-8 pb-12 relative">
-                {/* Decorative Stamp */}
-                <div className="absolute top-5 right-5 w-16 opacity-85 pointer-events-none sm:w-[72px]">
-                    <img
-                        src="/stamp-2026.webp"
-                        alt=""
-                        loading="lazy"
-                        decoding="async"
-                        className="block h-auto w-full"
-                    />
+                <div className="mb-4 -mt-3 -mr-3 flex items-start justify-between gap-3">
+                    <p className="pt-3 font-serif text-sm text-stone-500 italic">
+                        如果想联系我请留下一张便签...
+                    </p>
+                    <ContactPostmark delivered={status === 'success'} />
                 </div>
-
-                <p className="font-serif text-sm text-stone-500 mb-8 italic w-3/4">
-                    如果想联系我请留下一张便签...
-                </p>
 
                 {status === 'success' ? (
                     <div className="flex flex-col items-center justify-center py-12 space-y-4 animate-in fade-in slide-in-from-bottom-4">
