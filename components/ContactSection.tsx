@@ -36,20 +36,20 @@ function ContactPostmark({ delivered }: { delivered: boolean }) {
   }, [delivered]);
 
   return (
-    <svg viewBox="0 0 100 100" role="img" aria-label={`先见志明留言邮戳，${date}`}
-      className="block w-[82px] shrink-0 -rotate-6 text-brand-accent sm:w-[90px]">
+    <svg viewBox="0 0 124 82" role="img" aria-label={`先见志明留言邮戳，${date}`}
+      className="block w-[100px] shrink-0 -rotate-3 text-brand-accent sm:w-[110px]">
       <defs>
-        <path id="contact-stamp-top" d="M 18 50 A 32 32 0 0 1 82 50" />
-        <path id="contact-stamp-bottom" d="M 11 50 A 39 39 0 0 0 89 50" />
+        <mask id="contact-stamp-wordmark" x="18" y="18" width="88" height="26" maskUnits="userSpaceOnUse">
+          <image href="/logo-xianjian-white.webp" x="18" y="18" width="88" height="26" />
+        </mask>
+        <path id="contact-stamp-date" d="M 16 49 Q 62 79 108 49" />
       </defs>
-      <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeWidth="1.6" />
-      <g fill="currentColor" textAnchor="middle" className="font-serif" fontSize="12" letterSpacing="2">
-        <text><textPath href="#contact-stamp-top" startOffset="50%">先见志明</textPath></text>
-        <text><textPath href="#contact-stamp-bottom" startOffset="50%">留言邮局</textPath></text>
-      </g>
-      <path d="M 12 38 H 88 M 12 62 H 88" fill="none" stroke="currentColor" strokeWidth="1" />
-      <text x="50" y="55" textAnchor="middle" fill="currentColor"
-        fontFamily="ui-monospace, monospace" fontSize="13.5" fontWeight="600">{date}</text>
+      <ellipse cx="62" cy="41" rx="58" ry="37" fill="none" stroke="currentColor" strokeWidth="1.25" />
+      <rect x="18" y="18" width="88" height="26" fill="currentColor" mask="url(#contact-stamp-wordmark)" />
+      <text textAnchor="middle" fill="currentColor" fontFamily="ui-monospace, monospace"
+        fontSize="12.5" fontWeight="500" letterSpacing=".45">
+        <textPath href="#contact-stamp-date" startOffset="50%">{date}</textPath>
+      </text>
     </svg>
   );
 }
