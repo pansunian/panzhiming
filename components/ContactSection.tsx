@@ -37,7 +37,7 @@ function ContactPostmark({ delivered }: { delivered: boolean }) {
 
   return (
     <svg viewBox="0 0 162 126" role="img" aria-label={`先见志明留言邮戳，西宁东收费站，${date}`}
-      className="block w-[126px] shrink-0 -rotate-3 text-[#405e6b] sm:w-[140px]">
+      className="block w-24 shrink-0 -rotate-3 text-[#405e6b] sm:w-[104px]">
       <defs>
         <clipPath id="contact-stamp-scenery"><circle cx="98" cy="62" r="54" /></clipPath>
         <mask id="contact-stamp-wordmark" x="47" y="55" width="102" height="29" maskUnits="userSpaceOnUse">
@@ -71,7 +71,7 @@ function ContactPostmark({ delivered }: { delivered: boolean }) {
         fill="none" stroke="currentColor" strokeWidth="1" />
       <rect x="47" y="55" width="102" height="29" fill="currentColor" mask="url(#contact-stamp-wordmark)" />
       <text textAnchor="middle" fill="currentColor" fontFamily="ui-monospace, monospace"
-        fontSize="14" fontWeight="600" letterSpacing=".55">
+        fontSize="15.5" fontWeight="600" letterSpacing=".3">
         <textPath href="#contact-stamp-date" startOffset="50%">{date}</textPath>
       </text>
     </svg>
@@ -132,8 +132,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
             {/* Form Section */}
             <div className="p-8 pb-12 relative">
                 <div className="-mt-5 -mr-3 flex items-center justify-between gap-3">
-                    <p className="font-serif text-sm text-stone-500 italic">
-                        留张便签吧。
+                    <p className="font-serif text-[15px] leading-6 text-stone-600">
+                        读到这儿，<span className="font-medium text-ink">聊两句？</span>
                     </p>
                     <ContactPostmark delivered={status === 'success'} />
                 </div>
