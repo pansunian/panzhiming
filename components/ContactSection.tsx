@@ -36,18 +36,42 @@ function ContactPostmark({ delivered }: { delivered: boolean }) {
   }, [delivered]);
 
   return (
-    <svg viewBox="0 0 124 82" role="img" aria-label={`先见志明留言邮戳，${date}`}
-      className="block w-[100px] shrink-0 -rotate-3 text-brand-accent sm:w-[110px]">
+    <svg viewBox="0 0 162 126" role="img" aria-label={`先见志明留言邮戳，西宁东收费站，${date}`}
+      className="block w-[126px] shrink-0 -rotate-3 text-[#405e6b] sm:w-[140px]">
       <defs>
-        <mask id="contact-stamp-wordmark" x="18" y="18" width="88" height="26" maskUnits="userSpaceOnUse">
-          <image href="/logo-xianjian-white.webp" x="18" y="18" width="88" height="26" />
+        <clipPath id="contact-stamp-scenery"><circle cx="98" cy="62" r="54" /></clipPath>
+        <mask id="contact-stamp-wordmark" x="47" y="55" width="102" height="29" maskUnits="userSpaceOnUse">
+          <image href="/logo-xianjian-white.webp" x="47" y="55" width="102" height="29" />
         </mask>
-        <path id="contact-stamp-date" d="M 16 49 Q 62 79 108 49" />
+        <path id="contact-stamp-date" d="M 48 84 Q 98 125 148 84" />
+        <path id="contact-stamp-wave" d="M 2 53 C 14 53 16 45 27 45 C 32 45 35 47 39 48" />
       </defs>
-      <ellipse cx="62" cy="41" rx="58" ry="37" fill="none" stroke="currentColor" strokeWidth="1.25" />
-      <rect x="18" y="18" width="88" height="26" fill="currentColor" mask="url(#contact-stamp-wordmark)" />
+      <g fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" opacity=".76">
+        <use href="#contact-stamp-wave" />
+        <use href="#contact-stamp-wave" transform="translate(0 7)" />
+        <use href="#contact-stamp-wave" transform="translate(0 14)" />
+      </g>
+      <circle cx="98" cy="62" r="58" fill="none" stroke="currentColor" strokeWidth="2.8" />
+      <g clipPath="url(#contact-stamp-scenery)" fill="currentColor">
+        {/* Xining East: the cable stays, low canopy and open toll lanes from the first album photo. */}
+        <path d="M 110 43 L 112 20 L 113 17 L 115 20 L 117 43 Z M 61 44 L 62 33 L 63.5 33 L 65 44 Z" />
+        <path d="M 113 22 L 70 43 M 113 26 L 80 43 M 113 30 L 91 43
+                 M 114 22 L 151 40 M 114 26 L 142 41 M 114 30 L 133 42
+                 M 63 35 L 44 44 M 63 35 L 81 43"
+          fill="none" stroke="currentColor" strokeWidth="1.1" />
+        <path d="M 40 44 L 155 39 L 155 44 L 40 49 Z
+                 M 51 47 H 54 V 54 H 51 Z M 68 46 H 71 V 53 H 68 Z
+                 M 86 45 H 89 V 52 H 86 Z M 105 44 H 108 V 51 H 105 Z
+                 M 126 43 H 129 V 50 H 126 Z M 146 42 H 149 V 49 H 146 Z" />
+        <path fillRule="evenodd" d="M 73 48 H 80 V 53 H 73 Z M 74 49 V 50.5 H 78.5 V 49 Z
+                                   M 111 46.5 H 119 V 51 H 111 Z M 112 47.5 V 49 H 117.5 V 47.5 Z" />
+        <path d="M 42 54 L 153 49" fill="none" stroke="currentColor" strokeWidth="1.1" />
+      </g>
+      <path d="M 58 29 A 52 52 0 0 1 137 28 M 64 103 A 52 52 0 0 0 132 102"
+        fill="none" stroke="currentColor" strokeWidth="1" />
+      <rect x="47" y="55" width="102" height="29" fill="currentColor" mask="url(#contact-stamp-wordmark)" />
       <text textAnchor="middle" fill="currentColor" fontFamily="ui-monospace, monospace"
-        fontSize="12.5" fontWeight="500" letterSpacing=".45">
+        fontSize="14" fontWeight="600" letterSpacing=".55">
         <textPath href="#contact-stamp-date" startOffset="50%">{date}</textPath>
       </text>
     </svg>
@@ -107,8 +131,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ logoUrl }) => {
         <TicketBase className="rounded-none bg-paper">
             {/* Form Section */}
             <div className="p-8 pb-12 relative">
-                <div className="mb-4 -mt-3 -mr-3 flex items-start justify-between gap-3">
-                    <p className="pt-3 font-serif text-sm text-stone-500 italic">
+                <div className="mb-4 -mt-3 -mr-3 flex items-center justify-between gap-3">
+                    <p className="font-serif text-sm text-stone-500 italic" style={{ textWrap: 'balance' }}>
                         如果想联系我请留下一张便签...
                     </p>
                     <ContactPostmark delivered={status === 'success'} />
